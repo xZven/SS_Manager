@@ -19,15 +19,16 @@ package stri.ss_manager.SNMPMessage.transport;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import stri.ss_manager.SNMPMessage.handler.SNMPMessageHandlerInputStream;
+import java.util.Queue;
 
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
  * @version 1.0
+ * @see Queue
  * @see SNMPMessageHandlerInputStream
  * 
- * Cette classe permet de gérer les PDU SNMP entrants sur les socket UDP.
+ * Cette classe permet de gérer les PDU SNMP entrants sur le socket UDP.
  * 
  * <p>
  * Ce Thread écoute sur le socket UDP et attent de recevoir des PDU SNMP.
@@ -39,24 +40,20 @@ public class SocketHandlerInputStream extends Thread{
     
     // attributs
     
-    private DatagramSocket socket;                              // Socket UDP
-    private SNMPMessageHandlerInputStream S_MSG_HDLR_IS;        // Gestion messages SNMP pour les flux entrants
+    private DatagramSocket socket;                          // Socket UDP
+    private Queue<DatagramPacket> DG_packet_queue_IS;       // File d'attente pour les PDU SNMP pour le flux entrant;
     
     // méthodes
-    
-    /**
-     * 
-     * @param socket Socket UDP où le thread écoutera les PDU SNMP entrantes
-     * @param S_MSG_HDLR_IS Gestionnaire pour les messages SNMP entrant.
-     */
-    public SocketHandlerInputStream(DatagramSocket socket, SNMPMessageHandlerInputStream S_MSG_HDLR_IS) {
+
+    public SocketHandlerInputStream(DatagramSocket socket, Queue<DatagramPacket> DG_packet_queue_IS) {
         //
-        this.socket        = socket;
+        this.socket = socket;
         //
-        this.S_MSG_HDLR_IS = S_MSG_HDLR_IS;
+        this.DG_packet_queue_IS = DG_packet_queue_IS;
         //
         System.out.println("[SOCK_HDLR_IS]: Ready...");
     }
+       
     /**
      * Cette procédure permet d'arrêter le Thread de manière sécurisé.
      * Tous les PDU SNMP entrantes seront ignorées.
@@ -64,8 +61,10 @@ public class SocketHandlerInputStream extends Thread{
      */
     public void Stop(){
         System.out.println("[SOCK_HDLR_IS]: Stopping...");
-        //
+        // Fermeture du socket
         socket.close();
+        // arrêt du Thread
+        this.interrupt();
         //
         System.out.println("[SOCK_HDLR_IS]: Stopped");
     }
@@ -81,8 +80,8 @@ public class SocketHandlerInputStream extends Thread{
                 // on écoute sur le socket
                 socket.receive(data_packet);
                 System.out.println("[SOCK_HDLR_IS]: Datagram Received");
-                // On transmet place maintenant le paquet Datagram reçu dans la file
-                
+                // On  place le paquet Datagram reçu dans la file
+                DG_packet_queue_IS.add(data_packet);
                 System.out.println("[SOCK_HDLR_IS]: Datagram transmited to S_MSG_HDLR_IS");
                 // 
                 data_packet = null;
