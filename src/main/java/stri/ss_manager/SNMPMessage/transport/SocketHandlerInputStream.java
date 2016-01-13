@@ -40,33 +40,33 @@ public class SocketHandlerInputStream extends Thread{
     
     // attributs
     
-    private DatagramSocket socket;                          // Socket UDP
-    private Queue<DatagramPacket> DG_packet_queue_IS;       // File d'attente pour les PDU SNMP pour le flux entrant;
+    private DatagramSocket          socket;                   // Socket UDP
+    private Queue<DatagramPacket>   DG_packet_queue_IS;       // File d'attente pour les PDU SNMP pour le flux entrant;
+    private boolean                 RUNNING = true;           // Utiliser pour mettre fin au Thread
     
     // méthodes
-
+    
+    /**
+     * 
+     * @param socket Socket UDP où ce Thread écoutera les DGPacket entrants
+     * @param DG_packet_queue_IS File d'attente où seront placés les DGPacket entrants.
+     */
     public SocketHandlerInputStream(DatagramSocket socket, Queue<DatagramPacket> DG_packet_queue_IS) {
-        //
+        // Le socket est passé par le programme principale.
         this.socket = socket;
         //
         this.DG_packet_queue_IS = DG_packet_queue_IS;
         //
         System.out.println("[SOCK_HDLR_IS]: Ready...");
-    }
-       
+    }   
     /**
-     * Cette procédure permet d'arrêter le Thread de manière sécurisé.
+     * Cette procédure permet d'arrêter le Thread.
      * Tous les PDU SNMP entrantes seront ignorées.
-     * 
      */
     public void Stop(){
         System.out.println("[SOCK_HDLR_IS]: Stopping...");
-        // Fermeture du socket
-        socket.close();
         // arrêt du Thread
-        this.interrupt();
-        //
-        System.out.println("[SOCK_HDLR_IS]: Stopped");
+        this.RUNNING = false;
     }
     @Override
     public void run(){
@@ -75,7 +75,7 @@ public class SocketHandlerInputStream extends Thread{
         
         System.out.println("[SOCK_HDLR_IS]: Ready...");
         //
-        while(socket.isConnected()){ // boucle infinie -- socket connecté
+        while(socket.isConnected() && RUNNING){ // boucle infinie -- socket connecté && RUN
             try{
                 // on écoute sur le socket
                 socket.receive(data_packet);
@@ -89,5 +89,8 @@ public class SocketHandlerInputStream extends Thread{
                 System.err.println("[SOCK_HDLR_IS]: ERROR -- > "+e.getMessage() );
             }
         }
+        
+        // on a quitté la booucle while --> FIN du thread
+        System.out.println("[SOCK_HDLR_IS]: Stopped");
     }
 }
