@@ -1,0 +1,106 @@
+/*
+ ----------------------------- 
+ PVII Scroll To Top
+ by Project Seven Development
+ www.projectseven.com
+ Core CSS
+ -----------------------------
+*/
+
+.p7STT {
+	padding: 1em;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	text-align: center;
+	position: fixed;
+	display: none;
+	z-index: 999999999;
+}
+
+/*For old browsers*/
+.p7STT.dark {
+	background-color: #222;
+	color: #AAA;
+}
+.p7STT.light {
+	background-color: #FFF;
+	color: #000;
+}
+/*End Older Browsers*/
+
+.p7STT.dark {
+	background: rgba(0,0,0,.9);
+}
+.p7STT.light {
+	background: rgba(255,255,255,.8);
+}
+.p7STT.bottom {
+	bottom: 0px;
+	width: 100%;
+}
+.p7STT.right {
+	right: 6px;
+	top: 100px;
+	padding: 0px 6px 2px 6px;
+	font-size: 2.5em;
+	border-radius: 5px;
+}
+.p7STT.right span {
+	display: none;
+}
+.p7STT.right i:before {
+	padding: 0px;
+}
+.p7STT-anchor {
+	text-decoration: none;
+}
+.p7STT.dark .p7STT-anchor {
+	color: #AAA;
+}
+.p7STT.dark .p7STT-anchor:hover {
+	color: #FFF;
+}
+.p7STT.light .p7STT-anchor {
+	color: #999;
+}
+.p7STT.light .p7STT-anchor:hover {
+	color: #000;
+}
+.p7STT-anchor i {
+   font-style: normal;
+} 
+.p7STT-anchor i:before {
+	content: "\2191";
+	padding-right: 4px;
+}
+
+/* animations for arrows */
+
+/* arrow on right */
+.p7STT.right {
+	opacity: 0;
+	margin-top:60px;
+	-webkit-transition: opacity 1s, margin-top .5s;
+	transition: opacity 1s, margin-top .5s;
+}
+.p7STT.right.p7stt-on {
+	opacity: 1;
+	margin-top: 0px;
+}
+
+/* bottom overlay */
+.p7STT.bottom {
+	opacity: 0;
+	bottom:-100px;
+	-webkit-transition: opacity 1s, bottom 1s;
+	transition: opacity 1s, bottom 1s;
+}
+.p7STT.bottom.p7stt-on {
+	opacity: 1;
+	bottom: 0px;
+}
+
+.p7STT-scroll-to-top {
+	font-size: inherit;	
+}
+

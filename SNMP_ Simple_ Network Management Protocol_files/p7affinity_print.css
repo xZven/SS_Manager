@@ -1,0 +1,70 @@
+/* 
+  ------------------------------------------------
+  PVII Affinity
+  Copyright (c) 2011 Project Seven Development
+  www.projectseven.com
+  Print Media Style Sheet
+  ------------------------------------------------
+*/
+
+body {
+	margin: 0;
+	padding: 0;
+	min-width: 0;
+	width: auto !important;
+	float: none;
+	font: 9pt Georgia, "Times New Roman", Times, serif;
+ }
+ .sidebar, .main-content, .sidebar2, .sidebar-right, .content, .column-content {
+ padding-bottom: 0;
+ margin-bottom: 0;
+ border: none !important;
+ width: auto !important;
+ float: none;
+ }
+ .main-content {
+ margin: 0;
+ width: auto !important;
+ float: none;
+ }
+ #p7PM3_1 {
+display: none;
+}
+ #p7PM3tb_1 {
+display: none;
+}
+ #p7MBM_1 {
+display: none;
+}
+#p7TP3_1 div {
+float:none !important;
+height: auto !important;
+}
+ #layout {
+ max-width: none;
+ margin: 0px;
+ width: auto !important;
+ float: none;
+ }
+ .column-content, .content {
+ height: auto !important;
+ max-height: 888678px;
+ border: none !important;
+ width: auto !important;
+ float: none;
+ }
+ .column-content * {
+ padding: 0px !important;
+ width: auto !important;
+ float: none;
+ }
+ .sml-content {
+ overflow: visible !important;
+ height: auto !important;
+ }
+ .footer {
+ position: static;
+ width: auto !important;
+ float: none;
+ display: none;
+ }

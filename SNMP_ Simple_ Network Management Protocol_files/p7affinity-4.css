@@ -1,0 +1,407 @@
+/* 
+  ------------------------------------------------
+  PVII Affinity
+  Copyright (c) 2013 Project Seven Development
+  www.projectseven.com
+  Metroplex Theme
+  ------------------------------------------------
+*/
+
+body {
+	background-color: #fff8dc;
+	font-family: "Segoe UI", "Gill Sans", Optima, sans-serif;
+	margin: 0px 0px 30px 0px;
+	font-size: .9em;
+}
+
+/*LAYOUT WIDTH */
+.p7DMM04, #layout {
+	max-width: 1392px;
+	margin: 0px auto;
+}
+#layout {
+	max-width: 1360px;
+	padding: 15px;
+	border: 1px solid rgba(0,0,0,.75);
+	overflow: hidden;
+}
+
+/*Drop Menu Magic Adjustments*/
+
+
+/*Baseline Adjustment for images needed with strict DOCTYPE*/
+img {vertical-align: bottom;}
+
+
+/*Logo and Banner*/
+#logo {
+	padding: 10px 20px;
+	position: relative;
+	z-index: 10;
+	background-image: -webkit-linear-gradient(#333, #111);
+	background-image: linear-gradient(#333, #111);
+	background-color: #151515;
+	box-shadow: 0px 0px 30px #000;
+}
+
+
+/*Utility Rules for images. Makes images scale with window size.*/
+#logo img, .affinity-row img, .footer img {
+	height: auto !important;
+	width: auto !important;
+	max-width: 100%;
+}
+/* 
+Add the fancy class to the scalable class to add a drop shadow
+<img class="scalable fancy"...>
+*/
+.fancy {
+	border: 1px solid rgba(255,255,255,.5);
+	box-shadow: 0px 0px 20px rgba(0,0,0,.5);
+}
+/* 
+Add the accented class to the scalable class to add eounded corners and a border.
+<img class="scalable accented"...>
+*/
+.accented {
+	border: 1px solid #000;
+}
+
+
+/*Default Row Structures*/
+.affinity-row {
+	padding: 0px;
+	margin-bottom: 15px;
+}
+
+/*Clear Fix to Clear Floats*/
+.affinity-row:after {
+	visibility: hidden;
+	display: block;
+	content: "\0020";
+	clear: both;
+	height: 0;
+}
+/*Strctural wrapper for 2-column row*/
+.affinity-row .column-half {
+	width: 49.5%;
+	float: left;
+	margin-right: 1%;
+}
+
+/*Strctural wrapper for 3-column row*/
+.affinity-row .column-third {
+	width: 32.5%;
+	float: left;
+	margin-right: 1.25%;
+}
+/*Strctural wrapper for 4-column row*/
+.affinity-row .column-fourth {
+	width: 24.25%;
+	float: left;
+	margin-right: 1%;
+}
+/*Strctural wrapper for 5-column row*/
+.affinity-row .column-fifth {
+	width: 19%;
+	float: left;
+	margin-right: 1.25%;
+}
+
+/*Strctural wrapper for 2-column sidebar-left row*/
+.affinity-row.sidebar-left .column-1 {
+	width: 74.75%;
+	float: right;
+	margin-left: 1.25%;
+	-webkit-transition: width ease-in-out .5s .1s;
+	transition: width ease-in-out .5s .1s;
+}
+.affinity-row.sidebar-left .column-2 {
+	width: 24%;
+	float: left;
+	position: relative;
+	z-index: 90;
+	transition: width ease-in-out .5s .1s;
+}
+.affinity-row.sidebar-left .column-content {
+	line-height: 1.5;
+}
+.affinity-row.sidebar-left .column-2 .column-content {
+	font-size: inherit;
+}
+
+/*Strctural wrapper for 2-column sidebar-right row*/
+.affinity-row.sidebar-right .column-1 {
+	width: 74.75%;
+	float: left;
+	margin-right: 1.25%;
+	transition: width ease-in-out .5s .1s;
+}
+.affinity-row.sidebar-right .column-2 {
+	width: 24%;
+	float: left;
+	transition: width ease-in-out .5s .1s;
+}
+.affinity-row.sidebar-right .column-content {
+	line-height: 1.5;
+}
+.affinity-row.sidebar-right .column-2 .column-content {
+	font-size: .9em;
+}
+.affinity-row .no-margin {
+	margin-right: 0px !important;
+}
+.left-border {
+	border-left: 1px solid rgba(0,0,0,.75);
+}
+.right-border {
+	border-right: 1px solid rgba(0,0,0,.75);
+}
+.left-right-border {
+	border-left: 1px solid rgba(0,0,0,.75);
+	border-right: 1px solid rgba(0,0,0,.75);
+}
+.boxed {
+	border: 1px solid rgba(0,0,0,.75);
+}
+.no-border {
+	border: none !important;
+}
+/*Column Colors */
+.red {
+	background-color: #AF272F;
+	background-image: -webkit-linear-gradient(#AF272F, #D23740);
+	background-image: linear-gradient(#AF272F, #D23740);
+	color: #FFF;
+}
+.blue {
+	background-color: #00587C;
+	background-image: -webkit-linear-gradient(90deg, #006A96, #00587C);
+	background-image: linear-gradient(90deg, #006A96, #00587C);
+	color: #FFF;
+}
+.purple {
+	background-color: #6B0086;
+	background-image: -webkit-linear-gradient(180deg, #6B0086, #57006D);
+	background-image: linear-gradient(180deg, #6B0086, #57006D);
+	color: #FFF;
+}
+.gray {
+	background-color: #ABABAB;
+	background-image: -webkit-linear-gradient(90deg, #999, #BBB);
+	background-image: linear-gradient(90deg, #999, #BBB);
+}
+.green {
+	background-color: #1b8600;
+	background-image: -webkit-linear-gradient(180deg, #209F00, #1b8600);
+	background-image: linear-gradient(180deg, #209F00, #1b8600);
+	color: #FFF;
+}
+.red, .blue, .purple, .gray, .green {
+	border-top: 1px solid rgba(0,0,0,.1);
+	border-right: 1px solid rgba(0,0,0,.4);
+	border-bottom: 1px solid rgba(0,0,0,.4);
+	border-left: 1px solid rgba(0,0,0,.1);
+}
+.black {
+	background-color: #111;
+	color: #CCC;
+}
+.white {
+	background-color: #FFF;
+}
+.black, .white {
+	border: 1px solid rgba(0,0,0,.75);
+}
+/*Column Content*/
+.column-content {
+	padding: 15px 24px;
+}
+.column-content p {
+	line-height: 1.65;
+}
+.affinity-row.sidebar-right .column-content,
+.affinity-row.sidebar-left .column-content,
+.affinity-row.thirds.full-height .column-content {
+	padding: 30px;
+}
+
+
+/*Headings*/
+h1, h2, h3, h4 {
+	line-height: 1em;
+	margin: 30px 0px 0px 0px;
+	font-family: "PT Sans Narrow", Optima, "Segoe UI", Arial, sans-serif;
+	font-weight: 400;
+}
+.column-content h1:first-child,
+.column-content h2:first-child,
+.column-content h3:first-child,
+.column-content h4:first-child {
+	margin-top: 10px;
+}
+h1.centered-text {
+	text-align: center;
+	margin: 0px !important;
+}
+/*Use this class when you add a heading inside a row that contains multiple columns.*/
+.inner-row-heading {
+	position: relative;
+	top: 20px;
+	margin: 0px 0px 0px 24px;
+}
+
+/*Footer and Copyright*/
+.footer {
+	color: #000;
+	font-size: 0.85em;
+	border: 1px solid rgba(0,0,0,.75);
+}
+.footer h3, .footer h4 {
+	font-family: "Segoe UI", "Gill Sans", Optima, sans-serif;
+	font-weight: normal;
+	text-transform: uppercase;
+	margin: 10px 0px 0px 0px;
+}
+.footer ul {
+	margin: 0px;
+	padding: 0px;
+	margin-top: 10px;
+}
+.footer li {
+	list-style-type: none;
+	line-height: 1.75;
+}
+.footer a {
+	color: #000;
+}
+.footer a:hover, .footer a:focus {
+	color: #B02125;
+}
+.copyright {
+	font-size: .7em;
+	text-transform: uppercase;
+	color: #000;
+	clear: both;
+	padding: 0px;
+}
+
+/*1 Column for Narrow Browser Windows and Smartphones in both orientations*/
+@media only screen and (min-width: 0px) and (max-width: 700px) {
+body {
+	margin: 0px;
+}
+.p7DMM04.p7DMM.p7dmm-left, .p7DMM04.p7DMM.p7dmm-right {
+	padding: 0px !important;
+}
+#layout {
+	max-width: none;
+	padding: 0px;
+	border: none;
+}
+.copyright {
+	padding: 10px 20px;
+}
+.affinity-row {
+	margin-bottom: 0px;
+}
+.column, .column-1, .column-2, .column-3,
+.column-half, .column-third, .column-fourth,
+.column-fifth {
+	float: none !important;
+	width: auto !important;
+	margin-right: 0px !important;
+}
+.column-content, .footer {
+	height: auto !important;
+	max-height: 888678px;
+	border: none !important;
+}
+}
+/*Medium windows - reduce padding content padding*/
+@media only screen and (min-width: 700px) and (max-width: 1380px) {
+#layout {
+	max-width: none;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: none !important;
+}
+.affinity-row.sidebar-left .column-1 {
+	width: 68.75%;
+}
+.affinity-row.sidebar-left .column-2 {
+	width: 30%;
+	position: relative;
+	z-index: 90;
+}
+.affinity-row.sidebar-right .column-1 {
+	width: 68.75%;
+}
+.affinity-row.sidebar-right .column-2 {
+	width: 30%;
+}
+}
+/*Landscape Tablet Exceptions to adjust padding and reduce font size*/
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
+	body {
+	font-size: .85em;
+}
+}
+.fixed {
+	clear: both;
+	float: none;
+	height: 371px;
+	width: 735px;
+	overflow: visible;
+	position: relative;
+	visibility: visible;
+}
+/*The Menu List inside the Accordion Panel*/
+.menulist {
+	margin: 0 0 12px 0 !important;
+	padding: 0 !important;
+	list-style-type: none;
+	line-height: normal;
+	font-size: 1em;
+}
+.menulist li {margin: 0 0 4px 0;}
+.menulist a {
+	text-decoration: none;
+	display: block;
+	padding: 3px 6px;
+	border: 1px solid #999;
+	color: #333333;
+	background-image: url(../jpg/dj_linkgradient.jpg);
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	background-color: #FFFFFF;
+}
+.menulist a:hover {
+	color: #333333;
+	border-color: #505050;
+	background-position: 0px -100px;
+	text-decoration: none;
+}
+.mwidth {
+ max-width:900px; /* adjust to suit */
+ margin:0 auto;
+ }
+
+.video-wrapper {
+ position: relative;
+ padding-bottom: 56.25%;
+ padding-top: 30px;
+ height: 0px;
+ overflow: hidden;
+ }
+
+.video-wrapper iframe, .video-wrapper object, .video-wrapper embed {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ }
+.blue {
+	color: #FFF;
+}
