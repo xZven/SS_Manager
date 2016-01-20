@@ -259,6 +259,8 @@ public class ManagerIHM extends java.awt.Frame {
                 new ManagerIHM().setVisible(true);
             }
         });
+        
+        
     }
 
 
