@@ -63,6 +63,11 @@ public class SocketHandlerInputStream extends Thread{
      * Cette procédure permet d'arrêter le Thread.
      * Tous les PDU SNMP entrantes seront ignorées.
      */
+    
+    
+    
+    
+    
     public void Stop(){
         System.out.println("[SOCK_HDLR_IS]: Stopping...");
         // arrêt du Thread
