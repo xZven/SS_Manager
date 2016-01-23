@@ -19,6 +19,7 @@ package stri.ss_manager.SNMPMessage;
 
 import java.net.DatagramPacket;
 import java.net.Inet4Address;
+import stri.ss_manager.SNMP.smi.OID;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.payload.SNMPTrap;
 
@@ -42,14 +43,24 @@ public class SNMPMessage {
     private Inet4Address Sender;
     private Inet4Address Receiver;
     
-    private final int version;          // numéro de version
-    private final byte[] communauty;    // communauté
+    // Farid: (petite modification)
+    private int version;          // numéro de version SNMP (pk t'a mis final pour version et communauty)
+    private byte[] communauty;    // communauté
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public void setCommunauty(byte[] communauty) {
+        this.communauty = communauty;
+    }
+   
     
     // Un message SNMP est soit une trap, soit un payload !
     // PAS LES DEUX A LA FOIS !
     SNMPMessagePayload payload; //
-    SNMPTrap trap;              //
-    
+    SNMPTrap trap;          //
+    OID OID;
     // Constructeurs
     
     /* 
@@ -64,6 +75,7 @@ public class SNMPMessage {
     public SNMPMessage(DatagramPacket DG_packet){
         this.version = 0;
         this.communauty = new byte[Byte.decode("none")];
+     
     }
     
 }
