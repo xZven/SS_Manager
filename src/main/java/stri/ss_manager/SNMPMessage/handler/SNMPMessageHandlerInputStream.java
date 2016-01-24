@@ -21,6 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.LinkedList;
@@ -28,7 +31,6 @@ import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
-import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 
 /**
  *
@@ -96,9 +98,19 @@ public class SNMPMessageHandlerInputStream extends Thread {
     @Override
     public void run() {
         // VAR
-        DatagramPacket temp_DGPacket;
-        SNMPMessage temp_SNMPMessage = null;
-        byte[] tempByteArray;
+        
+        InetAddress Sender   = null;    // Adresse IPv4 de l'emmeteur du message SNMP
+        InetAddress Receiver;    // Adresse IPv4 du récepteur du messages SNMP
+        int         port     = 0;       // numéro de port d'où le datagramme provient
+        int    seqNumber;               // numéro de séquence du message SNMP
+        int    version;                 // numéro de version SNMP  
+        byte[] communauty;              // communauté SNMP
+        //
+        DatagramPacket  temp_DGPacket;
+        SNMPMessage     temp_SNMPMessage;
+        byte[]          pduSNMP;         // PDU SNMP (byte[])
+        int             pduSNMPSize;
+        int             index;
         //
         System.out.println("[MSG_HDLR_IS]: Started...");
 
@@ -107,38 +119,55 @@ public class SNMPMessageHandlerInputStream extends Thread {
             if (DG_packet_queue_IS.isEmpty() == false) { //FILE d'attente n'est pas vide
                 // on extrait un DG_packet de la file d'attente (en l'effacant?)
                 temp_DGPacket = DG_packet_queue_IS.poll();
-                // CONVERSION en SNMPMessage (Farid)
+                // CONVERSION en SNMPMessage
 //  ************************************************************************************************ //
-
-                // temp_DGPacket.getAddress();     
-                //  tempByteArray = new byte[temp_DGPacket.getLength()];
-                tempByteArray = temp_DGPacket.getData(); // Extraction de la partie data du Datagramme
-                //temp_DGPacket.getOffset();
-                //temp_DGPacket.getPort();
-
-                for (byte b : tempByteArray) {   // (impression de tempByteArray, juste pour tester)
-                    char c = (char) b;
-                    System.out.print(c + " ");
+                // On récupère les adresses IP sur le Datagramme et le numéro de port distant
+                try {
+                    port     = temp_DGPacket.getPort();     
+                    Sender   = temp_DGPacket.getAddress();
+                    Receiver = InetAddress.getLocalHost();
+                    
+                } catch (UnknownHostException ex) {
+                    System.out.println("[MSG_HDLR_IS]: ERROR --> Impossible de récuppérer l'adresse local...");
+                    // SI ON PEUT PAS RCUPERER L'ADRESSE LOCAL
+                    Receiver = null;
                 }
                 
-                ByteBuffer b = ByteBuffer.wrap(tempByteArray).order(ByteOrder.LITTLE_ENDIAN);   //1er Methode
-                     for (int i = 0; i < tempByteArray.length; i++){
-                     int f = b.getInt(i);
-                     // a completer
-                  }
-                DataInputStream data = new DataInputStream(new ByteArrayInputStream(tempByteArray)); // 2eme Methode: Mettre les donnees dand DataInputStream
-                try {
-                    while (data.available() > 0) {
-                        SNMPMessage msg = null; // probablement faux
-                        msg.setVersion(data.readInt()); // version
-                        byte[] communauty = new byte[7]; // communauté
-                        data.read(communauty, 8, 14);
-                        byte[] PDU = new byte[30];  // PDU puis j'extraie ce qu'il faut de ce PDU
-                        data.readFully(PDU);
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(SNMPMessageHandlerInputStream.class.getName()).log(Level.SEVERE, null, ex);
+                
+                pduSNMP = temp_DGPacket.getData();          // Extraction de la partie data du Datagramme --> PDU SNMP
+                
+/*
+                for (byte b : pduSNMP) {                    // (impression de pduSNMP, juste pour tester)
+                    char c = (char) b;
+                    System.out.print( c + " ");
                 }
+ */
+                // numéro de séquence de la pdu
+                seqNumber   = pduSNMP[0];
+                // taille de la pdu
+                pduSNMPSize = pduSNMP[1];
+                // on les supprimer ensuites du tableau
+                // A VERIFIER LE FONCTIONNEMENT de cette fonction
+                // On copie à partir du troisième octets jusqu'à la fin
+                System.arraycopy(pduSNMP, 3, pduSNMP, 0, pduSNMPSize);
+                
+                // extraction du numéro de version
+                version = pduSNMP[2] + 1;
+                System.arraycopy(pduSNMP, 3, pduSNMP, 0, pduSNMPSize);
+                
+                // extraction de la communauté
+                communauty = new byte[pduSNMP[1]]; // allocation
+                // copy de la communauté
+                for(index = 0; index <= pduSNMP[1]; index++)
+                {
+                   communauty[index] = pduSNMP[index+3];
+                }
+                System.arraycopy(pduSNMP, index+3, pduSNMP, 0, pduSNMPSize);
+                
+                // Maintenant il reste que la PAYLOAD                
+                temp_SNMPMessage = new SNMPMessage(Sender, Receiver, port, version, communauty, pduSNMP);
+                
+                // le constructeur se chargera d'extraire chaque élément de la payload
 
 //  ************************************************************************************************ //
                 // on le transmet à la file d'attente

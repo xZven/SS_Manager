@@ -17,9 +17,7 @@
  */
 package stri.ss_manager.SNMPMessage;
 
-import java.net.DatagramPacket;
-import java.net.Inet4Address;
-import stri.ss_manager.SNMP.smi.OID;
+import java.net.InetAddress;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.payload.SNMPTrap;
 
@@ -39,43 +37,41 @@ import stri.ss_manager.SNMPMessage.payload.SNMPTrap;
  */
 public class SNMPMessage {
     
-    // attributs
-    private Inet4Address Sender;
-    private Inet4Address Receiver;
+    // attributs                    // ces adresses sont extraite ou mis dans les PDU SNMP
+    private InetAddress Sender;    // Adresse IPv4 de l'emmeteur du message SNMP
+    private int          port;      // numéro de port de l'hôte distant
+    private InetAddress Receiver;  // Adresse IPv4 du récepteur du messages SNMP
     
-    // Farid: (petite modification)
-    private int version;          // numéro de version SNMP (pk t'a mis final pour version et communauty)
-    private byte[] communauty;    // communauté
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public void setCommunauty(byte[] communauty) {
-        this.communauty = communauty;
-    }
+    
+    private int seqNumber;          // num"ro de séquence du message SNMP
+    private int version;            // numéro de version SNMP
+    private byte[] communauty;      // communauté
    
     
     // Un message SNMP est soit une trap, soit un payload !
     // PAS LES DEUX A LA FOIS !
-    SNMPMessagePayload payload; //
-    SNMPTrap trap;          //
-    OID OID;
+    SNMPMessagePayload payload;     //
+    SNMPTrap trap;                  //
+    
     // Constructeurs
     
     /* 
-        On utilisera trois méthodes différents pour créer un SNMPMessage:
-        Une première en passant le DatagramPacket liée à la PDU SNMP.
         Une seconde en défissant les valeurs des attributs pour un message
         SNMP normal.
         Une troisième méthodes en définissant les valeurs des attributs pour
         un trap SNMP.
     */
     
-    public SNMPMessage(DatagramPacket DG_packet){
-        this.version = 0;
-        this.communauty = new byte[Byte.decode("none")];
-     
+    public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, byte[] payload){
+        this.Sender     = Sender;
+        this.Receiver   = Receiver;
+        this.port       = port;
+        this.version    = version;
+        this.communauty = communauty;
+        
+    //  ************************************************************************************************ //
+      
+        
+    //  ************************************************************************************************ //     
     }
-    
 }
