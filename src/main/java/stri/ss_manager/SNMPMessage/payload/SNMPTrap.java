@@ -54,4 +54,10 @@ public class SNMPTrap {
     private Timestamp timeStamp;
     
     //private Vector<OID> varBindings;
+    
+    // constructeurs
+
+    public SNMPTrap(byte[] pduPayload) {
+    }
+    
 }

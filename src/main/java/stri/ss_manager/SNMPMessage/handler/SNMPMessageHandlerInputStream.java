@@ -17,19 +17,10 @@
  */
 package stri.ss_manager.SNMPMessage.handler;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 
 /**
@@ -57,8 +48,8 @@ public class SNMPMessageHandlerInputStream extends Thread {
 
     // attributs
     private Queue<DatagramPacket> DG_packet_queue_IS;     // File d'attente pour les DGPacket entrants
-    private Queue<SNMPMessage> S_MSG_queue_IS;         // File d'attente pour les SNMPMessages entrants (transmit au noyau)
-    private boolean RUNNING = true;         // Variable utilisé pour arrêter le Thread
+    private Queue<SNMPMessage>    S_MSG_queue_IS;         // File d'attente pour les SNMPMessages entrants (transmit au noyau)
+    private boolean               RUNNING = true;         // Variable utilisé pour arrêter le Thread
 
     // méthodes
     /**
@@ -88,7 +79,7 @@ public class SNMPMessageHandlerInputStream extends Thread {
     }
 
     /**
-     * Cette fonction est utilisé pour arrêter le Thd
+     * Cette fonction est utilisé pour arrêter le Thread
      */
     public void Stop() {
         System.out.println("[MSG_HDLR_IS]: Stopping...");
@@ -120,55 +111,8 @@ public class SNMPMessageHandlerInputStream extends Thread {
                 // on extrait un DG_packet de la file d'attente (en l'effacant?)
                 temp_DGPacket = DG_packet_queue_IS.poll();
                 // CONVERSION en SNMPMessage
-//  ************************************************************************************************ //
-                // On récupère les adresses IP sur le Datagramme et le numéro de port distant
-                try {
-                    port     = temp_DGPacket.getPort();     
-                    Sender   = temp_DGPacket.getAddress();
-                    Receiver = InetAddress.getLocalHost();
-                    
-                } catch (UnknownHostException ex) {
-                    System.out.println("[MSG_HDLR_IS]: ERROR --> Impossible de récuppérer l'adresse local...");
-                    // SI ON PEUT PAS RCUPERER L'ADRESSE LOCAL
-                    Receiver = null;
-                }
-                
-                
-                pduSNMP = temp_DGPacket.getData();          // Extraction de la partie data du Datagramme --> PDU SNMP
-                
-/*
-                for (byte b : pduSNMP) {                    // (impression de pduSNMP, juste pour tester)
-                    char c = (char) b;
-                    System.out.print( c + " ");
-                }
- */
-                // numéro de séquence de la pdu
-                seqNumber   = pduSNMP[0];
-                // taille de la pdu
-                pduSNMPSize = pduSNMP[1];
-                // on les supprimer ensuites du tableau
-                // A VERIFIER LE FONCTIONNEMENT de cette fonction
-                // On copie à partir du troisième octets jusqu'à la fin
-                System.arraycopy(pduSNMP, 3, pduSNMP, 0, pduSNMPSize);
-                
-                // extraction du numéro de version
-                version = pduSNMP[2] + 1;
-                System.arraycopy(pduSNMP, 3, pduSNMP, 0, pduSNMPSize);
-                
-                // extraction de la communauté
-                communauty = new byte[pduSNMP[1]]; // allocation
-                // copy de la communauté
-                for(index = 0; index <= pduSNMP[1]; index++)
-                {
-                   communauty[index] = pduSNMP[index+3];
-                }
-                System.arraycopy(pduSNMP, index+3, pduSNMP, 0, pduSNMPSize);
-                
-                // Maintenant il reste que la PAYLOAD                
-                temp_SNMPMessage = new SNMPMessage(Sender, Receiver, port, version, communauty, pduSNMP);
-                
-                // le constructeur se chargera d'extraire chaque élément de la payload
-
+//  ************************************************************************************************ //           
+                temp_SNMPMessage = new SNMPMessage(temp_DGPacket);
 //  ************************************************************************************************ //
                 // on le transmet à la file d'attente
                 S_MSG_queue_IS.add(temp_SNMPMessage);
