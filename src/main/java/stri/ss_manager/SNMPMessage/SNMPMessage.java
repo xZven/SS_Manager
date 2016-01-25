@@ -49,6 +49,8 @@ public class SNMPMessage {
     private int         seqNumber;  // numéro de séquence du message SNMP
     private int         version;    // numéro de version SNMP
     private byte[]      communauty; // communauté
+    
+    private int         pduType;     // type de la PDU (e.g: Get, GetNext , Set, Getrespons, Tap)
    
     
     // Un message SNMP est soit une trap, soit un payload !
@@ -58,60 +60,38 @@ public class SNMPMessage {
     
     // Constructeurs
       
-    public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, byte[] pduPayload){
+    public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, SNMPMessagePayload payload){
+        
         this.Sender     = Sender;
         this.Receiver   = Receiver;
         this.port       = port;
+        
         this.version    = version;
         this.communauty = communauty;
         
-    //  ************************************************************************************************ //
-    // on extrait ensuite le type de la pdu pour savoir s'il s'agit d'une TRAP ou d'une Payload normale.
-        
-        switch((int) pduPayload[0]){    // Payload TYPE
-            case 0xA0:                  // GetReq;
-                this.trap = null;
-                
-                this.payload = new SNMPMessagePayload(pduPayload);
-                break;
-            case 0xA1:                  // GetNextReq;
-                this.trap = null;
-
-                this.payload = new SNMPMessagePayload(pduPayload);
-                break; 
-            case 0xA2:                  // GetRes
-                this.trap = null;
-                
-                this.payload = new SNMPMessagePayload(pduPayload);
-                break;
-            case 0xA3:                  // SetReq
-                this.trap = null;
-                
-                this.payload = new SNMPMessagePayload(pduPayload);
-                break;
-            case 0xA4:                  // Trap SNMPv1
-                this.payload = null;
-                
-                this.trap = new SNMPTrap(pduPayload);
-                break;
-            case 0xA6:                  // InformRequestPDU
-                this.payload = null;
-                
-                this.trap = new SNMPTrap(pduPayload);
-                break;
-            case 0xA7:                  // Trap SNMPv2
-                this.payload = null;
-
-                this.trap = new SNMPTrap(pduPayload);
-                break;
-            default:
-                // on détruit ce SNMP message.
-                break;
-        }
-        
-    //  ************************************************************************************************ //     
+        this.payload    = payload;
+        this.trap       = null;   
     }
-
+    
+    public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, SNMPTrap trap){
+        //
+        this.Sender     = Sender;
+        this.Receiver   = Receiver;
+        this.port       = port;
+        //
+        this.version    = version;
+        this.communauty = communauty;
+        //
+        this.payload    = null;
+        this.trap       = trap; 
+    }
+    
+    /**
+     * Construit un SNMPMessage en lui passant un DatagramPacket
+     * issu du réseau pour le protocol SNMP
+     * 
+     * @param temp_DGPacket DatagramPacket SNMP
+     */
     public SNMPMessage(DatagramPacket temp_DGPacket){
         
         // VAR
@@ -120,6 +100,8 @@ public class SNMPMessage {
         InetAddress Receiver;
         
         ByteBuffer pduSNMP = null;
+        
+        int index;
         
         // CODE
         // On récupère les adresses IP sur le Datagramme et le numéro de port distant
@@ -162,13 +144,19 @@ public class SNMPMessage {
            this.Sender     = Sender;
            this.Receiver   = Receiver;
            
-           this.version    = versionNumberValue;
+           for(index = 0; index < versionNumberValue.length; index++)
+            {   // Somme des octets du tableau transtypé en int
+            this.version += (int) versionNumberValue[index];
+            }
+           
            this.communauty = communautyValue;
            
         // Extraction de la PDUType
            
            int pduPayloadType  = pduSNMP.get();
            int pduPayloadLght  = pduSNMP.get();
+           
+           this.pduType        = pduPayloadType;
            
         // la transmission de la payload se fera donc à partir de ReqID
            byte[] pduPayloadByteArray = new byte[pduPayloadLght];

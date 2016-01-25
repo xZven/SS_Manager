@@ -15,12 +15,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package SNMP.smi;
+package stri.ss_manager.SNMP.smi;
 
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
  */
 public class OID {
+    
+    // attributs
+    private byte[] objectId;
+    
+    // Constructeurs
+    public OID(byte[] objectId){        
+        this.objectId    = objectId;
+    }
     
 }
