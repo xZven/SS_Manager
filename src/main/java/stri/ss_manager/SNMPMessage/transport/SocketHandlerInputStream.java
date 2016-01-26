@@ -35,6 +35,8 @@ import java.util.Queue;
  * Lorsqu'il en reçoit, ce dernier les places dans une file d'attente de type
  * FIFO dans le Thread du SNMPMessageHandlerInputStream.
  * </p>
+ * 
+
  */
 public class SocketHandlerInputStream extends Thread{
     
@@ -63,11 +65,7 @@ public class SocketHandlerInputStream extends Thread{
      * Cette procédure permet d'arrêter le Thread.
      * Tous les PDU SNMP entrantes seront ignorées.
      */
-    
-    
-    
-    
-    
+  
     public void Stop(){
         System.out.println("[SOCK_HDLR_IS]: Stopping...");
         // arrêt du Thread
