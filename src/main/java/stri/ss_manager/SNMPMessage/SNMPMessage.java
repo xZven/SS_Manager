@@ -22,19 +22,22 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
-import stri.ss_manager.SNMPMessage.payload.SNMPTrap;
+import stri.ss_manager.SNMPMessage.payload.SNMPTrapV1;
+import stri.ss_manager.SNMPMessage.payload.SNMPTrapV2;
 
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
  * @version 1.0
  * 
- * Cette classe défini les messages SNMP échangés. Elle servent entre les échanges
+ * Cette classe défini les messages SNMP échangés pour toute version. 
+ * Elle servent entre les échanges
  * entre la couche SNMPMessageHandler et SNMPProtocolHandler.
  * 
  * <p>
  * Attention: lorsqu'un SNMPMessage est créé, il ne peut plus être modifié.
  * (Pas de setteur défini)
+ * Aucun accesseur n'est créé
  * </p>
  * 
  */
@@ -50,13 +53,14 @@ public class SNMPMessage {
     private int         version;    // numéro de version SNMP
     private byte[]      communauty; // communauté
     
-    private int         pduType;     // type de la PDU (e.g: Get, GetNext , Set, Getrespons, Tap)
+    private int         pduType;     // type de la PDU (e.g: Get, GetNext , Set, Getrespons, Trapv1, Trapv2)
    
     
     // Un message SNMP est soit une trap, soit un payload !
-    // PAS LES DEUX A LA FOIS !
+    // Une trap de SNMPv2 est dans de type payload
+    // Seul le type de la pdu changera
     SNMPMessagePayload payload;     //
-    SNMPTrap trap;                  //
+    SNMPTrapV1 trapV1;              //
     
     // Constructeurs
       
@@ -70,22 +74,8 @@ public class SNMPMessage {
         this.communauty = communauty;
         
         this.payload    = payload;
-        this.trap       = null;   
-    }
-    
-    public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, SNMPTrap trap){
-        //
-        this.Sender     = Sender;
-        this.Receiver   = Receiver;
-        this.port       = port;
-        //
-        this.version    = version;
-        this.communauty = communauty;
-        //
-        this.payload    = null;
-        this.trap       = trap; 
-    }
-    
+        this.trapV1      = null;   
+    }    
     /**
      * Construit un SNMPMessage en lui passant un DatagramPacket
      * issu du réseau pour le protocol SNMP
@@ -164,43 +154,43 @@ public class SNMPMessage {
         // On choisie le bon constructeur selon la PAYLOAD (Trap ou normal)
            switch(pduPayloadType){      // pduPayload TYPE
             case 0xA0:                  // GetReq;
-                this.payload = new SNMPMessagePayload(pduPayloadByteArray);
-                this.trap    = null;
+                this.payload    = new SNMPMessagePayload(pduPayloadByteArray);
+                this.trapV1     = null;
                 break;
             case 0xA1:                  // GetNextReq;
-                this.payload = new SNMPMessagePayload(pduPayloadByteArray);
-                this.trap    = null;
+                this.payload    = new SNMPMessagePayload(pduPayloadByteArray);
+                this.trapV1     = null;
                 break; 
             case 0xA2:                  // GetRes
-                this.payload = new SNMPMessagePayload(pduPayloadByteArray);
-                this.trap    = null;
+                this.payload    = new SNMPMessagePayload(pduPayloadByteArray);
+                this.trapV1     = null;
                 break;
             case 0xA3:                  // SetReq
-                this.payload = new SNMPMessagePayload(pduPayloadByteArray);
-                this.trap    = null;
+                this.payload    = new SNMPMessagePayload(pduPayloadByteArray);
+                this.trapV1     = null;
                 break;
             case 0xA4:                  // SNMPv1 Trap
-                this.trap    = new SNMPTrap(pduPayloadByteArray, 0xA4);
-                this.payload = null;
+                this.trapV1     = new SNMPTrapV1(pduPayloadByteArray);
+                this.payload    = null;
                 break;
             case 0xA5:                  // GetBulkReq
                 // not handled
-                this.payload = null;
-                this.trap    = null;
+                this.payload    = null;
+                this.trapV1     = null;
                 break;
             case 0xA6:                  // InformReq
                 // not handled
-                this.payload = null;
-                this.trap    = null;
+                this.payload    = null;
+                this.trapV1     = null;
                 break;
             case 0xA7:                  // SNMPv2 Trap
-                this.trap    = new SNMPTrap(pduPayloadByteArray, 0xA6);
-                this.payload = null;
+                this.trapV1     = null;
+                this.payload    = (SNMPMessagePayload) new SNMPTrapV2(pduPayloadByteArray);
                 break;
             case 0xA8:                  // Report
                 // not handled
-                this.payload = null;
-                this.trap    = null;
+                this.payload    = null;
+                this.trapV1     = null;
                 break;
             default:
                 // on détruit ce SNMP message.

@@ -17,9 +17,7 @@
  */
 package stri.ss_manager.SNMPMessage.payload;
 
-import com.sun.corba.se.impl.naming.cosnaming.NamingUtils;
 import java.nio.ByteBuffer;
-import stri.ss_manager.SNMP.smi.OID;
 import java.util.Vector;
 import stri.ss_manager.SNMP.smi.VarBind;
 
@@ -133,8 +131,6 @@ public class SNMPMessagePayload {
             this.varBindingsList.add(new VarBind(varBindValue));
                                 
         }
-    }
-    
-    
+    } 
     
 }

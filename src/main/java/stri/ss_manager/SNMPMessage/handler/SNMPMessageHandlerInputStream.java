@@ -18,8 +18,6 @@
 package stri.ss_manager.SNMPMessage.handler;
 
 import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.util.LinkedList;
 import java.util.Queue;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 
@@ -43,6 +41,11 @@ import stri.ss_manager.SNMPMessage.SNMPMessage;
  * Une fois que le message est converti, elle est placé dans la file d'attente
  * du SNMPProtocolHandler pour y être traité.
  * </p>
+ * 
+ *  <p>
+ * Dans un prochaine version, on introduira un fichier de log qui enregistreara tous les messages
+ * SNMP reçu.
+ * </p>
  */
 public class SNMPMessageHandlerInputStream extends Thread {
 
@@ -53,29 +56,18 @@ public class SNMPMessageHandlerInputStream extends Thread {
 
     // méthodes
     /**
-     * Ce constructeur sert à initialiser le SNMPMessageHandler pour les flux
-     * entrants
-     *
-     * @param S_MSG_queue_IS - FIle d'attente pour les message SNMP entrants
+     * Ce constructeur permet d'initialiser le thread sans le lancer.
+     * @param DG_packet_queue_IS    File d'attente pour les DatagramPacket entrants
+     * @param S_MSG_queue_IS        FIle d'attente pour les SNMPMessages entrants
      */
-    public SNMPMessageHandlerInputStream(Queue<SNMPMessage> S_MSG_queue_IS) {
+    public SNMPMessageHandlerInputStream(Queue<DatagramPacket> DG_packet_queue_IS,Queue<SNMPMessage> S_MSG_queue_IS) {
         // On construit la file d'attente entre SOCK_HDLR_IS et MSG_HDLR_IS
-        this.DG_packet_queue_IS = new LinkedList<>();
+        this.DG_packet_queue_IS = DG_packet_queue_IS;
         // On lie la file d'attente  DU S_Proto_HDLR et MSG_HDLR_IS
-        this.S_MSG_queue_IS = S_MSG_queue_IS;
+        this.S_MSG_queue_IS     = S_MSG_queue_IS;
         //
+        this.setName("S_MSG_HDLR_IS");
         System.out.println("[MSG_HDLR_IS]: Ready...");
-    }
-
-    /**
-     * Permet d'obtenir la file d'attente pour les DatagramPacket. Cette
-     * fonction sera utiliser lors de l'apelle du constructeur du
-     * SocketHandlerInputStream.
-     *
-     * @return La file d'attente entre le SOCK_HDLR_IS et MSG_HDLR_IS.
-     */
-    public Queue<DatagramPacket> getDG_packet_queue_IS() {
-        return DG_packet_queue_IS;
     }
 
     /**
@@ -89,19 +81,8 @@ public class SNMPMessageHandlerInputStream extends Thread {
     @Override
     public void run() {
         // VAR
-        
-        InetAddress Sender   = null;    // Adresse IPv4 de l'emmeteur du message SNMP
-        InetAddress Receiver;    // Adresse IPv4 du récepteur du messages SNMP
-        int         port     = 0;       // numéro de port d'où le datagramme provient
-        int    seqNumber;               // numéro de séquence du message SNMP
-        int    version;                 // numéro de version SNMP  
-        byte[] communauty;              // communauté SNMP
-        //
         DatagramPacket  temp_DGPacket;
         SNMPMessage     temp_SNMPMessage;
-        byte[]          pduSNMP;         // PDU SNMP (byte[])
-        int             pduSNMPSize;
-        int             index;
         //
         System.out.println("[MSG_HDLR_IS]: Started...");
 
@@ -109,17 +90,15 @@ public class SNMPMessageHandlerInputStream extends Thread {
 
             if (DG_packet_queue_IS.isEmpty() == false) { //FILE d'attente n'est pas vide
                 // on extrait un DG_packet de la file d'attente (en l'effacant?)
-                temp_DGPacket = DG_packet_queue_IS.poll();
-                // CONVERSION en SNMPMessage
-//  ************************************************************************************************ //           
+                
+                temp_DGPacket    = DG_packet_queue_IS.poll();
+                
                 temp_SNMPMessage = new SNMPMessage(temp_DGPacket);
-//  ************************************************************************************************ //
                 // on le transmet à la file d'attente
                 S_MSG_queue_IS.add(temp_SNMPMessage);
-
                 // on endors maintenant le thread pour 10ms
                 try {
-                    sleep(10); // 100 ms
+                    sleep(10); // 10 ms
                 } catch (Exception e) {
                     System.err.println("[MSG_HDLR_IS]: ERROR --> " + e.getMessage());
                 }
@@ -132,9 +111,7 @@ public class SNMPMessageHandlerInputStream extends Thread {
                 }
             }
         }
-
         // on a quitté la booucle while --> FIN du thread
         System.out.println("[MSG_HDLR_IS]: Stopped");
     }
-
 }
