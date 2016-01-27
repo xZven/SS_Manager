@@ -18,7 +18,7 @@
 package stri.ss_manager.SNMPMessage.payload;
 
 import java.nio.ByteBuffer;
-import java.util.Vector;
+import java.util.ArrayList;
 import stri.ss_manager.SNMP.smi.VarBind;
 
 /**
@@ -44,7 +44,6 @@ public class SNMPMessagePayload {
         Get.res(2),
         Set.req(3),
     */
-    private int pduType;
     //
     private int requestId;
     /*
@@ -68,14 +67,13 @@ public class SNMPMessagePayload {
     /*
         Liste
     */
-    private Vector<VarBind> varBindingsList;
+    private ArrayList<VarBind> varBindingsList;
  
     // constructeurs
 
     public SNMPMessagePayload(byte[] pduPayload) {
        
-        ByteBuffer payloadSNMP = null;
-        payloadSNMP.wrap(pduPayload);
+        ByteBuffer payloadSNMP = ByteBuffer.wrap(pduPayload);
         
         int index;
         
@@ -83,54 +81,74 @@ public class SNMPMessagePayload {
         int    requestIdType = payloadSNMP.get();
         int    requestIdLght = payloadSNMP.get();
         byte[] requesIdValue = new byte[requestIdLght];
-        payloadSNMP.get(requesIdValue, payloadSNMP.position(), requestIdLght);
+        payloadSNMP.get(requesIdValue, 0, requestIdLght);
         
         for(index = 0; index < requesIdValue.length; index++)
         {   // Somme des octets du tableau transtypé en int
-            this.errorIndex += (int) requesIdValue[index];
+            this.requestId = (this.requestId * 256 + (int) (requesIdValue[index] & 0xFF));
         }
-        
         // Extraction ErrorStatus
         int    errorStatusType  = payloadSNMP.get();
         int    errorStatusLght  = payloadSNMP.get();
         byte[] errorStatusValue = new byte[errorStatusLght];
-        payloadSNMP.get(errorStatusValue, payloadSNMP.position(), errorStatusLght);  
+        payloadSNMP.get(errorStatusValue, 0, errorStatusLght);  
         
         for(index = 0; index < errorStatusValue.length; index++)
         {   // Somme des octets du tableau transtypé en int
-            this.errorIndex += (int) errorStatusValue[index];
+            this.errorStatus = this.errorStatus * 256 + (int) (errorStatusValue[index] & 0xFF);
         }
-        
         // Extraction ErrorIndex
         
         int    errorIndexType  = payloadSNMP.get();
         int    errorIndexLght  = payloadSNMP.get();
         byte[] errorIndexValue = new byte[ errorIndexLght];
-        payloadSNMP.get(errorIndexValue, payloadSNMP.position(), errorIndexLght); 
+        payloadSNMP.get(errorIndexValue, 0, errorIndexLght); 
         
         for(index = 0; index < errorIndexValue.length; index++)
         {
             // Somme des octets du tableau transtypé en int
-            this.errorIndex += (int) errorIndexValue[index];
+            this.errorIndex = this.errorIndex * 256 + (int) (errorIndexValue[index] & 0xFF);
+            
         }
-
+        
         // Extraction de la liste des variables
         
-        int varBindListType = payloadSNMP.get();
-        int varBindListLght     = payloadSNMP.get();
+        int varBindListType = payloadSNMP.get();        // type séquence
+        int varBindListLght = payloadSNMP.get();        //
+                
+
+        int varBindType ;                               
+        int varBindLght ;
+        byte[] varBindValue;
         
+        this.varBindingsList = new ArrayList<>(5);
         // TANT QU'ON a pas atteint la fin
+        
         while(payloadSNMP.position() < payloadSNMP.capacity()){ 
-            
-            int varBindType = payloadSNMP.get();
-            int varBindLght = payloadSNMP.get();
-            
-            byte[] varBindValue = new byte[varBindLght];
-            payloadSNMP.get(varBindValue, payloadSNMP.position(), varBindLght);
-            
-            this.varBindingsList.add(new VarBind(varBindValue));
-                                
+            //
+            varBindType = payloadSNMP.get();            // type ObjectIdentifier
+            varBindLght = payloadSNMP.get();
+            //
+            varBindValue = new byte[varBindLght];
+            payloadSNMP.get(varBindValue, 0, varBindLght);
+            //
+            this.varBindingsList.add(new VarBind(varBindValue));                       
         }
     } 
-    
+ 
+    @Override
+    public String toString(){
+        String VB_String = "";
+        
+        for(VarBind VB : this.varBindingsList)
+        {
+             VB_String = VB_String +  VB.toString();
+        }
+        return
+                "[REQUES_ID]  "       +  this.requestId       +
+                "[ERROR_STATUS]  "    +  this.errorStatus     +
+                "[ERROR_INDEX]  "     +  this.errorIndex      +
+                "{VAR_BIND]}  "       +  VB_String;
+    }
+           
 }

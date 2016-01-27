@@ -60,13 +60,15 @@ public class SNMPMessageHandlerInputStream extends Thread {
      * @param DG_packet_queue_IS    File d'attente pour les DatagramPacket entrants
      * @param S_MSG_queue_IS        FIle d'attente pour les SNMPMessages entrants
      */
-    public SNMPMessageHandlerInputStream(Queue<DatagramPacket> DG_packet_queue_IS,Queue<SNMPMessage> S_MSG_queue_IS) {
+    public SNMPMessageHandlerInputStream(Queue<DatagramPacket> DG_packet_queue_IS, Queue<SNMPMessage> S_MSG_queue_IS) {
+        // Attribution d'un nom au thread
+        this.setName("S_MSG_HDLR_IS");
         // On construit la file d'attente entre SOCK_HDLR_IS et MSG_HDLR_IS
         this.DG_packet_queue_IS = DG_packet_queue_IS;
         // On lie la file d'attente  DU S_Proto_HDLR et MSG_HDLR_IS
         this.S_MSG_queue_IS     = S_MSG_queue_IS;
         //
-        this.setName("S_MSG_HDLR_IS");
+        //
         System.out.println("[MSG_HDLR_IS]: Ready...");
     }
 
@@ -88,15 +90,17 @@ public class SNMPMessageHandlerInputStream extends Thread {
 
         while (RUNNING) {
 
-            if (DG_packet_queue_IS.isEmpty() == false) { //FILE d'attente n'est pas vide
-                // on extrait un DG_packet de la file d'attente (en l'effacant?)
-                
-                temp_DGPacket    = DG_packet_queue_IS.poll();
-                
+            if (DG_packet_queue_IS.isEmpty()== false) { //FILE d'attente n'est pas vide
+                // on extrait un DG_packet de la file d'attente
+                temp_DGPacket    =  DG_packet_queue_IS.poll();
+                // Conversion
                 temp_SNMPMessage = new SNMPMessage(temp_DGPacket);
+                // affichage
+                System.out.println("[MSG_HDLR_IS]: RECEIVED MSG --> " + temp_SNMPMessage.toString());
                 // on le transmet à la file d'attente
                 S_MSG_queue_IS.add(temp_SNMPMessage);
-                // on endors maintenant le thread pour 10ms
+                // on endors le thread pour 10ms
+                //
                 try {
                     sleep(10); // 10 ms
                 } catch (Exception e) {

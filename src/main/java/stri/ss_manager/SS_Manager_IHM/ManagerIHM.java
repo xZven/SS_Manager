@@ -336,6 +336,10 @@ public class ManagerIHM extends java.awt.Frame {
                 new ManagerIHM().setVisible(true);
             }
         });
+        
+        // Ici le role du programme principale est de vérifier
+        // que les threads fonctionnent corecctement.
+        // Il les relance en cas d'arrête.
     }
 
 

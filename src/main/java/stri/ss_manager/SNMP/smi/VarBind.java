@@ -47,15 +47,14 @@ public class VarBind {
      */
     public VarBind(byte[] varBindValue)
     {
-        ByteBuffer VarBindSNMP = null;
-        VarBindSNMP.wrap(varBindValue);
+        ByteBuffer VarBindSNMP = ByteBuffer.wrap(varBindValue);
         
         // Extraction de l'OID
         int     objectIdType  = VarBindSNMP.get();
         int     objectIdLght  = VarBindSNMP.get();
         byte[]  objectIdValue = new byte[objectIdLght];
         //
-        VarBindSNMP.get(objectIdValue, VarBindSNMP.position(), objectIdLght);
+        VarBindSNMP.get(objectIdValue, 0, objectIdLght);
         //
         this.objectId = new OID(objectIdValue);        
 
@@ -63,13 +62,23 @@ public class VarBind {
         int objectValueType = VarBindSNMP.get();
         int objectValueLght = VarBindSNMP.get();
         
-        if(objectIdLght == 0){  // s'il n'y a pas de valeur alors
-            this.objectId = null;
-            
+        if(objectValueLght == 0){  // s'il n'y a pas de valeur alors
+            this.objectValue = null;
         }else{
             byte[]  objectValueValue = new byte[objectValueLght];
-            VarBindSNMP.get(objectValueValue, VarBindSNMP.position(), objectValueLght);
+            VarBindSNMP.get(objectValueValue, 0, objectValueLght);
         }
     }
+
+        
+    @Override
+    public String toString() {
+        if(this.objectValue == null)
+            return objectId.getObjectIdStringFormat() + " = NULL ";
+        else{
+            return objectId.getObjectIdStringFormat() + " = " + new String(objectValue) +" ";
+        }
+    }
+    
     
 }

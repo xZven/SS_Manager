@@ -31,4 +31,13 @@ public class OID {
         this.objectId    = objectId;
     }
     
+    public String getObjectIdStringFormat(){
+        String oid = "";
+        
+        for(byte b: objectId){
+            oid = oid + "." + Byte.toString(b);
+        }
+        
+        return oid;
+    }
 }

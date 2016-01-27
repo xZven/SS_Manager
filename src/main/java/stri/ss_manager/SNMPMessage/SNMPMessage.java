@@ -17,6 +17,7 @@
  */
 package stri.ss_manager.SNMPMessage;
 
+import com.sun.xml.internal.ws.encoding.MtomCodec;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -49,7 +50,6 @@ public class SNMPMessage {
     private InetAddress Receiver;   // Adresse IPv4 du récepteur du messages SNMP
     
     
-    private int         seqNumber;  // numéro de séquence du message SNMP
     private int         version;    // numéro de version SNMP
     private byte[]      communauty; // communauté
     
@@ -107,7 +107,7 @@ public class SNMPMessage {
         }
 
         // Extraction de la partie data du Datagramme --> PDU SNMP
-        pduSNMP.wrap(temp_DGPacket.getData());
+        pduSNMP =  ByteBuffer.wrap(temp_DGPacket.getData());
         //
  
     //  ************************************************************************************************ //
@@ -119,14 +119,14 @@ public class SNMPMessage {
            int    versionNumberType  = pduSNMP.get();
            int    versionNumberLght  = pduSNMP.get();
            byte[] versionNumberValue = new byte[versionNumberLght];
-           pduSNMP.get(versionNumberValue, pduSNMP.position(), versionNumberLght);
-
+           pduSNMP.get(versionNumberValue, 0, versionNumberLght);
+          
         // Extraction de la communauté
            
            int    communautyType  = pduSNMP.get();  // OCTET STRING
            int    communautyLght  = pduSNMP.get();  // TAILLE en nombre d'octet de la communté
            byte[] communautyValue = new byte[communautyLght];
-           pduSNMP.get(communautyValue, pduSNMP.position(), communautyLght);
+           pduSNMP.get(communautyValue, 0, communautyLght);
            
         // attribution des variables à l'objet
            
@@ -134,24 +134,27 @@ public class SNMPMessage {
            this.Sender     = Sender;
            this.Receiver   = Receiver;
            
+           this.version = 0;
+           // a vérifier
            for(index = 0; index < versionNumberValue.length; index++)
             {   // Somme des octets du tableau transtypé en int
-            this.version += (int) versionNumberValue[index];
+                this.version = this.version * 256 + (int) versionNumberValue[index];
             }
            
            this.communauty = communautyValue;
            
         // Extraction de la PDUType
            
-           int pduPayloadType  = pduSNMP.get();
+           int pduPayloadType  = pduSNMP.get() & 0xFF;
            int pduPayloadLght  = pduSNMP.get();
            
            this.pduType        = pduPayloadType;
            
         // la transmission de la payload se fera donc à partir de ReqID
            byte[] pduPayloadByteArray = new byte[pduPayloadLght];
-           pduSNMP.get(pduPayloadByteArray, pduSNMP.position(), pduPayloadLght);
-        // On choisie le bon constructeur selon la PAYLOAD (Trap ou normal)
+           pduSNMP.get(pduPayloadByteArray, 0, pduPayloadLght);
+        // On choisie le bon constructeur selon la PAYLOAD (Trap ou normal)          
+           
            switch(pduPayloadType){      // pduPayload TYPE
             case 0xA0:                  // GetReq;
                 this.payload    = new SNMPMessagePayload(pduPayloadByteArray);
@@ -197,5 +200,31 @@ public class SNMPMessage {
                 break;  
         }    
     //  ************************************************************************************************ //   
+    }
+    
+    @Override
+    public String toString(){
+        
+        if(this.payload == null){ // payload == trapv1
+            return  
+                "[SENDER]  "       +   this.Sender                 +
+                " [RECEIVER]  "    +   this.Receiver               +
+                " [PORT]  "        +   this.port                   +
+                " [VERSION]  "     +   this.version                +
+                " [COMMUNAUTY]  "  +   new String(this.communauty) +
+                " [PDU_TYPE]  "    +   this.pduType                +
+                " {PAYLOAD}  "     +   this.trapV1.toString();  
+        }else{                    // payload != trapv1
+            return  
+                "[SENDER]  "       +   this.Sender                 +
+                " [RECEIVER]  "    +   this.Receiver               +
+                " [PORT]  "        +   this.port                   +
+                " [VERSION]  "     +   this.version                +
+                " [COMMUNAUTY]  "  +   new String(this.communauty) +
+                " [PDU_TYPE]  "    +   this.pduType                +
+                " {PAYLOAD}  "     +   this.payload.toString();  
+        }
+        
+        
     }
 }

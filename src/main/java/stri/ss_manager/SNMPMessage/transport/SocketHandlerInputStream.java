@@ -19,7 +19,6 @@ package stri.ss_manager.SNMPMessage.transport;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.LinkedList;
 import java.util.Queue;
 
 /**
@@ -80,14 +79,16 @@ public class SocketHandlerInputStream extends Thread{
         //
         
         while((socket.isClosed() == false) && RUNNING){ // boucle infinie -- socket connecté && RUN
-            DatagramPacket data_packet = new DatagramPacket(new byte[100],100);
+            DatagramPacket data_packet = new DatagramPacket(new byte[256],256);
             try{
                 // on écoute sur le socket
                 socket.receive(data_packet);
                 System.out.println("[SOCK_HDLR_IS]: Datagram Received");
                 // On  place le paquet Datagram reçu dans la file
                 DG_packet_queue_IS.add(data_packet);
+                //
                 System.out.println("[SOCK_HDLR_IS]: Datagram transmited to S_MSG_HDLR_IS");
+                
             }catch(Exception e){
                 System.err.println("[SOCK_HDLR_IS]: ERROR -- > "+e.getMessage() );
             }
