@@ -28,7 +28,7 @@ import java.util.Queue;
  * @see Queue
  * @see SNMPMessageHandlerInputStream
  * 
- * Cette classe permet de gérer les PDU SNMP entrants sur le socket UDP.
+ * Cette classe permet de gérer les PDU SNMP entrants sur le socket UDP port 162 (TRAP).
  * 
  * <p>
  * Ce Thread écoute sur le socket UDP et attent de recevoir des PDU SNMP.
@@ -38,44 +38,31 @@ import java.util.Queue;
  * 
 
  */
-public class SocketHandlerInputStream extends Thread{
-    
-    // attributs
-    
-    protected DatagramSocket          socket;                   // Socket UDP
-    protected Queue<DatagramPacket>   DG_packet_queue_IS;       // File d'attente pour les PDU SNMP pour le flux entrant;
-    protected boolean                 RUNNING = true;           // Utiliser pour mettre fin au Thread
-    
-    // méthodes
-    
+public class SocketHandlerTrapListener extends SocketHandlerInputStream{
+
     /**
      * 
-     * @param socket Socket UDP où ce Thread écoutera les DGPacket entrants
-     * @param DG_packet_queue_IS File d'attente où seront placés les DGPacket entrants.
+     * @param socket Socket où les TRAPs arriveront
+     * @param DG_packet_queue_IS File d'attente où les TRAP seront placé.
      */
-    public SocketHandlerInputStream(DatagramSocket socket, Queue<DatagramPacket> DG_packet_queue_IS) {
-        // Le socket est passé par le programme principale.
-        this.socket = socket;
+    public SocketHandlerTrapListener(DatagramSocket socket, Queue<DatagramPacket> DG_packet_queue_IS) {
         //
-        this.DG_packet_queue_IS = DG_packet_queue_IS;
-        //
-        this.setName("SOCK_HDLR_IS");
-        System.out.println("[SOCK_HDLR_IS]: Ready...");
-    }   
-    /**
-     * Cette procédure permet d'arrêter le Thread.
-     * Tous les PDU SNMP entrantes seront ignorées.
-     */
-  
-    public void Stop(){
-        System.out.println("[SOCK_HDLR_IS]: Stopping...");
-        // arrêt du Thread
-        this.RUNNING = false;
+        super(socket, DG_packet_queue_IS);
+        super.setName("SOCK_HDLR_TRAP_LISTNR");
+        
+        System.out.println("[SOCK_HDLR_TRAP_LISTNR]: Ready...");
     }
+
+    @Override
+    public void Stop(){
+        System.out.println("[SOCK_HDLR_TRAP_LISTNR]: Stopping...");
+        // arrêt du Thread
+        super.RUNNING = false;
+    }
+    
     @Override
     public void run(){
-       
-        System.out.println("[SOCK_HDLR_IS]: Started...");
+        System.out.println("[SOCK_HDLR_TRAP_LISTNR]: Started...");
         //
         
         while((socket.isClosed() == false) && RUNNING){ // boucle infinie -- socket connecté && RUN
@@ -83,18 +70,19 @@ public class SocketHandlerInputStream extends Thread{
             try{
                 // on écoute sur le socket
                 socket.receive(data_packet);
-                System.out.println("[SOCK_HDLR_IS]: Datagram Received");
-                // On  place le paquet Datagram reçu dans la file
+                System.out.println("[SOCK_HDLR_TRAP_LISTNR]: Datagram Received");
+                // On  place le paquet Datagram dans la file d'attente.
+                
                 DG_packet_queue_IS.add(data_packet);
                 //
-                System.out.println("[SOCK_HDLR_IS]: Datagram transmited to S_MSG_HDLR_IS");
+                System.out.println("[SOCK_HDLR_TRAP_LISTNR]: Datagram transmited to S_MSG_HDLR_IS");
                 
             }catch(Exception e){
-                System.err.println("[SOCK_HDLR_IS]: ERROR -- > "+e.getMessage() );
+                System.err.println("[SOCK_HDLR_TRAP_LISTNR]: ERROR -- > "+e.getMessage() );
             }
         }
         
         // on a quitté la booucle while --> FIN du thread
-        System.out.println("[SOCK_HDLR_IS]: Stopped");
+        System.out.println("[SOCK_HDLR_TRAP_LISTNR]: Stopped");
     }
 }

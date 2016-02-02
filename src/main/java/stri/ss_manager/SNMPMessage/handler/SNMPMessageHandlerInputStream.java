@@ -73,7 +73,7 @@ public class SNMPMessageHandlerInputStream extends Thread {
     }
 
     /**
-     * Cette fonction est utilisé pour arrêter le Thread
+     * Cette méthode permet d'arrêter le Thread en cours.
      */
     public void Stop() {
         System.out.println("[MSG_HDLR_IS]: Stopping...");
