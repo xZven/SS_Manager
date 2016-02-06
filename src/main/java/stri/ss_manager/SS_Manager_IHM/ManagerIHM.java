@@ -17,21 +17,18 @@
  */
 package stri.ss_manager.SS_Manager_IHM;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.sound.midi.SysexMessage;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.handler.*;
+import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
 
@@ -46,13 +43,14 @@ public class ManagerIHM extends java.awt.Frame {
      */
     public ManagerIHM() {
         initComponents();
-     
+
     }
-     
-    public static boolean validate(final String ip) { // pour validation addresse IPV4
-    String PATTERN = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
-    return ip.matches(PATTERN);
+
+    public static boolean validate(final String ip) { // fonction pour validation addresse IPV4
+        String PATTERN = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
+        return ip.matches(PATTERN);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -75,23 +73,23 @@ public class ManagerIHM extends java.awt.Frame {
         jScrollPane1 = new javax.swing.JScrollPane();
         network_tree = new javax.swing.JTree();
         jLabel1 = new javax.swing.JLabel();
-        SetValueField = new javax.swing.JTextField();
+        SetOIDField = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         LogTextArea = new javax.swing.JTextArea();
         ClearFieldBouton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        SetValueField1 = new javax.swing.JTextField();
+        ValueField = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         ValiderConfiguration = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        AddressIP = new javax.swing.JTextField();
-        jComboBox2 = new javax.swing.JComboBox();
-        jTextField7 = new javax.swing.JTextField();
+        AddressIPField = new javax.swing.JTextField();
+        choixversionSNMP = new javax.swing.JComboBox();
+        CommunauteField = new javax.swing.JTextField();
         resultatValidationIP = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -172,18 +170,18 @@ public class ManagerIHM extends java.awt.Frame {
 
         jLabel1.setText("OID");
 
-        SetValueField.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        SetValueField.addMouseListener(new java.awt.event.MouseAdapter() {
+        SetOIDField.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        SetOIDField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                SetValueFieldMouseClicked(evt);
+                SetOIDFieldMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                SetValueFieldMouseExited(evt);
+                SetOIDFieldMouseExited(evt);
             }
         });
-        SetValueField.addActionListener(new java.awt.event.ActionListener() {
+        SetOIDField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SetValueFieldActionPerformed(evt);
+                SetOIDFieldActionPerformed(evt);
             }
         });
 
@@ -205,18 +203,18 @@ public class ManagerIHM extends java.awt.Frame {
 
         jLabel5.setText("Valeur");
 
-        SetValueField1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        SetValueField1.addMouseListener(new java.awt.event.MouseAdapter() {
+        ValueField.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        ValueField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                SetValueField1MouseClicked(evt);
+                ValueFieldMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                SetValueField1MouseExited(evt);
+                ValueFieldMouseExited(evt);
             }
         });
-        SetValueField1.addActionListener(new java.awt.event.ActionListener() {
+        ValueField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SetValueField1ActionPerformed(evt);
+                ValueFieldActionPerformed(evt);
             }
         });
 
@@ -262,8 +260,8 @@ public class ManagerIHM extends java.awt.Frame {
                                             .addComponent(jLabel5)
                                             .addGap(10, 10, 10)))
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(SetValueField1, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
-                                        .addComponent(SetValueField))
+                                        .addComponent(ValueField, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                                        .addComponent(SetOIDField))
                                     .addGap(0, 0, Short.MAX_VALUE))))))
                 .addContainerGap(12, Short.MAX_VALUE))
         );
@@ -296,20 +294,19 @@ public class ManagerIHM extends java.awt.Frame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(SetValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(SetOIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(SetValueField1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(ClearFieldBouton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(ValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5)))
+                            .addComponent(ClearFieldBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, Short.MAX_VALUE)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        SetValueField.getAccessibleContext().setAccessibleName("GetValueField");
+        SetOIDField.getAccessibleContext().setAccessibleName("GetValueField");
         jLabel2.getAccessibleContext().setAccessibleName("wIcon");
         jLabel5.getAccessibleContext().setAccessibleName("ValeurOID");
 
@@ -329,7 +326,7 @@ public class ManagerIHM extends java.awt.Frame {
 
         jLabel10.setText("Version SNMP");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "version 1", "version 2" }));
+        choixversionSNMP.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "version 1", "version 2" }));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -353,9 +350,9 @@ public class ManagerIHM extends java.awt.Frame {
                                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))))
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(AddressIP, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(choixversionSNMP, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(AddressIPField, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(CommunauteField, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(resultatValidationIP))
                     .addGroup(jPanel5Layout.createSequentialGroup()
@@ -368,16 +365,16 @@ public class ManagerIHM extends java.awt.Frame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AddressIP, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(AddressIPField, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(resultatValidationIP))
                 .addGap(25, 25, 25)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                    .addComponent(CommunauteField, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
                     .addComponent(jLabel9))
                 .addGap(20, 20, 20)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(choixversionSNMP, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
                 .addGap(34, 34, 34)
                 .addComponent(ValiderConfiguration, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -398,7 +395,7 @@ public class ManagerIHM extends java.awt.Frame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(106, 106, 106)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(169, Short.MAX_VALUE))
+                .addContainerGap(145, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Configuration", jPanel4);
@@ -419,7 +416,7 @@ public class ManagerIHM extends java.awt.Frame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(235, 235, 235)
                 .addComponent(jLabel3)
-                .addContainerGap(262, Short.MAX_VALUE))
+                .addContainerGap(238, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("A propos", jPanel6);
@@ -439,7 +436,7 @@ public class ManagerIHM extends java.awt.Frame {
             main_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(main_panelLayout.createSequentialGroup()
                 .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 515, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(42, 42, 42)
                 .addGroup(main_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label_logo_stri)
                     .addGroup(main_panelLayout.createSequentialGroup()
@@ -463,32 +460,69 @@ public class ManagerIHM extends java.awt.Frame {
         System.exit(0);
     }//GEN-LAST:event_exitForm
 
-    private void ClearFieldBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearFieldBoutonActionPerformed
+    private void ValiderConfigurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValiderConfigurationActionPerformed
+
+        InetAddress ipv4 = null;
+        String versionSNMP;
+        int version;
+        byte[] Communautebytes;
+        SNMPMessagePayload payload = null; // ?
+        String AddressIPAverifier = AddressIPField.getText(); // recuperation de l'addresse IP
+        if (validate(AddressIPAverifier) == true) {           // validation
+
+        } else {
+            resultatValidationIP.setText("Addresse IP invalide"); // warning si invalide
+        }
+        String Communaute = CommunauteField.getText();        // recuperation de la communauté
+
+        version = choixversionSNMP.getSelectedIndex() + 1;    // recuperation du numero de la version choisi selon l'index+1 car ca commence par 0. (ici on peux pas utiliser getSelectedValue())
+        try {
+            ipv4 = InetAddress.getByName(AddressIPAverifier); // conversion de l'adresse ip valide en InetAddress
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ManagerIHM.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Communautebytes = Communaute.getBytes(); // conversion du string communaute en byte[]
+        SNMPMessage msg;
+        msg = new SNMPMessage(ipv4, ipv4, 1024, version, Communautebytes, payload); // constructeur (probablement faux ici)
+
+    }//GEN-LAST:event_ValiderConfigurationActionPerformed
+
+    private void ValueFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValueFieldActionPerformed
         // TODO add your handling code here:
-        // on vide les champs
-        //GetValueField.setText("");
-        SetValueField.setText("");
+    }//GEN-LAST:event_ValueFieldActionPerformed
+
+    private void ValueFieldMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ValueFieldMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ValueFieldMouseExited
+
+    private void ValueFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ValueFieldMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ValueFieldMouseClicked
+
+    private void ClearFieldBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearFieldBoutonActionPerformed
+        SetOIDField.setText("");
+        ValueField.setText("");
     }//GEN-LAST:event_ClearFieldBoutonActionPerformed
 
-    private void SetValueFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetValueFieldActionPerformed
+    private void SetOIDFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetOIDFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_SetValueFieldActionPerformed
+    }//GEN-LAST:event_SetOIDFieldActionPerformed
 
-    private void SetValueFieldMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SetValueFieldMouseExited
+    private void SetOIDFieldMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SetOIDFieldMouseExited
         // TODO add your handling code here:
         // TODO add your handling code here:
-        if(SetValueField.getText().isEmpty() == true){
-            SetValueField.setText("Value to set");
-        }else{
+        if (SetOIDField.getText().isEmpty() == true) {
+            SetOIDField.setText("Value to set");
+        } else {
             // il y a une valeur dans le champs donc on ne fait rien
         }
-    }//GEN-LAST:event_SetValueFieldMouseExited
+    }//GEN-LAST:event_SetOIDFieldMouseExited
 
-    private void SetValueFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SetValueFieldMouseClicked
+    private void SetOIDFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SetOIDFieldMouseClicked
         // TODO add your handling code here:
         // on nettoie le champs
-        SetValueField.setText("");
-    }//GEN-LAST:event_SetValueFieldMouseClicked
+        SetOIDField.setText("");
+    }//GEN-LAST:event_SetOIDFieldMouseClicked
 
     private void GetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetBoutonActionPerformed
         // TODO add your handling code here:
@@ -498,99 +532,73 @@ public class ManagerIHM extends java.awt.Frame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void SetValueField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SetValueField1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_SetValueField1MouseClicked
-
-    private void SetValueField1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SetValueField1MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_SetValueField1MouseExited
-
-    private void SetValueField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetValueField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_SetValueField1ActionPerformed
-
-    private void ValiderConfigurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValiderConfigurationActionPerformed
-
-        String AddressIPAverifier = AddressIP.getText();
-        if (validate(AddressIPAverifier)== true){
-       // resultatValidationIP.setText("Addresse IP valide"); 
-        }
-        else {
-        resultatValidationIP.setText("Addresse IP invalide"); 
-        }
-    }//GEN-LAST:event_ValiderConfigurationActionPerformed
-
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         // Déclaration des variables
-            //Sockets
-            DatagramSocket                  socket          = null;
-            DatagramSocket                  trap_listenner  = null;
-            //Queues
-            Queue<DatagramPacket>   DG_packet_queue_IS;       // File d'attente pour les PDU SNMP pour le flux entrant;
-            Queue<DatagramPacket>   DG_packet_queue_OS;       // File d'attente pour les PDU SNMP pour le flux sortant;
-            
-            Queue<SNMPMessage>      S_MSG_queue_IS;           // File d'attente pour les SNMPMessages entrants (transmit au noyau)
-            Queue<SNMPMessage>      S_MSG_queue_OS;           // File d'attente pour les SNMPMessages entrants (transmit au noyau)
-            
-            //Thread
-            SNMPMessageHandlerInputStream  S_MSG_HDLR_IS;     // Thread gérant les SNMPMessages entrants
-            SNMPMessageHandlerOutputStream S_MSG_HDLR_OS;     // Thread gérant les SNMPMessages sortants
-            
-            SocketHandlerInputStream       SOCK_HDLR_IS;      // Thread gérant les DatagramPacket entrants
-            SocketHandlerOutputStream      SOCK_HDLR_OS;      // Thread gérant les DatagramPacket sortants
-            
-            //Autres
-            
+        //Sockets
+        DatagramSocket socket = null;
+        DatagramSocket trap_listenner = null;
+        //Queues
+        Queue<DatagramPacket> DG_packet_queue_IS;       // File d'attente pour les PDU SNMP pour le flux entrant;
+        Queue<DatagramPacket> DG_packet_queue_OS;       // File d'attente pour les PDU SNMP pour le flux sortant;
+
+        Queue<SNMPMessage> S_MSG_queue_IS;           // File d'attente pour les SNMPMessages entrants (transmit au noyau)
+        Queue<SNMPMessage> S_MSG_queue_OS;           // File d'attente pour les SNMPMessages entrants (transmit au noyau)
+
+        //Thread
+        SNMPMessageHandlerInputStream S_MSG_HDLR_IS;     // Thread gérant les SNMPMessages entrants
+        SNMPMessageHandlerOutputStream S_MSG_HDLR_OS;     // Thread gérant les SNMPMessages sortants
+
+        SocketHandlerInputStream SOCK_HDLR_IS;      // Thread gérant les DatagramPacket entrants
+        SocketHandlerOutputStream SOCK_HDLR_OS;      // Thread gérant les DatagramPacket sortants
+
+        //Autres
         // Initialisation du Socket
         System.out.println("[MAIN_PROC]: Initializing Sockets...");
-        try{
-            socket         = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
+        try {
+            socket = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
             trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
-        }catch(Exception e){
-            System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> "+e.getMessage());
+        } catch (Exception e) {
+            System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> " + e.getMessage());
             System.err.println("Exiting...");
-            
+
             System.exit(-1);                                  // FIN RPOG si Erreur de chargement du socket
         }
         System.out.println("[MAIN_PROC]: Sockets initialized...");
-        
+
         // Initialisation des files d'attentes
         System.out.println("[MAIN_PROC]: Initializing queues...");
         DG_packet_queue_IS = new LinkedList<>();
-    //  DG_packet_queue_OS = new LinkedList<>();
-        
-        S_MSG_queue_IS     = new LinkedList<>();
-    //  S_MSG_queue_OS     = new LinkedList<>();
-        
+        //  DG_packet_queue_OS = new LinkedList<>();
+
+        S_MSG_queue_IS = new LinkedList<>();
+        //  S_MSG_queue_OS     = new LinkedList<>();
+
         System.out.println("[MAIN_PROC]: Queues initialized...");
         // Initialisation des Threads
         System.out.println("[MAIN_PROC]: Initializing Threads...");
-        
+
         // Couche SocketHandler
-        SOCK_HDLR_IS = new SocketHandlerInputStream( socket, DG_packet_queue_IS);
+        SOCK_HDLR_IS = new SocketHandlerInputStream(socket, DG_packet_queue_IS);
     //  SOCK_HDLR_OS = new SocketHandlerOutputStream(socket, DG_packet_queue_OS);
-        
+
         // Couche SNMPMessageHandler
         S_MSG_HDLR_IS = new SNMPMessageHandlerInputStream(DG_packet_queue_IS, S_MSG_queue_IS);
     //  S_MSG_HDLR_OS = new SNMPMessageHandlerOutputStream(DG_packet_queue_OS, SOCK_HDLR_OS);
-        
+
         // Couche SNMPKernel
-        
         System.out.println("[MAIN_PROC]: Threads initializded...");
         System.out.println("[MAIN_PROC]: Successfull initialized !");
         // Démarrage des Threads
         // Couche SocketHandler
         SOCK_HDLR_IS.start();
-    //  SOCK_HDLR_OS.start();
-        
+        //  SOCK_HDLR_OS.start();
+
         S_MSG_HDLR_IS.start();
     //  S_MSG_HDLR_OS.start();
-  
-        
+
         // Initialisation de l'IHM
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -601,18 +609,19 @@ public class ManagerIHM extends java.awt.Frame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField AddressIP;
+    private javax.swing.JTextField AddressIPField;
     private javax.swing.JButton ClearFieldBouton;
+    private javax.swing.JTextField CommunauteField;
     private javax.swing.JButton GetBouton;
     private javax.swing.JButton GetNextBouton;
     private javax.swing.JTextArea LogTextArea;
     private javax.swing.JButton SetBouton;
-    private javax.swing.JTextField SetValueField;
-    private javax.swing.JTextField SetValueField1;
+    private javax.swing.JTextField SetOIDField;
     private javax.swing.JButton ValiderConfiguration;
+    private javax.swing.JTextField ValueField;
+    private javax.swing.JComboBox choixversionSNMP;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -628,7 +637,6 @@ public class ManagerIHM extends java.awt.Frame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JTextField jTextField7;
     private javax.swing.JLabel label_logo_UPSSITECH;
     private javax.swing.JLabel label_logo_stri;
     private javax.swing.JLabel label_soft_name;
