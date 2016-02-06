@@ -138,5 +138,9 @@ public class SNMPTrapV1 {
         
         
     }
+
+     public byte[] getPduFormat() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

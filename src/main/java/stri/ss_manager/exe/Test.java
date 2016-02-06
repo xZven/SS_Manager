@@ -1,10 +1,12 @@
 package stri.ss_manager.exe;
 
 
+import static java.lang.Thread.sleep;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.LinkedList;
 import java.util.Queue;
+import javax.swing.JProgressBar;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.handler.*;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
@@ -60,65 +62,96 @@ public class Test {
 
         //Autres
 
-    // Initialisation du Socket
-    System.out.println("[MAIN_PROC]: Initializing Sockets...");
-    try{
-        socket         = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
-        trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
-    }catch(Exception e){
-        System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> "+e.getMessage());
-        System.err.println("Exiting...");
+        // Initialisation du Socket
+        System.out.println("[MAIN_PROC]: Initializing Sockets...");
+        try{
+            socket         = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
+            trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
+        }catch(Exception e){
+            System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> "+e.getMessage());
+            System.err.println("Exiting...");
 
-        System.exit(-1);                                  // FIN RPOG si Erreur de chargement du socket
-    }
-    System.out.println("[MAIN_PROC]: Sockets initialized...");
-
-    // Initialisation des files d'attentes
-    System.out.println("[MAIN_PROC]: Initializing queues...");
-    DG_packet_queue_IS = new LinkedList<>();
-//  DG_packet_queue_OS = new LinkedList<>();
-
-    S_MSG_queue_IS     = new LinkedList<>();
-//  S_MSG_queue_OS     = new LinkedList<>();
-
-    System.out.println("[MAIN_PROC]: Queues initialized...");
-    // Initialisation des Threads
-    System.out.println("[MAIN_PROC]: Initializing Threads...");
-
-    // Couche SocketHandler
-    SOCK_HDLR_IS         = new SocketHandlerInputStream( socket, DG_packet_queue_IS);
-    SOCK_HDLR_TRAP_LSTNR = new SocketHandlerTrapListener(trap_listenner, DG_packet_queue_IS);
-//  SOCK_HDLR_OS = new SocketHandlerOutputStream(socket, DG_packet_queue_OS);
-
-    // Couche SNMPMessageHandler
-    S_MSG_HDLR_IS = new SNMPMessageHandlerInputStream(DG_packet_queue_IS, S_MSG_queue_IS);
-//  S_MSG_HDLR_OS = new SNMPMessageHandlerOutputStream(DG_packet_queue_OS, SOCK_HDLR_OS);
-
-    // Couche SNMPKernel
-
-    System.out.println("[MAIN_PROC]: Threads initializded...");
-    System.out.println("[MAIN_PROC]: Successfull initialized !");
-    // Démarrage des Threads
-    // Couche SocketHandler
-    SOCK_HDLR_IS.start();
-    SOCK_HDLR_TRAP_LSTNR.start();
-//  SOCK_HDLR_OS.start();
-
-    S_MSG_HDLR_IS.start();
-//  S_MSG_HDLR_OS.start();
-
-/*
-    // Initialisation de l'IHM
-    java.awt.EventQueue.invokeLater(new Runnable() {
-        public void run() {
-            new ManagerIHM().setVisible(true);
+            System.exit(-1);                                  // FIN RPOG si Erreur de chargement du socket
         }
-    });
+        System.out.println("[MAIN_PROC]: Sockets initialized...");
 
-*/
-    // Ici le role du programme principale est de vérifier
-    // que les threads fonctionnent corecctement.
-    // Il les relance en cas d'arrête.
+        // Initialisation des files d'attentes
+        System.out.println("[MAIN_PROC]: Initializing queues...");
+        DG_packet_queue_IS = new LinkedList<>();
+        DG_packet_queue_OS = new LinkedList<>();
+
+        S_MSG_queue_IS     = new LinkedList<>();
+        S_MSG_queue_OS     = new LinkedList<>();
+
+        System.out.println("[MAIN_PROC]: Queues initialized...");
+        // Initialisation des Threads
+        System.out.println("[MAIN_PROC]: Initializing Threads...");
+
+        // Couche SocketHandler
+        SOCK_HDLR_IS         = new SocketHandlerInputStream(socket, DG_packet_queue_IS);
+        SOCK_HDLR_TRAP_LSTNR = new SocketHandlerTrapListener(trap_listenner, DG_packet_queue_IS);
+        SOCK_HDLR_OS         = new SocketHandlerOutputStream(socket, DG_packet_queue_OS);
+
+        // Couche SNMPMessageHandler
+        S_MSG_HDLR_IS = new SNMPMessageHandlerInputStream(DG_packet_queue_IS, S_MSG_queue_IS);
+        S_MSG_HDLR_OS = new SNMPMessageHandlerOutputStream(DG_packet_queue_OS, S_MSG_queue_OS);
+
+        // Couche SNMPKernel
+
+        System.out.println("[MAIN_PROC]: Threads initializded...");
+        System.out.println("[MAIN_PROC]: Successfull initialized !");
+        // Démarrage des Threads
+
+        // Couche SocketHandler
+        SOCK_HDLR_IS.start();
+        SOCK_HDLR_TRAP_LSTNR.start();
+        SOCK_HDLR_OS.start();
+
+
+        S_MSG_HDLR_IS.start();
+        S_MSG_HDLR_OS.start();
+
+    /*
+        // Initialisation de l'IHM
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ManagerIHM().setVisible(true);
+            }
+        });
+
+    */
+        // Ici le role du programme principale est de vérifier
+        // que les threads fonctionnent corecctement.
+        // Il les relance en cas d'arrête.
+
+    /*    while(true){
+            if(SOCK_HDLR_IS.isAlive() == false){
+                SOCK_HDLR_IS.start();
+            }
+            
+            if(SOCK_HDLR_OS.isAlive() == false){
+                SOCK_HDLR_OS.start();
+            }
+            
+            if(SOCK_HDLR_TRAP_LSTNR.isAlive() == false){
+                SOCK_HDLR_TRAP_LSTNR.start();
+            }
+            
+            if(S_MSG_HDLR_IS.isAlive() == false){
+                S_MSG_HDLR_IS.start();
+            }
+            
+            if(S_MSG_HDLR_OS.isAlive() == false){
+                S_MSG_HDLR_OS.start();
+            }
+            
+            
+            try{
+                sleep(1000);
+            }catch(Exception e){
+                System.err.println("[MAIN_PROC]: "+e.getMessage());
+            }
+        } */
     }
 
 }

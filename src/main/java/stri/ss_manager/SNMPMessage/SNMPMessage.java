@@ -17,7 +17,6 @@
  */
 package stri.ss_manager.SNMPMessage;
 
-import com.sun.xml.internal.ws.encoding.MtomCodec;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -227,8 +226,77 @@ public class SNMPMessage {
         
         
     }
-
+    
+    /**
+     * Cette fonction permet d'obtenir un DatagramPacket à partir d'un SNMPMessage.
+     * 
+     * @return Le DatagramPacket, ou null si le SNMPMessage est incomplet
+     */
     public DatagramPacket getDGPacketPdu() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        // VAR
+        
+        DatagramPacket temp_DGPacket = null;
+        //
+        byte    SNMPMessageType = 0x30;                           // SEQUENCE
+        byte    SNMPMessageLght = 0x00;
+        
+        // Extraction du numéro de version
+        byte    versionNumberType  = 0x02;                        // INTERGER32
+        byte    versionNumberLght  = 0x01;
+        byte    versionNumberValue = (byte) (0xFF & (byte) this.version);
+
+          
+        // Extraction de la communauté
+        byte    communautyType  = 0x04;                           // OCTET STRING
+        byte    communautyLght  = (byte) this.communauty.length;  // TAILLE en nombre d'octet de la communté
+        byte[]  communautyValue =  this.communauty;
+        
+        
+        byte[]  pduPayloadValue;
+        byte    pduPayLoadLght;
+        byte    pduPayLoadType;
+        // Extraction PayLoad
+        if(this.pduType == 0xA4){                                // Si TRAPv1;
+            pduPayloadValue = this.trapV1.getPduFormat();
+            pduPayLoadLght  = (byte) pduPayloadValue.length;
+            pduPayLoadType  = (byte) this.pduType;             
+        }else{                                                  // AUTRE TYPE
+            pduPayloadValue = this.payload.getPduFormat();
+            pduPayLoadLght  = (byte) pduPayloadValue.length;
+            pduPayLoadType  = (byte) this.pduType; 
+        }
+        
+        // vérification de tous les champs
+        
+        // Constitution du DGPacket
+        
+        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(256);
+           
+        //
+        temp_ByteBuffer.put(SNMPMessageType);                   //        |  T
+        temp_ByteBuffer.put(SNMPMessageLght);                   //        |  L
+        
+        //
+        temp_ByteBuffer.put(versionNumberType);                 // T      |
+        temp_ByteBuffer.put(versionNumberLght);                 // L      |
+        temp_ByteBuffer.put(versionNumberValue);                // V      |
+        
+        //
+        temp_ByteBuffer.put(communautyType);                    // T      |
+        temp_ByteBuffer.put(communautyLght);                    // L      | V
+        temp_ByteBuffer.put(communautyValue);                   // V      |
+        
+        //
+        temp_ByteBuffer.put(pduPayLoadType);                    // T      |
+        temp_ByteBuffer.put(pduPayLoadLght);                    // L      |
+        temp_ByteBuffer.put(pduPayloadValue);                   // V      |
+        //
+        
+        byte[] DgData = new byte[temp_ByteBuffer.position()]; temp_ByteBuffer.get(DgData);
+        
+        temp_DGPacket = new DatagramPacket(DgData, temp_ByteBuffer.position());
+        temp_DGPacket.setAddress(this.Receiver);
+        return temp_DGPacket;
     }
 }

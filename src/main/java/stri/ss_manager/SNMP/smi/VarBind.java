@@ -20,8 +20,11 @@ package stri.ss_manager.SNMP.smi;
 import java.nio.ByteBuffer;
 
 /**
- *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
+ * @version 1.0
+ * 
+ * Cette classe défini l'ensemble OID plus sa valeur. Le type de sa valeur
+ * sera extrait des MIBs.
  */
 public class VarBind {
     
@@ -69,8 +72,7 @@ public class VarBind {
             VarBindSNMP.get(objectValueValue, 0, objectValueLght);
         }
     }
-
-        
+    
     @Override
     public String toString() {
         if(this.objectValue == null)
@@ -79,6 +81,73 @@ public class VarBind {
             return objectId.getObjectIdStringFormat() + " = " + new String(objectValue) +" ";
         }
     }
+    //
+    private byte[] getobjectIdTLVFormat(){
+        return this.objectId.getTLVFormat();
+    }
     
+    private byte[] getobjectValueTLVFormat(){
+        
+        // VAR
+        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(50);
+        byte[] temp_data;
+        
+        byte objectValueType;
+        byte objectValueLght;
+        byte[] objectValueValue;
+        
+        //
+        if(this.objectValue == null){
+            objectValueType = 0x05;
+            objectValueLght = 0x00;
+            //
+            temp_ByteBuffer.put(objectValueType);
+            temp_ByteBuffer.put(objectValueLght);
+            //
+            temp_data = new byte[temp_ByteBuffer.position()];
+            temp_ByteBuffer.get(temp_data);
+            //
+            return temp_data;
+            //
+        }else{
+            objectValueType  = 0x00;
+            objectValueLght  = (byte) this.objectValue.length;
+            objectValueValue = this.objectValue;
+            //
+            temp_ByteBuffer.put(objectValueType);
+            temp_ByteBuffer.put(objectValueLght);
+            //
+            temp_data = new byte[temp_ByteBuffer.position()];
+            temp_ByteBuffer.get(temp_data);
+            //
+            return temp_data;
+        }
+    }
     
+    public byte[] getTLVFormat() {
+        
+        // VAR
+        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(50);
+        byte[] temp_data;
+        
+        //
+        temp_ByteBuffer.put((byte) 0x30);                // T = SEQUENCE
+        int varBindLghtpos = temp_ByteBuffer.position(); // Position de L
+        
+        // Extraction de l'OID
+        temp_ByteBuffer.put(this.getobjectIdTLVFormat());
+        // Extraction de sa valeur
+        temp_ByteBuffer.put(this.getobjectValueTLVFormat());
+        // Calcul de varBindLght
+        temp_ByteBuffer.position(varBindLghtpos);
+        temp_ByteBuffer.put((byte) (this.getobjectIdTLVFormat().length + 
+                                    this.getobjectValueTLVFormat().length));
+        //
+        temp_data= new byte[temp_ByteBuffer.position()];
+        temp_ByteBuffer.get(temp_data);
+        //
+        return temp_data;
+        
+    }
+    //
 }

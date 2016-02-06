@@ -17,27 +17,80 @@
  */
 package stri.ss_manager.SNMP.smi;
 
+import java.nio.ByteBuffer;
+
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
+ * @version 1.0
+ * 
+ * Cette classe défini les ObjectIdentifier défini dans le protocole SNMP.
+ * 
  */
 public class OID {
     
     // attributs
-    private byte[] objectId;
+    private final byte[] objectId;
     
     // Constructeurs
+    /**
+     * Permet de créer un ObjectIdentifier en passant un byte Array.
+     * 
+     * @param objectId 
+     */
     public OID(byte[] objectId){        
         this.objectId    = objectId;
     }
     
+    // méthodes
+    /**
+     * Cette fonction permet d'obtenir la chaine de caractère
+     * de l'OID au format X.X.X.X.X
+     * @return OID.
+     */
     public String getObjectIdStringFormat(){
         String oid = "";
+        //
         
+        oid = oid + "1.3";
+        //
+        for(int index = 1; index < this.objectId.length; index++){
+            oid = oid + "." + Byte.toString(this.objectId[index]);
+        }
+/*  
         for(byte b: objectId){
             oid = oid + "." + Byte.toString(b);
         }
-        
+*/      
         return oid;
+    }
+    
+    /**
+     * Retourne l'OID au format TLV
+     * @return OID au format TLV
+     */
+    public byte[] getTLVFormat() {
+        
+        // VAR
+        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(50);
+        byte[] temp_data;
+        
+        byte     objectIdType;  
+        byte     objectIdLght; 
+        byte[]   objectIdValue;
+        
+        //
+        objectIdType  = 0x06;
+        objectIdLght  = (byte) this.objectId.length;
+        objectIdValue = this.objectId;
+        //
+        temp_ByteBuffer.put(objectIdType);      // T
+        temp_ByteBuffer.put(objectIdLght);      // L
+        temp_ByteBuffer.put(objectIdValue);     // V
+        //
+        temp_data = new byte[temp_ByteBuffer.position()];
+        temp_ByteBuffer.get(temp_data);
+        //
+        return temp_data;
     }
 }
