@@ -190,7 +190,7 @@ public class ManagerIHM extends java.awt.Frame {
             .addGroup(ConfigurationPanelLayout.createSequentialGroup()
                 .addGap(106, 106, 106)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addContainerGap(176, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Configuration", ConfigurationPanel);
@@ -418,7 +418,7 @@ public class ManagerIHM extends java.awt.Frame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(235, 235, 235)
                 .addComponent(jLabel3)
-                .addContainerGap(238, Short.MAX_VALUE))
+                .addContainerGap(269, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("A propos", jPanel6);
@@ -441,13 +441,12 @@ public class ManagerIHM extends java.awt.Frame {
         main_panelLayout.setVerticalGroup(
             main_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(main_panelLayout.createSequentialGroup()
-                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 515, Short.MAX_VALUE)
-                .addGap(42, 42, 42)
+                .addContainerGap()
+                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(main_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label_logo_stri)
-                    .addGroup(main_panelLayout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addComponent(label_logo_UPSSITECH)))
+                    .addComponent(label_logo_UPSSITECH))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
