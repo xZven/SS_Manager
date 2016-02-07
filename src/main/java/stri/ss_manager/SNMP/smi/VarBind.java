@@ -72,6 +72,7 @@ public class VarBind {
         }else{
             byte[]  objectValueValue = new byte[objectValueLght];
             VarBindSNMP.get(objectValueValue, 0, objectValueLght);
+            this.objectValue = objectValueValue;
         }
     }
     
