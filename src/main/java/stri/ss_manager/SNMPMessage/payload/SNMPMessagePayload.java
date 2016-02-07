@@ -59,7 +59,13 @@ public class SNMPMessagePayload {
     private ArrayList<VarBind> varBindingsList;
  
     // constructeurs
-
+    
+    /**
+     * Ce constructeur permet de construire un payload à partir
+     * d'une suite d'octet ici des PDU au format TLV.
+     * 
+     * @param pduPayload Payload à extraire
+     */
     public SNMPMessagePayload(byte[] pduPayload) {
        
         ByteBuffer payloadSNMP = ByteBuffer.wrap(pduPayload);
@@ -124,6 +130,30 @@ public class SNMPMessagePayload {
             this.varBindingsList.add(new VarBind(varBindValue));                       
         }
     } 
+
+    /**
+     *  Ce constructeur permet de créer une payload on y insérant directement
+     *  les valeurs.
+     * 
+     * @param requestId Numéro d'identification de la requête.
+     * <p>
+     *  Pour une requête ponctuel, cette valeur doit être de la forme 0xFFXXXXXXXX
+     *  avec X une valeur décimal quelconque( Valide que pour la version 1).
+     *  Cette valeur est défini sur 4 octets dans une PDU SNMP.
+     * </p>
+     * @param errorStatus Status de l'erreur 
+     * <p> noError(0), tooBig(1), noSuchName(2), badValue(3), readOnly(4), genErr(5)</p>
+     * @param errorIndex Variable qui a provoqué l'erreur dans les cas suivants:
+     * <p>noSuchName(2), badValue(3) et readOnly(4)</p>
+     * @param varBindingsList Liste de Varbind
+     */
+    public SNMPMessagePayload(int requestId, int errorStatus, int errorIndex, ArrayList<VarBind> varBindingsList) {
+        this.requestId       = requestId;
+        this.errorStatus     = errorStatus;
+        this.errorIndex      = errorIndex;
+        this.varBindingsList = varBindingsList;
+    }
+    
     
     // méthodes
     @Override
@@ -144,8 +174,9 @@ public class SNMPMessagePayload {
     private byte[] getRequestIdTLVFormat(){
         
         // VAR
-        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(3);
-        byte[] temp_data;
+        ByteBuffer temp_ByteBuffer;
+        byte[] temp_data = new byte[2+Integer.BYTES]; 
+        temp_ByteBuffer = ByteBuffer.wrap(temp_data);
         //
         byte    requestIdType    = 0x02;
         byte    requestIdLght    = (byte) Integer.BYTES;
@@ -155,17 +186,15 @@ public class SNMPMessagePayload {
         temp_ByteBuffer.put(requestIdLght);         // L
         temp_ByteBuffer.put(requestIdValue);        // V
         //
-        temp_data = new byte[temp_ByteBuffer.position()];
-        temp_ByteBuffer.get(temp_data);
-        //
         return temp_data;
     }
     
     private byte[] getErrorStatusTLVFormat(){
         
          // VAR
-        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(3);
-        byte[] temp_data;
+        ByteBuffer temp_ByteBuffer;
+        byte[] temp_data = new byte[3]; 
+        temp_ByteBuffer = ByteBuffer.wrap(temp_data);
         //
         byte    errorStatusType  = 0x02;
         byte    errorStatusLght  = 0x01;
@@ -175,16 +204,14 @@ public class SNMPMessagePayload {
         temp_ByteBuffer.put(errorStatusLght);       // L
         temp_ByteBuffer.put(errorStatusValue);      // V
         //
-        temp_data = new byte[temp_ByteBuffer.position()];
-        temp_ByteBuffer.get(temp_data);
-        //
         return temp_data;
     }
     
     private byte[] getErrorIndexTLVFormat(){
          // VAR
-        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(3);
-        byte[] temp_data;
+        ByteBuffer temp_ByteBuffer;
+        byte[] temp_data = new byte[3]; 
+        temp_ByteBuffer = ByteBuffer.wrap(temp_data);
         //
         byte    errorIndexType   = 0x02;
         byte    errorIndexLght   = 0x01;
@@ -193,9 +220,6 @@ public class SNMPMessagePayload {
         temp_ByteBuffer.put(errorIndexType);        // T
         temp_ByteBuffer.put(errorIndexLght);        // L
         temp_ByteBuffer.put(errorIndexValue);       // V
-        //
-        temp_data = new byte[temp_ByteBuffer.position()];
-        temp_ByteBuffer.get(temp_data);
         //
         return temp_data;
     }
@@ -212,17 +236,17 @@ public class SNMPMessagePayload {
         int varBindListLghtpos = temp_ByteBuffer.position();
         // décallage de 1 pour insérer les données
         temp_ByteBuffer.position(varBindListLghtpos + 1);
-        //
+        // Pour Chaque varBind dans la liste
         for(VarBind temp_vb : this.varBindingsList){
             varBindListLght += temp_vb.getTLVFormat().length;
             temp_ByteBuffer.put(temp_vb.getTLVFormat());   
         }
+        temp_data = new byte[temp_ByteBuffer.position()];
         // Calcule de la taille
         temp_ByteBuffer.put(varBindListLghtpos, (byte) varBindListLght);
         // return
-        
-        temp_data = new byte[temp_ByteBuffer.position()];
-        temp_ByteBuffer.get(temp_data);
+        temp_ByteBuffer.position(0);
+        temp_ByteBuffer.get(temp_data, 0,temp_data.length);
         //
         return temp_data;
     }
@@ -241,9 +265,10 @@ public class SNMPMessagePayload {
            temp_ByteBuffer.put(this.getErrorIndexTLVFormat());
         // Extraction du VarBindList
            temp_ByteBuffer.put(this.getVarBindListTLVFormat());        
-        //
-        temp_data = new byte[temp_ByteBuffer.position()];
-        temp_ByteBuffer.get(temp_data);
+        // Assemblage
+           temp_data = new byte[temp_ByteBuffer.position()];
+           temp_ByteBuffer.position(0);
+           temp_ByteBuffer.get(temp_data, 0, temp_data.length);
         //
         return temp_data;
     }

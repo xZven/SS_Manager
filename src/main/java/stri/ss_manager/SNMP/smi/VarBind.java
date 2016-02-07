@@ -34,11 +34,13 @@ public class VarBind {
     private byte[] objectValue;
     
     // Constructeurs
-    public VarBind(OID objectId) {
-        this.objectId = objectId;
-        this.objectId = null;
-    }
-
+        
+    /**
+     * Cette fonction permet de créer un varBind complet.
+     * 
+     * @param objectId OID de l'objet.
+     * @param objectValue Valeur de l'object
+     */
     public VarBind(OID objectId, byte[] objectValue) {
         this.objectId    = objectId;
         this.objectValue = objectValue;
@@ -73,12 +75,16 @@ public class VarBind {
         }
     }
     
+    /**
+     * 
+     * @return 
+     */
     @Override
     public String toString() {
         if(this.objectValue == null)
-            return objectId.getObjectIdStringFormat() + " = NULL ";
+            return this.objectId.getObjectIdStringFormat() + " = NULL ";
         else{
-            return objectId.getObjectIdStringFormat() + " = " + new String(objectValue) +" ";
+            return this.objectId.getObjectIdStringFormat() + " = " + new String(this.objectValue) +" ";
         }
     }
     //
@@ -89,8 +95,6 @@ public class VarBind {
     private byte[] getobjectValueTLVFormat(){
         
         // VAR
-        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(50);
-        byte[] temp_data;
         
         byte objectValueType;
         byte objectValueLght;
@@ -98,18 +102,21 @@ public class VarBind {
         
         //
         if(this.objectValue == null){
+            byte[]     temp_data       = new byte[2];
+            ByteBuffer temp_ByteBuffer = ByteBuffer.wrap(temp_data);
+            //
             objectValueType = 0x05;
             objectValueLght = 0x00;
             //
             temp_ByteBuffer.put(objectValueType);
             temp_ByteBuffer.put(objectValueLght);
             //
-            temp_data = new byte[temp_ByteBuffer.position()];
-            temp_ByteBuffer.get(temp_data);
-            //
             return temp_data;
             //
         }else{
+            byte[]     temp_data       = new byte[2 + objectValue.length];
+            ByteBuffer temp_ByteBuffer = ByteBuffer.wrap(temp_data);
+            //
             objectValueType  = 0x00;
             objectValueLght  = (byte) this.objectValue.length;
             objectValueValue = this.objectValue;
@@ -117,14 +124,11 @@ public class VarBind {
             temp_ByteBuffer.put(objectValueType);
             temp_ByteBuffer.put(objectValueLght);
             //
-            temp_data = new byte[temp_ByteBuffer.position()];
-            temp_ByteBuffer.get(temp_data);
-            //
             return temp_data;
         }
     }
     
-    public byte[] getTLVFormat() {
+    public byte[]  getTLVFormat() {
         
         // VAR
         ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(50);
@@ -133,18 +137,21 @@ public class VarBind {
         //
         temp_ByteBuffer.put((byte) 0x30);                // T = SEQUENCE
         int varBindLghtpos = temp_ByteBuffer.position(); // Position de L
+        temp_ByteBuffer.position(temp_ByteBuffer.position() + 1);
         
         // Extraction de l'OID
         temp_ByteBuffer.put(this.getobjectIdTLVFormat());
         // Extraction de sa valeur
         temp_ByteBuffer.put(this.getobjectValueTLVFormat());
-        // Calcul de varBindLght
+        // Allocation
+        temp_data= new byte[temp_ByteBuffer.position()];
+        // Calcul de varBindLght       
         temp_ByteBuffer.position(varBindLghtpos);
         temp_ByteBuffer.put((byte) (this.getobjectIdTLVFormat().length + 
                                     this.getobjectValueTLVFormat().length));
         //
-        temp_data= new byte[temp_ByteBuffer.position()];
-        temp_ByteBuffer.get(temp_data);
+        temp_ByteBuffer.position(0);
+        temp_ByteBuffer.get(temp_data,0, temp_data.length);
         //
         return temp_data;
         

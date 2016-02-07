@@ -41,6 +41,7 @@ public class SocketHandlerOutputStream extends Thread{
     private DatagramSocket socket;                          // Socket UDP
     private Queue<DatagramPacket> DG_packet_queue_OS;       // File d'attente pour les PDU SNMP pour le flux sortant;
     
+    private boolean RUNNING = true;
     // méthodes
     
     /**
@@ -60,7 +61,7 @@ public class SocketHandlerOutputStream extends Thread{
     @Override
     public void run(){
     
-        while(socket.isConnected()){
+        while(socket.isClosed() == false && RUNNING){
 // ****************************************************************************************** //              
             if(DG_packet_queue_OS.isEmpty() == false){ // Si la file n'est pas video
                 try {

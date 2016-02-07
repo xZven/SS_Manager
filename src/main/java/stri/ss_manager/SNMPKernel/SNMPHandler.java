@@ -17,6 +17,7 @@
  */
 package stri.ss_manager.SNMPKernel;
 
+import java.util.Queue;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 
 /**
@@ -42,6 +43,19 @@ public class SNMPHandler extends Thread{
     
     // attributs
     
+    // files d'attentes
+        Queue<SNMPMessage> S_MSG_queue_IS;
+        Queue<SNMPMessage> S_MSG_queue_OS;
+    //
+        
+    // constructeurs
+
+    public SNMPHandler(Queue<SNMPMessage> S_MSG_queue_IS, Queue<SNMPMessage> S_MSG_queue_OS) {
+        this.S_MSG_queue_IS = S_MSG_queue_IS;
+        this.S_MSG_queue_OS = S_MSG_queue_OS;
+    }
+        
+       
     // méthodes
     
     // ATTENTION CES METHODES DE MARCHERONT QUE POUR LA VERSION 1 DU PROGRAMME SS_MANAGER
@@ -56,10 +70,31 @@ public class SNMPHandler extends Thread{
      */
     public SNMPMessage sendGetRequest(SNMPMessage S_MSG_TO_SEND){
         SNMPMessage S_MSG_RESPONSE = null;
+        int counter = 0;
     // ********************************************************************* //
-    
-    // ********************************************************************* // 
-        return S_MSG_RESPONSE;
+        
+        while((S_MSG_RESPONSE = this.S_MSG_queue_IS.poll()) == null && counter <4){ // TANT qu'aucun message n'est reçu
+            // on attends et au bout d'un délai on renvoi un message
+            // 4 essais MAX
+            
+            this.S_MSG_queue_OS.add(S_MSG_TO_SEND); counter += 1;
+            // attente de la réponse
+                        
+            try{
+                sleep(100);
+            }catch(Exception e){
+                System.err.println("[SNMPHandler.sendGetRequest()]: Error de sleep --> " + e.getMessage());
+            }
+            //
+        }        
+    // ********************************************************************* //
+        if(counter < 4 && S_MSG_RESPONSE == null){
+            System.out.println("[SNMPHandler.sendGetRequest()]: Aucune réponse reçu...");
+            return S_MSG_RESPONSE; // null
+        }else{
+            return S_MSG_RESPONSE;
+        }
+        
     }
     
     /**
@@ -71,12 +106,31 @@ public class SNMPHandler extends Thread{
      * @return SNMPMessage reçu de l'agent ou NULL.
      */
     public SNMPMessage sendGetNextRequest(SNMPMessage S_MSG_TO_SEND){
-        SNMPMessage S_MSG_RESPONSE = null; 
+           SNMPMessage S_MSG_RESPONSE = null;
+        int counter = 0;
     // ********************************************************************* //
-    
-    // ********************************************************************* // 
         
-        return S_MSG_RESPONSE;
+        while((S_MSG_RESPONSE = this.S_MSG_queue_IS.poll()) == null && counter <4){ // TANT qu'aucun message n'est reçu
+            // on attends et au bout d'un délai on renvoi un message
+            // 4 essais MAX
+            
+            this.S_MSG_queue_OS.add(S_MSG_TO_SEND); counter += 1;
+            // attente de la réponse
+                        
+            try{
+                sleep(100);
+            }catch(Exception e){
+                System.err.println("[SNMPHandler.sendGetNextRequest()]: Error de sleep --> " + e.getMessage());
+            }
+            //
+        }        
+    // ********************************************************************* //
+        if(counter < 4 && S_MSG_RESPONSE == null){
+            System.out.println("[SNMPHandler.sendGetRequest()]: Aucune réponse reçu...");
+            return S_MSG_RESPONSE; // null
+        }else{
+            return S_MSG_RESPONSE;
+        }
     }
     
     /**
@@ -88,11 +142,30 @@ public class SNMPHandler extends Thread{
      * @return SNMPMessage reçu de l'agent ou NULL.
      */
     public SNMPMessage sendSetRequest(SNMPMessage S_MSG_TO_SEND){
-        SNMPMessage S_MSG_RESPONSE = null;
+               SNMPMessage S_MSG_RESPONSE = null;
+        int counter = 0;
     // ********************************************************************* //
-    
-    // ********************************************************************* // 
         
-        return S_MSG_RESPONSE;
+        while((S_MSG_RESPONSE = this.S_MSG_queue_IS.poll()) == null && counter <4){ // TANT qu'aucun message n'est reçu
+            // on attends et au bout d'un délai on renvoi un message
+            // 4 essais MAX
+            
+            this.S_MSG_queue_OS.add(S_MSG_TO_SEND); counter += 1;
+            // attente de la réponse
+                        
+            try{
+                sleep(100);
+            }catch(Exception e){
+                System.err.println("[SNMPHandler.sendGetRequest()]: Error de sleep --> " + e.getMessage());
+            }
+            //
+        }        
+    // ********************************************************************* //
+        if(counter < 4 && S_MSG_RESPONSE == null){
+            System.out.println("[SNMPHandler.sendSetRequest()]: Aucune réponse reçu...");
+            return S_MSG_RESPONSE; // null
+        }else{
+            return S_MSG_RESPONSE;
+        }
     }
 }

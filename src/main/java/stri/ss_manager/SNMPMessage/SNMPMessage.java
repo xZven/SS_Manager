@@ -47,30 +47,28 @@ public class SNMPMessage {
     private InetAddress Sender;     // Adresse IPv4 de l'emmeteur du message SNMP
     private int         port;       // numéro de port de l'hôte distant
     private InetAddress Receiver;   // Adresse IPv4 du récepteur du messages SNMP
-    
-    
+    //
     private int         version;    // numéro de version SNMP
     private byte[]      communauty; // communauté
-    
     private int         pduType;     // type de la PDU (e.g: Get, GetNext , Set, Getrespons, Trapv1, Trapv2)
    
     
     // Un message SNMP est soit une trap, soit un payload !
-    // Une trap de SNMPv2 est dans de type payload
-    // Seul le type de la pdu changera
+    // Une trap de SNMPv2 est de type payload
     SNMPMessagePayload payload;     //
     SNMPTrapV1 trapV1;              //
     
     // Constructeurs
       
-    public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, SNMPMessagePayload payload){
+    public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, byte pduType, SNMPMessagePayload payload){
         
         this.Sender     = Sender;
         this.Receiver   = Receiver;
         this.port       = port;
         
-        this.version    = version;
+        this.version    = version - 1;
         this.communauty = communauty;
+        this.pduType    = pduType;
         
         this.payload    = payload;
         this.trapV1      = null;   
@@ -252,7 +250,7 @@ public class SNMPMessage {
         byte    communautyLght  = (byte) this.communauty.length;  // TAILLE en nombre d'octet de la communté
         byte[]  communautyValue =  this.communauty;
         
-        
+        // 
         byte[]  pduPayloadValue;
         byte    pduPayLoadLght;
         byte    pduPayLoadType;
@@ -266,17 +264,16 @@ public class SNMPMessage {
             pduPayLoadLght  = (byte) pduPayloadValue.length;
             pduPayLoadType  = (byte) this.pduType; 
         }
-        
-        // vérification de tous les champs
-        
         // Constitution du DGPacket
-        
+        // Calcul de la taille total de la pdu
+        //
         ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(256);
            
         //
         temp_ByteBuffer.put(SNMPMessageType);                   //        |  T
-        temp_ByteBuffer.put(SNMPMessageLght);                   //        |  L
-        
+        int SNMPMessageLghtPos = temp_ByteBuffer.position();    //        |  L pos
+        temp_ByteBuffer.position(SNMPMessageLghtPos + 1);       // décallage
+
         //
         temp_ByteBuffer.put(versionNumberType);                 // T      |
         temp_ByteBuffer.put(versionNumberLght);                 // L      |
@@ -291,12 +288,19 @@ public class SNMPMessage {
         temp_ByteBuffer.put(pduPayLoadType);                    // T      |
         temp_ByteBuffer.put(pduPayLoadLght);                    // L      |
         temp_ByteBuffer.put(pduPayloadValue);                   // V      |
+        // Calcul de la taille total de message SNMP
+            SNMPMessageLght = (byte) (6 + versionNumberLght + communautyLght + pduPayLoadLght);
+            temp_ByteBuffer.put(SNMPMessageLghtPos, SNMPMessageLght);
         //
-        
-        byte[] DgData = new byte[temp_ByteBuffer.position()]; temp_ByteBuffer.get(DgData);
-        
-        temp_DGPacket = new DatagramPacket(DgData, temp_ByteBuffer.position());
-        temp_DGPacket.setAddress(this.Receiver);
+        //
+        byte[] DgData = new byte[temp_ByteBuffer.position()]; 
+        temp_ByteBuffer.position(0);
+        temp_ByteBuffer.get(DgData, 0,DgData.length);
+        //
+        temp_DGPacket = new DatagramPacket(DgData, DgData.length);
+        temp_DGPacket.setPort(this.port);                       // Port distant où le paquet sera envoyé
+        temp_DGPacket.setAddress(this.Receiver);                // Adresse distant où le paquet sera envoyé
+        //
         return temp_DGPacket;
     }
 }

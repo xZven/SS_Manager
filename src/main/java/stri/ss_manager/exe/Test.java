@@ -4,11 +4,17 @@ package stri.ss_manager.exe;
 import static java.lang.Thread.sleep;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import javax.swing.JProgressBar;
+import stri.ss_manager.SNMP.smi.OID;
+import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.handler.*;
+import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerTrapListener;
@@ -152,6 +158,25 @@ public class Test {
                 System.err.println("[MAIN_PROC]: "+e.getMessage());
             }
         } */
+
+        // Test d'envoi de message SNMP
+        ArrayList<VarBind> varBindingsList = new ArrayList<>();
+        //
+        OID oid         = new OID("1.3.6.1.2.1.1.5.0"); 
+        varBindingsList.add(new VarBind(oid, null));
+        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
+        try{
+            InetAddress Receiver        = InetAddress.getByName("192.168.0.117");            //
+            //
+            SNMPMessage SNMPTestMessage = new SNMPMessage(null, Receiver, 161, 2, "public".getBytes(), (byte) 0xA0, payload); 
+            //
+            S_MSG_queue_OS.add(SNMPTestMessage);
+        }catch(Exception e){
+            System.err.println("ERROR " +e.getMessage());
+        }
+        
+        
+        
     }
 
 }

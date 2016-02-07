@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
 public class OID {
     
     // attributs
-    private final byte[] objectId;
+    private byte[] objectId;
     
     // Constructeurs
     /**
@@ -42,29 +42,50 @@ public class OID {
         this.objectId    = objectId;
     }
     
+    public OID(String objectId){ 
+       
+        this.objectId = new byte[objectId.getBytes().length - ((objectId.getBytes().length/2))]; // 3 Piquets = 2 Barrière et on ne veut que les barrière.
+        ByteBuffer temp_ByteBuffer = ByteBuffer.wrap(this.objectId);
+        //
+        for(byte c : objectId.getBytes()){ // pour chaque octet
+            // on regard si c'est un point
+            if((char) c != '.'){    // si le caractère extrait n'est pas un point
+                temp_ByteBuffer.put((byte) Character.getNumericValue(c));
+            }
+        }
+    }
     // méthodes
     /**
      * Cette fonction permet d'obtenir la chaine de caractère
-     * de l'OID au format X.X.X.X.X
-     * @return OID.
+     * de l'OID au format X.X.X.X.X en prenant en compte l'octet raccourci
+     * 1.3 (0x2B).
+     * @return OID au format 1.3.X.X.X
      */
     public String getObjectIdStringFormat(){
         String oid = "";
         //
-        
         oid = oid + "1.3";
         //
         for(int index = 1; index < this.objectId.length; index++){
             oid = oid + "." + Byte.toString(this.objectId[index]);
         }
-/*  
-        for(byte b: objectId){
-            oid = oid + "." + Byte.toString(b);
-        }
-*/      
+        //
         return oid;
     }
-    
+
+    @Override
+    public String toString() {
+        String oid = "";
+        //
+        
+        oid = oid + Byte.toString(this.objectId[0]);
+        //
+        for(int index = 1; index < this.objectId.length; index++){
+            oid = oid + "." + Byte.toString(this.objectId[index]);
+        }   
+        return oid;
+    }
+
     /**
      * Retourne l'OID au format TLV
      * @return OID au format TLV
@@ -72,24 +93,15 @@ public class OID {
     public byte[] getTLVFormat() {
         
         // VAR
-        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(50);
-        byte[] temp_data;
-        
-        byte     objectIdType;  
-        byte     objectIdLght; 
-        byte[]   objectIdValue;
-        
+        byte[]      temp_data       = new byte[1 + this.objectId.length]; // 2 octets TL + V
+        ByteBuffer  temp_ByteBuffer = ByteBuffer.wrap(temp_data);
+        //      
+        byte     objectIdLght = (byte) (this.objectId.length - 1);         
         //
-        objectIdType  = 0x06;
-        objectIdLght  = (byte) this.objectId.length;
-        objectIdValue = this.objectId;
-        //
-        temp_ByteBuffer.put(objectIdType);      // T
-        temp_ByteBuffer.put(objectIdLght);      // L
-        temp_ByteBuffer.put(objectIdValue);     // V
-        //
-        temp_data = new byte[temp_ByteBuffer.position()];
-        temp_ByteBuffer.get(temp_data);
+        temp_ByteBuffer.put((byte) 0x06);                           // T = ObjectIdentifier 
+        temp_ByteBuffer.put(objectIdLght);                          // L
+        temp_ByteBuffer.put((byte)0x2B);                            // Raccourci pour 1.3 (iso.org)
+        temp_ByteBuffer.put(this.objectId, 2 ,objectIdLght - 1);        // V
         //
         return temp_data;
     }
