@@ -1,15 +1,12 @@
 package stri.ss_manager.exe;
 
 
-import static java.lang.Thread.sleep;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import javax.swing.JProgressBar;
 import stri.ss_manager.SNMP.smi.OID;
 import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
@@ -162,7 +159,7 @@ public class Test {
         // Test d'envoi de message SNMP
         ArrayList<VarBind> varBindingsList = new ArrayList<>();
         //
-        OID oid         = new OID("1.3.6.1.2.1.1.5.0"); 
+        OID oid         = new OID("1.3.6.1.2.1.1.6.0"); 
         varBindingsList.add(new VarBind(oid, null));
         SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
         try{

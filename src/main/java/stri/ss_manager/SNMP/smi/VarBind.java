@@ -157,5 +157,26 @@ public class VarBind {
         return temp_data;
         
     }
-    //
+    // getters
+
+    public OID getObjectId() {
+        return objectId;
+    }
+
+    public byte[] getObjectValue() {
+        return objectValue;
+    }
+    
+    // setters
+
+    public void setObjectId(OID objectId) {
+        this.objectId = objectId;
+    }
+
+    public void setObjectValue(byte[] objectValue) {
+        this.objectValue = objectValue;
+    }
+    
+    
+    
 }

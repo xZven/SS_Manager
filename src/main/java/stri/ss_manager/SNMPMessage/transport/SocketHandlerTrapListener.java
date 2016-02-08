@@ -19,6 +19,7 @@ package stri.ss_manager.SNMPMessage.transport;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.LinkedList;
 import java.util.Queue;
 
 /**
@@ -72,7 +73,6 @@ public class SocketHandlerTrapListener extends SocketHandlerInputStream{
                 socket.receive(data_packet);
                 System.out.println("[SOCK_HDLR_TRAP_LISTNR]: Datagram Received");
                 // On  place le paquet Datagram dans la file d'attente.
-                
                 DG_packet_queue_IS.add(data_packet);
                 //
                 System.out.println("[SOCK_HDLR_TRAP_LISTNR]: Datagram transmited to S_MSG_HDLR_IS");

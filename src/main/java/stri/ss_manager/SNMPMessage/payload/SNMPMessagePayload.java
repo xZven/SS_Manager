@@ -272,5 +272,25 @@ public class SNMPMessagePayload {
         //
         return temp_data;
     }
-           
+     
+    
+    // getters
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public int getErrorStatus() {
+        return errorStatus;
+    }
+
+    public int getErrorIndex() {
+        return errorIndex;
+    }
+
+    public ArrayList<VarBind> getVarBindingsList() {
+        return varBindingsList;
+    }
+    
+    
 }

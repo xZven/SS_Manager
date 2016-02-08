@@ -105,4 +105,12 @@ public class OID {
         //
         return temp_data;
     }
+    
+    // getters
+
+    public byte[] getObjectId() {
+        return objectId;
+    }
+    
+    
 }

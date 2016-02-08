@@ -303,4 +303,40 @@ public class SNMPMessage {
         //
         return temp_DGPacket;
     }
+
+    
+    // Getters
+
+    public InetAddress getSender() {
+        return Sender;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public InetAddress getReceiver() {
+        return Receiver;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public byte[] getCommunauty() {
+        return communauty;
+    }
+
+    public int getPduType() {
+        return pduType;
+    }
+
+    public SNMPMessagePayload getPayload() {
+        return payload;
+    }
+
+    public SNMPTrapV1 getTrapV1() {
+        return trapV1;
+    }
+    
 }
