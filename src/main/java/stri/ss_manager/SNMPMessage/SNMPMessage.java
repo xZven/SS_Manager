@@ -37,7 +37,7 @@ import stri.ss_manager.SNMPMessage.payload.SNMPTrapV2;
  * <p>
  * Attention: lorsqu'un SNMPMessage est créé, il ne peut plus être modifié.
  * (Pas de setteur défini)
- * Aucun accesseur n'est créé
+ * Un nouveau SNMPMessage devra être créé.
  * </p>
  * 
  */
@@ -50,16 +50,28 @@ public class SNMPMessage {
     //
     private int         version;    // numéro de version SNMP
     private byte[]      communauty; // communauté
-    private int         pduType;     // type de la PDU (e.g: Get, GetNext , Set, Getrespons, Trapv1, Trapv2)
+    private int         pduType;    // type de la PDU (e.g: Get, GetNext , Set, Getrespons, Trapv1, Trapv2)
    
     
     // Un message SNMP est soit une trap, soit un payload !
-    // Une trap de SNMPv2 est de type payload
+    // Une trap de SNMPv2 est de type payload, on pourra donc faire un transtypage.
     SNMPMessagePayload payload;     //
     SNMPTrapV1 trapV1;              //
     
     // Constructeurs
-      
+    
+    /**
+     * Cette fonction permet de construire un message SNMP en lui passant
+     * les paramètres suivants.
+     * 
+     * @param Sender Adresse IP de celui qui envoi le message SNMP
+     * @param Receiver Adresse IP de celui qui reçoit le message SNMP
+     * @param port Numéro de port distant sur lequel le message SNMP est reçu ou envoyé.
+     * @param version Numéro de version.
+     * @param communauty Nom de la communauté.
+     * @param pduType Type de la PDU (e.g: Get(0xA0), GetNext (0xA1) , Set (0xA3), GetResponse (0xA2) , Trapv1 (0xA4), Trapv2 (0xA7))
+     * @param payload Payload du message SNMP
+     */
     public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, byte pduType, SNMPMessagePayload payload){
         
         this.Sender     = Sender;
@@ -73,9 +85,11 @@ public class SNMPMessage {
         this.payload    = payload;
         this.trapV1      = null;   
     }    
+   
     /**
      * Construit un SNMPMessage en lui passant un DatagramPacket
-     * issu du réseau pour le protocol SNMP
+     * issu d'une PDU SNMP. Cette fonction est utilisé
+     * par le SocketHandlerInputStream
      * 
      * @param temp_DGPacket DatagramPacket SNMP
      */
@@ -226,8 +240,8 @@ public class SNMPMessage {
     }
     
     /**
-     * Cette fonction permet d'obtenir un DatagramPacket à partir d'un SNMPMessage.
-     * 
+     * Cette fonction permet d'obtenir un DatagramPacket à partir d'un SNMPMessage
+     * formant une PDU SNMP au format BER.
      * @return Le DatagramPacket, ou null si le SNMPMessage est incomplet
      */
     public DatagramPacket getDGPacketPdu() {
@@ -303,40 +317,96 @@ public class SNMPMessage {
         //
         return temp_DGPacket;
     }
-
     
     // Getters
-
+    
+    /**
+     * Retourne l'adresse IP de celui envoi
+     * le message SNMP
+     * 
+     * @return Adresse IP de l'emmteur ou null si le message émane de cette machine.
+     */
     public InetAddress getSender() {
         return Sender;
     }
-
-    public int getPort() {
-        return port;
-    }
-
+    
+    /** 
+     * Retourne l'adresse IP de celui qui reçoit
+     * le message SNMP.
+     * 
+     * @return Adresse IP du récepteur obligatoirement
+     */
     public InetAddress getReceiver() {
         return Receiver;
     }
 
-    public int getVersion() {
-        return version;
+    /**
+     * Retour le numéro de port distant où le message SNMP
+     * est reçu ou envoyé.
+     * 
+     * @return Numéro de port
+     */
+    public int getPort() {
+        return port;
     }
-
+    
+    /**
+     * Numéro de version du protocole utilisé par le message SNMP
+     * 
+     * Version 1
+     * Version 2c
+     * 
+     * @return numéro de version + 1
+     */
+    public int getVersion() {
+        return version + 1;
+    }
+    
+    /**
+     * Retour la communauté sous forme d'un tableau d'octets
+     * 
+     * @return Communauté du message SNMP
+     */
     public byte[] getCommunauty() {
         return communauty;
     }
-
+    
+    /**
+     * Retourne le type du message SNMP.
+     * 
+     * <p>
+     * (e.g: Get(0xA0), GetNext (0xA1) , Set (0xA3), GetResponse (0xA2) , Trapv1 (0xA4), Trapv2 (0xA7))
+     * </p>
+     * 
+     * @return le type du message SNMP
+     */
     public int getPduType() {
         return pduType;
     }
-
+    
+    /** 
+     * Retourne la charge utile du message SNMP
+     * 
+     * @return Payload de la PDU
+     */
     public SNMPMessagePayload getPayload() {
         return payload;
     }
-
+    
+    /** 
+     * Retourne la charge utile de la PDU SNMP
+     * s'il s'agit d'un TRAP SNMP.
+     * 
+     * @return Trap
+     */
     public SNMPTrapV1 getTrapV1() {
         return trapV1;
     }
     
+    //Setter
+    
+    /*
+     * Aucun setters n'est défini car un message SNMP n'est utilisable qu'une seule fois.
+     * Pour répondre, un nouveau message SNMP doit être créé.
+     */
 }

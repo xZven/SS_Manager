@@ -20,20 +20,12 @@ package stri.ss_manager.SNMPKernel.SNMPAgent;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
-import stri.ss_manager.SNMPMessage.handler.SNMPMessageHandlerInputStream;
-import stri.ss_manager.SNMPMessage.handler.SNMPMessageHandlerOutputStream;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
-import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
-import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
-import stri.ss_manager.SNMPMessage.transport.SocketHandlerTrapListener;
 
 /**
  *
@@ -48,7 +40,7 @@ public class SNMPAgent extends Thread {
     
     private Queue<SNMPMessage> S_MSG_queue_IS;                                  // file d'attente pour les reqûetes entrants
     private Queue<SNMPMessage> S_MSG_queue_OS;                                  // file d'atten pour les messages sortant
-    private SNMPAgentMib       agent_mib;                                       // 
+    private SNMPAgentMib       agent_mib = new SNMPAgentMib();                                       // 
     private boolean            RUNNING = true;                                  // sert à arrêter le thread   
     private String             configurationFile = "./conf/SNMPAgent.conf";     // ficjier de configuration de l'agent
     
@@ -118,42 +110,37 @@ public class SNMPAgent extends Thread {
                 temp_SNMPMessage = this.S_MSG_queue_IS.poll();
                 
                 // vérification du nom de communauté
-                
                 switch(temp_SNMPMessage.getPduType()){
-                    case 0xA0:                          // Get.req
+                    case 0xA0: // ******************************************* //Get.req
+                        System.out.println("[SNMP_AGENT] GET.req Received...");
                         // vérification de la communauté
-                        if(this.communauty == temp_SNMPMessage.getCommunauty()){
+                        if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){
                             // Traitement du message reçu
-                            for(VarBind vb: temp_SNMPMessage.getPayload().getVarBindingsList())
-                            {
-                                // Pour chaque varbind, on lui attribut sa valeur
-                                vb.setObjectValue(agent_mib.getOidValue(vb.getObjectId()));  
-                            }
+                            System.out.println("[SNMP_AGENT] communauté égale");
+                            res_payload = this.agent_mib.getOidValue(temp_SNMPMessage.getPayload());
+
                             // Construction du message de réponse.
                             res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
                                                          ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
                                                          ,temp_SNMPMessage.getPort()            // port distant
-                                                         ,temp_SNMPMessage.getVersion()         // numéro de version identique
+                                                         ,temp_SNMPMessage.getVersion()     // numéro de version identique
                                                          ,temp_SNMPMessage.getCommunauty()      // communauté identique
                                                          ,(byte) 0xA2                           // Get.res
-                                                         ,temp_SNMPMessage.getPayload());       // payload du message réponse.
-                             this.S_MSG_queue_OS.add(res_SNMPMessage);                           // renvoi de la réponse
+                                                         ,res_payload);                         // payload du message réponse.
+                            // renvoi de la réponse
+                            this.S_MSG_queue_OS.add(res_SNMPMessage);                          // placement en file d'attente de sorti
                         }else{  // ne fais pas partie de la bonne communauté
-                            
+                           //
+                           System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
                            // un trap sera envoyé à son Manager
                         }
-                       
-                        
                         break;
-                    case 0xA1:                          // GetNext.req
-                         // vérification de la communauté
-                        if(this.communauty == temp_SNMPMessage.getCommunauty()){
+                    case 0xA1:  // ******************************************* // GetNext.req
+                        System.out.println("[SNMP_AGENT] GETNext.req Received...");
+                       // vérification de la communauté
+                       if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){ //Si communauté est bonne
                             // Traitement du message reçu
-                            for(VarBind vb: temp_SNMPMessage.getPayload().getVarBindingsList())
-                            {
-                                // Pour chaque varbind, on lui attribut sa valeur
-                                vb.setObjectValue(agent_mib.getNextOidValue(vb.getObjectId()));  
-                            }
+                            res_payload = this.agent_mib.getNextOidValue(temp_SNMPMessage.getPayload());
                             // Construction du message de réponse.
                             res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
                                                          ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
@@ -161,23 +148,22 @@ public class SNMPAgent extends Thread {
                                                          ,temp_SNMPMessage.getVersion()         // numéro de version identique
                                                          ,temp_SNMPMessage.getCommunauty()      // communauté identique
                                                          ,(byte) 0xA2                           // Get.res
-                                                         ,temp_SNMPMessage.getPayload());       // payload du message réponse.
+                                                         ,res_payload);                         // payload du message réponse.
                             
                             this.S_MSG_queue_OS.add(res_SNMPMessage);                           // renvoi de la réponse
                         }else{  // ne fais pas partie de la bonne communauté
+                           System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
                            // un trap sera envoyé à son Manager
                         }
                         
                         break;
-                    case 0xA3:                          // SetReq
+                    case 0xA3:   // ******************************************* // SetReq
+                        System.out.println("[SNMP_AGENT] SET.req Received...");
                         // vérification de la communauté
-                        if(this.communauty == temp_SNMPMessage.getCommunauty()){
+                        if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){
                             // Traitement du message reçu
-                            for(VarBind vb: temp_SNMPMessage.getPayload().getVarBindingsList())
-                            {
-                                // Pour chaque varbind, on lui attribut sa valeur
-                                vb.setObjectValue(agent_mib.setOidValue(vb.getObjectId()));  
-                            }
+                            
+                            res_payload = this.agent_mib.setOidValue(temp_SNMPMessage.getPayload());
                             // Construction du message de réponse.
                             res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
                                                          ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
@@ -185,14 +171,13 @@ public class SNMPAgent extends Thread {
                                                          ,temp_SNMPMessage.getVersion()         // numéro de version identique
                                                          ,temp_SNMPMessage.getCommunauty()      // communauté identique
                                                          ,(byte) 0xA2                           // Get.res
-                                                         ,temp_SNMPMessage.getPayload());       // payload du message réponse.
-                            
-                            this.S_MSG_queue_OS.add(res_SNMPMessage);                           // renvoi de la réponse
+                                                         ,res_payload);                         // payload du message réponse.
+                            // renvoi de la réponse
+                            this.S_MSG_queue_OS.add(res_SNMPMessage);                           // placement en file d'attente
                         }else{  // ne fais pas partie de la bonne communauté
-                            
+                            System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
                            // un trap sera envoyé à son Manager
                         }
-                        
                         break;
                         
                     default:                            // Autres type de paquets = non-géré.
@@ -259,80 +244,7 @@ public class SNMPAgent extends Thread {
         this.start();
     }
     
-    public static void main(String[] args) {
-        DatagramSocket                  socket          = null;
-        DatagramSocket                  trap_listenner  = null;
-        //Queues
-        Queue<DatagramPacket>   DG_packet_queue_IS;         // File d'attente pour les PDU SNMP pour le flux entrant;
-        Queue<DatagramPacket>   DG_packet_queue_OS;         // File d'attente pour les PDU SNMP pour le flux sortant;
 
-        Queue<SNMPMessage>      S_MSG_queue_IS;             // File d'attente pour les SNMPMessages entrants (transmit au noyau)
-        Queue<SNMPMessage>      S_MSG_queue_OS;             // File d'attente pour les SNMPMessages entrants (transmit au noyau)
-
-        //Thread
-        SNMPMessageHandlerInputStream  S_MSG_HDLR_IS;       // Thread gérant les SNMPMessages entrants
-        SNMPMessageHandlerOutputStream S_MSG_HDLR_OS;       // Thread gérant les SNMPMessages sortants
-
-        SocketHandlerInputStream       SOCK_HDLR_IS;        // Thread gérant les DatagramPacket entrants
-        SocketHandlerOutputStream      SOCK_HDLR_OS;        // Thread gérant les DatagramPacket sortants
-//      SocketHandlerTrapListener      SOCK_HDLR_TRAP_LSTNR;// Thread gérant les DatagramPacket entrants sur le port 162 (TRAPS)
-        
-        SNMPAgent                      SNMP_AGENT;
-
-        //Autres
-
-        // Initialisation du Socket
-        System.out.println("[MAIN_PROC]: Initializing Sockets...");
-        try{
-            socket         = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
-            trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
-        }catch(Exception e){
-            System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> "+e.getMessage());
-            System.err.println("Exiting...");
-
-            System.exit(-1);                                  // FIN RPOG si Erreur de chargement du socket
-        }
-        System.out.println("[MAIN_PROC]: Sockets initialized...");
-
-        // Initialisation des files d'attentes
-        System.out.println("[MAIN_PROC]: Initializing queues...");
-        DG_packet_queue_IS = new LinkedList<>();
-        DG_packet_queue_OS = new LinkedList<>();
-
-        S_MSG_queue_IS     = new LinkedList<>();
-        S_MSG_queue_OS     = new LinkedList<>();
-
-        System.out.println("[MAIN_PROC]: Queues initialized...");
-        // Initialisation des Threads
-        System.out.println("[MAIN_PROC]: Initializing Threads...");
-
-        // Couche SocketHandler
-        SOCK_HDLR_IS         = new SocketHandlerInputStream(socket, DG_packet_queue_IS);
-//      SOCK_HDLR_TRAP_LSTNR = new SocketHandlerTrapListener(trap_listenner, DG_packet_queue_IS);
-        SOCK_HDLR_OS         = new SocketHandlerOutputStream(socket, DG_packet_queue_OS);
-
-        // Couche SNMPMessageHandler
-        S_MSG_HDLR_IS = new SNMPMessageHandlerInputStream(DG_packet_queue_IS, S_MSG_queue_IS);
-        S_MSG_HDLR_OS = new SNMPMessageHandlerOutputStream(DG_packet_queue_OS, S_MSG_queue_OS);
-
-        // Couche SNMPKernel
-        
-        SNMP_AGENT = new SNMPAgent(S_MSG_queue_IS, S_MSG_queue_OS);
-
-        System.out.println("[MAIN_PROC]: Threads initializded...");
-        System.out.println("[MAIN_PROC]: Successfull initialized !");
-        // Démarrage des Threads
-
-        // Couche SocketHandler
-        SOCK_HDLR_IS.start();
-//      SOCK_HDLR_TRAP_LSTNR.start();
-        SOCK_HDLR_OS.start();
-
-        S_MSG_HDLR_IS.start();
-        S_MSG_HDLR_OS.start();
-        
-        
-    }
     
 }
 

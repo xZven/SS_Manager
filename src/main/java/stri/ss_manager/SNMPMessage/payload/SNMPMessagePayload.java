@@ -227,7 +227,7 @@ public class SNMPMessagePayload {
     private byte[] getVarBindListTLVFormat(){
         
         // VAR
-        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(50);
+        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(100);
         byte[] temp_data;
         int varBindListLght = 0;
         //
@@ -290,6 +290,27 @@ public class SNMPMessagePayload {
 
     public ArrayList<VarBind> getVarBindingsList() {
         return varBindingsList;
+    }
+    
+    // setters
+    
+    /**
+     * noError(0), tooBig(1), noSuchName(2), badValue(3), readOnly(4), genErr(5)
+     * 
+     * @param errorStatus 
+     */
+    public void setErrorStatus(int errorStatus) {
+        this.errorStatus = errorStatus;
+    }
+
+    /**
+     * Variable qui a provoqué l'erreur dans les cas suivants:
+     * noSuchName(2), badValue(3) et readOnly(4)
+     * 
+     * @param errorIndex 
+     */
+    public void setErrorIndex(int errorIndex) {
+        this.errorIndex = errorIndex;
     }
     
     

@@ -1,21 +1,3 @@
-package stri.ss_manager.exe;
-
-
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import stri.ss_manager.SNMP.smi.OID;
-import stri.ss_manager.SNMP.smi.VarBind;
-import stri.ss_manager.SNMPMessage.SNMPMessage;
-import stri.ss_manager.SNMPMessage.handler.*;
-import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
-import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
-import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
-import stri.ss_manager.SNMPMessage.transport.SocketHandlerTrapListener;
-
 /*
  * Copyright (C) 2016 Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
  *
@@ -33,19 +15,26 @@ import stri.ss_manager.SNMPMessage.transport.SocketHandlerTrapListener;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+package stri.ss_manager.exe;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.util.LinkedList;
+import java.util.Queue;
+import stri.ss_manager.SNMPKernel.SNMPAgent.SNMPAgent;
+import stri.ss_manager.SNMPMessage.SNMPMessage;
+import stri.ss_manager.SNMPMessage.handler.SNMPMessageHandlerInputStream;
+import stri.ss_manager.SNMPMessage.handler.SNMPMessageHandlerOutputStream;
+import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
+import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
 
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
  */
-public class Test {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-    // Déclaration des variables
-        //Sockets
+public class SNMPAgentTest {
+    
+        public static void main(String[] args) {
         DatagramSocket                  socket          = null;
         DatagramSocket                  trap_listenner  = null;
         //Queues
@@ -61,7 +50,9 @@ public class Test {
 
         SocketHandlerInputStream       SOCK_HDLR_IS;        // Thread gérant les DatagramPacket entrants
         SocketHandlerOutputStream      SOCK_HDLR_OS;        // Thread gérant les DatagramPacket sortants
-        SocketHandlerTrapListener      SOCK_HDLR_TRAP_LSTNR;// Thread gérant les DatagramPacket entrants sur le port 162 (TRAPS)
+//      SocketHandlerTrapListener      SOCK_HDLR_TRAP_LSTNR;// Thread gérant les DatagramPacket entrants sur le port 162 (TRAPS)
+        
+        SNMPAgent                      SNMP_AGENT;
 
         //Autres
 
@@ -92,7 +83,7 @@ public class Test {
 
         // Couche SocketHandler
         SOCK_HDLR_IS         = new SocketHandlerInputStream(socket, DG_packet_queue_IS);
-        SOCK_HDLR_TRAP_LSTNR = new SocketHandlerTrapListener(trap_listenner, DG_packet_queue_IS);
+//      SOCK_HDLR_TRAP_LSTNR = new SocketHandlerTrapListener(trap_listenner, DG_packet_queue_IS);
         SOCK_HDLR_OS         = new SocketHandlerOutputStream(socket, DG_packet_queue_OS);
 
         // Couche SNMPMessageHandler
@@ -100,6 +91,8 @@ public class Test {
         S_MSG_HDLR_OS = new SNMPMessageHandlerOutputStream(DG_packet_queue_OS, S_MSG_queue_OS);
 
         // Couche SNMPKernel
+        
+        SNMP_AGENT = new SNMPAgent(S_MSG_queue_IS, S_MSG_queue_OS);
 
         System.out.println("[MAIN_PROC]: Threads initializded...");
         System.out.println("[MAIN_PROC]: Successfull initialized !");
@@ -107,73 +100,13 @@ public class Test {
 
         // Couche SocketHandler
         SOCK_HDLR_IS.start();
-        SOCK_HDLR_TRAP_LSTNR.start();
+//      SOCK_HDLR_TRAP_LSTNR.start();
         SOCK_HDLR_OS.start();
-
 
         S_MSG_HDLR_IS.start();
         S_MSG_HDLR_OS.start();
-
-    /*
-        // Initialisation de l'IHM
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ManagerIHM().setVisible(true);
-            }
-        });
-
-    */
-        // Ici le role du programme principale est de vérifier
-        // que les threads fonctionnent corecctement.
-        // Il les relance en cas d'arrête.
-
-    /*    while(true){
-            if(SOCK_HDLR_IS.isAlive() == false){
-                SOCK_HDLR_IS.start();
-            }
-            
-            if(SOCK_HDLR_OS.isAlive() == false){
-                SOCK_HDLR_OS.start();
-            }
-            
-            if(SOCK_HDLR_TRAP_LSTNR.isAlive() == false){
-                SOCK_HDLR_TRAP_LSTNR.start();
-            }
-            
-            if(S_MSG_HDLR_IS.isAlive() == false){
-                S_MSG_HDLR_IS.start();
-            }
-            
-            if(S_MSG_HDLR_OS.isAlive() == false){
-                S_MSG_HDLR_OS.start();
-            }
-            
-            
-            try{
-                sleep(1000);
-            }catch(Exception e){
-                System.err.println("[MAIN_PROC]: "+e.getMessage());
-            }
-        } */
-
-        // Test d'envoi de message SNMP
-        ArrayList<VarBind> varBindingsList = new ArrayList<>();
-        //
-        OID oid         = new OID("1.3.6.1.2.1.1.5.0"); 
-        varBindingsList.add(new VarBind(oid, null));
-        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
-        try{
-            InetAddress Receiver        = InetAddress.getByName("172.16.80.88");            //
-            //
-            SNMPMessage SNMPTestMessage = new SNMPMessage(null, Receiver, 161, 2, "public".getBytes(), (byte) 0xA0, payload); 
-            //
-            S_MSG_queue_OS.add(SNMPTestMessage);
-        }catch(Exception e){
-            System.err.println("ERROR " +e.getMessage());
-        }
-        
+        SNMP_AGENT.start();
         
         
     }
-
 }

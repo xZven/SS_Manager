@@ -114,16 +114,18 @@ public class VarBind {
             //
             return temp_data;
             //
-        }else{
+        }else{  // si l'objet a une valeur
             byte[]     temp_data       = new byte[2 + objectValue.length];
             ByteBuffer temp_ByteBuffer = ByteBuffer.wrap(temp_data);
             //
-            objectValueType  = 0x00;
+            
+            objectValueType  = 0x04; // à modifier plus tard lors de la mise en place des mibs
             objectValueLght  = (byte) this.objectValue.length;
             objectValueValue = this.objectValue;
             //
-            temp_ByteBuffer.put(objectValueType);
-            temp_ByteBuffer.put(objectValueLght);
+            temp_ByteBuffer.put(objectValueType);           // T
+            temp_ByteBuffer.put(objectValueLght);           // L
+            temp_ByteBuffer.put(objectValueValue);          // V
             //
             return temp_data;
         }
