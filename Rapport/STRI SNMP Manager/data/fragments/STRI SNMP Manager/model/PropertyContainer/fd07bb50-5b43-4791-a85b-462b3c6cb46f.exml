@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="STRI SNMP Manager" version="4">
+  <OBJECT>
+    <ID name="STRI SNMP Manager" mc="Standard.PropertyContainer" uid="fd07bb50-5b43-4791-a85b-462b3c6cb46f"/>
+    <PID name="STRI SNMP Manager" mc="Standard.AnalystProject" uid="e7177c81-e8ee-4f50-8890-9b2999a8409d"/>
+    <ATTRIBUTES>
+      <ATT name="Name"><![CDATA[STRI SNMP Manager]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES></DEPENDENCIES>
+  </OBJECT>
+</EXT>

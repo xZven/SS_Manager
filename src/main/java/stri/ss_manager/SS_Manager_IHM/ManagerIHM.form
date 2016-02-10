@@ -213,6 +213,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="AddressIPField">
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AddressIPFieldActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JComboBox" name="choixversionSNMP">
                       <Properties>

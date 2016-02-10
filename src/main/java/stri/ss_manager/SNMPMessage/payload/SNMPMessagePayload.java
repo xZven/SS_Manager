@@ -156,6 +156,11 @@ public class SNMPMessagePayload {
     
     
     // méthodes
+    /**
+     * Cette fonction renvoi un chaine de caractère représentant
+     * la charge utile d'un message SNMP
+     * @return Chaine de caractère
+     */
     @Override
     public String toString(){
         String VB_String = "";
@@ -171,6 +176,10 @@ public class SNMPMessagePayload {
                 "{VAR_BIND]}  "       +  VB_String;
     }
     //
+    /** 
+     * 
+     * @return tableau d'octet du numéro de requête au format TLV
+     */
     private byte[] getRequestIdTLVFormat(){
         
         // VAR
@@ -189,6 +198,10 @@ public class SNMPMessagePayload {
         return temp_data;
     }
     
+    /**
+     * 
+     * @return tableau d'octet l'errorStatus au format TLV
+     */
     private byte[] getErrorStatusTLVFormat(){
         
          // VAR
@@ -207,6 +220,10 @@ public class SNMPMessagePayload {
         return temp_data;
     }
     
+    /**
+     * 
+     * @return tableau d'octet du errorIndex au format TLV
+     */
     private byte[] getErrorIndexTLVFormat(){
          // VAR
         ByteBuffer temp_ByteBuffer;
@@ -224,6 +241,10 @@ public class SNMPMessagePayload {
         return temp_data;
     }
     
+    /**
+     * 
+     * @return tableau d'octet des Varaibles Bindings au format TLV
+     */
     private byte[] getVarBindListTLVFormat(){
         
         // VAR
@@ -251,6 +272,10 @@ public class SNMPMessagePayload {
         return temp_data;
     }
     
+    /**
+     * 
+     * @return tableau d'octet du type de la pdu au format TLV
+     */
     public byte[] getPduFormat() {
         // VAR
         ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(256);
@@ -276,18 +301,35 @@ public class SNMPMessagePayload {
     
     // getters
 
+    /**
+     * 
+     * @return Le numéro du message SNMP
+     */
     public int getRequestId() {
         return requestId;
     }
-
+    
+    /**
+     * 
+     * @return l'erreur status
+     */
     public int getErrorStatus() {
         return errorStatus;
     }
 
+    
+    /**
+     * 
+     * @return l'erreur index
+     */
     public int getErrorIndex() {
         return errorIndex;
     }
-
+    
+    /**
+     * 
+     * @return arraylist de Variable Binding
+     */
     public ArrayList<VarBind> getVarBindingsList() {
         return varBindingsList;
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Diagram" version="4">
+  <OBJECT>
+    <ID name="Diagram" mc="Standard.Package" uid="e9d626d0-8321-4cf9-a101-a0694b60daa1"/>
+    <PID name="stri snmp manager" mc="Standard.Package" uid="b63b38cb-a073-481b-b67a-7d537f6e6846"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[Diagram]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedBehavior">
+        <COMPID name="Version 1" mc="Standard.Interaction" uid="e3ed8563-a918-4264-b539-167e143be339"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="SNMPMessage.handler" version="4">
+  <OBJECT>
+    <ID name="SNMPMessage.handler" mc="Standard.Package" uid="a2968a44-cb7e-4589-8532-ec49b3a24b94"/>
+    <PID name="stri snmp manager" mc="Standard.Package" uid="b63b38cb-a073-481b-b67a-7d537f6e6846"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[SNMPMessage.handler]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="SNMPMessageHandlerInputStream" mc="Standard.Class" uid="a93787fd-9c62-4a44-8d86-61da3346721c"/>
+        <COMPID name="SNMPMessageHandlerOutputStream" mc="Standard.Class" uid="6239c1c8-9777-45bc-bc12-afccf0af5c8f"/>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="SNMPMessage.handler" mc="Standard.ClassDiagram" uid="190d1127-49dc-45f6-b67d-e667ad42525d"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

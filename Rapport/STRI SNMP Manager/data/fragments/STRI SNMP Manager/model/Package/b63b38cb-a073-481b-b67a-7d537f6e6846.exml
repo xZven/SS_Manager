@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="stri snmp manager" version="4">
+  <OBJECT>
+    <ID name="stri snmp manager" mc="Standard.Package" uid="b63b38cb-a073-481b-b67a-7d537f6e6846"/>
+    <PID name="STRI SNMP Manager" mc="Standard.Project" uid="5b13dca7-97c4-4973-8b4c-1a4df28a2678"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[stri snmp manager]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="SNMPAgent" mc="Standard.Class" uid="8aa6316c-c9f4-4b55-b314-b4d47ed62090"/>
+        <COMPID name="IHM" mc="Standard.Class" uid="feba5045-1740-49e4-930f-e6eef2b55345"/>
+        <COMPID name="SNMPMessage" mc="Standard.Package" uid="94cca497-d12f-4fb3-8d32-9f122eccf418"/>
+        <COMPID name="SNMPMessage.handler" mc="Standard.Package" uid="a2968a44-cb7e-4589-8532-ec49b3a24b94"/>
+        <COMPID name="SNMPMessage.transport" mc="Standard.Package" uid="c2553009-0032-487d-9cf0-574375f8c392"/>
+        <COMPID name="SNMPKernel" mc="Standard.Package" uid="ec866944-2498-4263-b450-1d238a3e93ec"/>
+        <COMPID name="smi" mc="Standard.Package" uid="2ed27596-2091-443a-b497-adef059043fd"/>
+        <COMPID name="Diagram" mc="Standard.Package" uid="e9d626d0-8321-4cf9-a101-a0694b60daa1"/>
+        <COMPID name="Java class" mc="Standard.Package" uid="98d6fb5e-bcff-4750-ab29-9a0934f62b42"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

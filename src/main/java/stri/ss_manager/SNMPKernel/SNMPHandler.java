@@ -49,7 +49,14 @@ public class SNMPHandler extends Thread{
     //
         
     // constructeurs
-
+    
+    /**
+     * Permet de créer un SNMPHandler qui permettra de gérer l'envoi et la réception des requêtes
+     * et réponses SNMP.
+     * 
+     * @param S_MSG_queue_IS File d'attente pour le flux entrant des messages SNMP
+     * @param S_MSG_queue_OS File d'attente pour le flux sortant des messages SNMP
+     */
     public SNMPHandler(Queue<SNMPMessage> S_MSG_queue_IS, Queue<SNMPMessage> S_MSG_queue_OS) {
         this.S_MSG_queue_IS = S_MSG_queue_IS;
         this.S_MSG_queue_OS = S_MSG_queue_OS;
@@ -65,7 +72,7 @@ public class SNMPHandler extends Thread{
      * ATTENTION: elle n'est valide que pour la version 1 du programme.
      * Cette méthode est blockante. Si un message SNMP n'est pas reçu, alors
      * NULL est renvoyé.
-     * @param S_MSG_TO_SEND
+     * @param S_MSG_TO_SEND Message à envoyer
      * @return SNMPMessage reçu de l'agent ou NULL.
      */
     public SNMPMessage sendGetRequest(SNMPMessage S_MSG_TO_SEND){
@@ -102,7 +109,7 @@ public class SNMPHandler extends Thread{
      * ATTENTION: elle n'est valide que pour la version 1 du programme.
      * Cette méthode est blockante. Si un message SNMP n'est pas reçu, alors
      * NULL est renvoyé.
-     * @param S_MSG_TO_SEND
+     * @param S_MSG_TO_SEND Message à envoyer
      * @return SNMPMessage reçu de l'agent ou NULL.
      */
     public SNMPMessage sendGetNextRequest(SNMPMessage S_MSG_TO_SEND){
@@ -138,7 +145,7 @@ public class SNMPHandler extends Thread{
      * Cette méthode est blockante. Si un message SNMP n'est pas reçu, alors
      * NULL est renvoyé.
      * ATTENTION: elle n'est valide que pour la version 1 du programme.
-     * @param S_MSG_TO_SEND
+     * @param S_MSG_TO_SEND Message à envoyer
      * @return SNMPMessage reçu de l'agent ou NULL.
      */
     public SNMPMessage sendSetRequest(SNMPMessage S_MSG_TO_SEND){

@@ -9,12 +9,14 @@ import java.util.LinkedList;
 import java.util.Queue;
 import stri.ss_manager.SNMP.smi.OID;
 import stri.ss_manager.SNMP.smi.VarBind;
+import stri.ss_manager.SNMPKernel.SNMPHandler;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.handler.*;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerTrapListener;
+import stri.ss_manager.SS_Manager_IHM.ManagerIHM;
 
 /*
  * Copyright (C) 2016 Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
@@ -35,12 +37,20 @@ import stri.ss_manager.SNMPMessage.transport.SocketHandlerTrapListener;
  */
 
 /**
- *
+ * 
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
+ * 
+ *  * Cette classe permet de tester le Manager SNMP en initialisant
+ * les Threads nécessaire et en créant des messages de tests.
+ * 
+ * @version 1
+ * 
  */
 public class Test {
 
     /**
+     * Programme principale qui sert à tester le Manager SNMP
+     * 
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -68,7 +78,7 @@ public class Test {
         // Initialisation du Socket
         System.out.println("[MAIN_PROC]: Initializing Sockets...");
         try{
-            socket         = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
+            socket         = new DatagramSocket(10100);         // socket d'envoie/réception des requêtes SNMP
             trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
         }catch(Exception e){
             System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> "+e.getMessage());
@@ -114,15 +124,17 @@ public class Test {
         S_MSG_HDLR_IS.start();
         S_MSG_HDLR_OS.start();
 
-    /*
+        new ManagerIHM(new SNMPHandler(S_MSG_queue_IS, S_MSG_queue_OS));
+    
         // Initialisation de l'IHM
-        java.awt.EventQueue.invokeLater(new Runnable() {
+     /*  java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new ManagerIHM().setVisible(true);
             }
-        });
+        }); */
 
-    */
+    
         // Ici le role du programme principale est de vérifier
         // que les threads fonctionnent corecctement.
         // Il les relance en cas d'arrête.
@@ -156,24 +168,43 @@ public class Test {
             }
         } */
 
-        // Test d'envoi de message SNMP
+        // Test d'envoi de message SNMP get
         ArrayList<VarBind> varBindingsList = new ArrayList<>();
-        //
-        OID oid         = new OID("1.3.6.1.2.1.1.5.0"); 
-        varBindingsList.add(new VarBind(oid, null));
+        // création d'un oid
+        varBindingsList.add(new VarBind(new OID("1.3.6.1.2.1.1.5.0"), null));
+        // création de la payload
         SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
         try{
-            InetAddress Receiver        = InetAddress.getByName("172.16.80.88");            //
-            //
+            InetAddress Receiver        = InetAddress.getByName("172.16.48.65");            //
+            // création du message SNMP
             SNMPMessage SNMPTestMessage = new SNMPMessage(null, Receiver, 161, 2, "public".getBytes(), (byte) 0xA0, payload); 
-            //
+            // envoi du message
             S_MSG_queue_OS.add(SNMPTestMessage);
         }catch(Exception e){
             System.err.println("ERROR " +e.getMessage());
         }
         
-        
-        
+        // Test d'envoi de message SNMP set
+        ArrayList<VarBind> varBindingsList1 = new ArrayList<>();
+        try{
+            Thread.sleep(1000);
+        }catch(Exception e){
+            
+        }
+        varBindingsList1.add(new VarBind(new OID("1.3.6.1.2.1.1.5.0"), "debiantest".getBytes()));
+        // créeation de la payload
+        SNMPMessagePayload payload1      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList1);
+        try{
+            InetAddress Receiver        = InetAddress.getByName("127.0.0.1");            //
+            // création du message SNMP
+            SNMPMessage SNMPTestMessage1 = new SNMPMessage(null, Receiver, 161, 2, "public".getBytes(), (byte) 0xA4, payload1); 
+            // envoi
+            S_MSG_queue_OS.add(SNMPTestMessage1);
+            
+        }catch(Exception e){
+            System.err.println("ERROR " +e.getMessage());
+        }
+  
     }
 
 }

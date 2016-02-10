@@ -31,6 +31,11 @@ import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
+ * 
+ * Cette classe permet de gérer partiellement l'agent SNMP en intialisant
+ * les Thread nécessaires.
+ * 
+ * @version 1
  */
 public class SNMPAgentTest {
     
@@ -60,7 +65,7 @@ public class SNMPAgentTest {
         System.out.println("[MAIN_PROC]: Initializing Sockets...");
         try{
             socket         = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
-            trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
+            //trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
         }catch(Exception e){
             System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> "+e.getMessage());
             System.err.println("Exiting...");

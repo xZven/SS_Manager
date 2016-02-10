@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Payload" version="4">
+  <OBJECT>
+    <ID name="Payload" mc="Standard.Package" uid="bba5f058-9aa5-47ee-94b0-3b3ebe0a78cf"/>
+    <PID name="SNMPMessage" mc="Standard.Package" uid="94cca497-d12f-4fb3-8d32-9f122eccf418"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[Payload]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="SNMPMessagePayload" mc="Standard.Class" uid="9657213f-722d-442f-bdfb-53565aded914"/>
+        <COMPID name="SNMPTrapV1" mc="Standard.Class" uid="7307d63d-77c6-4c45-9769-33b4396337bd"/>
+        <COMPID name="SNMPTrapV2" mc="Standard.Class" uid="653172f6-113a-4f97-9adf-fe00f81865d1"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

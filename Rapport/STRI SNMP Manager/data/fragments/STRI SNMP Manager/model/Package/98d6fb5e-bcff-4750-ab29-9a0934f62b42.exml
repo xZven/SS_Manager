@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Java class" version="4">
+  <OBJECT>
+    <ID name="Java class" mc="Standard.Package" uid="98d6fb5e-bcff-4750-ab29-9a0934f62b42"/>
+    <PID name="stri snmp manager" mc="Standard.Package" uid="b63b38cb-a073-481b-b67a-7d537f6e6846"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[Java class]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="Queue&lt;DatagramPacket&gt;" mc="Standard.Class" uid="d378051c-ea91-41ca-b071-1d872b06ad03"/>
+        <COMPID name="Thread" mc="Standard.Class" uid="85fa0003-5b59-4fe0-b706-e13e59a86d38"/>
+        <COMPID name="DatagramSocket" mc="Standard.Class" uid="0a69a57a-29d3-4314-b85d-83e0af13231b"/>
+        <COMPID name="Queue&lt;SNMPMessage&gt;" mc="Standard.Class" uid="919d84d8-30af-4b86-88e4-fdbd7da33f3c"/>
+        <COMPID name="Agent" mc="Standard.Actor" uid="411dedcf-536d-4f02-a20e-3f3c1ce5dedb"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

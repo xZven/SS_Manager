@@ -35,7 +35,7 @@ public class OID {
     // Constructeurs
     /**
      * Permet de créer un ObjectIdentifier en passant un byte Array.
-     * 
+     * Aucun vérification n'est faite.
      * @param objectId 
      */
     public OID(byte[] objectId){        
@@ -72,7 +72,12 @@ public class OID {
         //
         return oid;
     }
-
+    
+    /**
+     * Retourn une chaine de caractère en prenant en compte le premier octet primitive 0x2B
+     * 
+     * @return Chaine de caractère au format 43.X.X.X
+     */
     @Override
     public String toString() {
         String oid = "";
@@ -107,7 +112,11 @@ public class OID {
     }
     
     // getters
-
+    
+    /**
+     * Retourn l'objet
+     * @return tableau d'octet 
+     */
     public byte[] getObjectId() {
         return objectId;
     }

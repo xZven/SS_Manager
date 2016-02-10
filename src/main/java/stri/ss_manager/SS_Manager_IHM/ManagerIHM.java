@@ -17,22 +17,18 @@
  */
 package stri.ss_manager.SS_Manager_IHM;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import stri.ss_manager.SNMP.smi.OID;
+import stri.ss_manager.SNMP.smi.VarBind;
+import stri.ss_manager.SNMPKernel.SNMPHandler;
 
 import stri.ss_manager.SNMPMessage.SNMPMessage;
-import stri.ss_manager.SNMPMessage.handler.*;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
-import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
-import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
 
 /**
  *
@@ -42,9 +38,15 @@ public class ManagerIHM extends java.awt.Frame {
 
     /**
      * Creates new form ManagerIHM
+     * @param snmpHandler
      */
-    public ManagerIHM() {
+    public ManagerIHM(SNMPHandler snmpHandler) {
         initComponents();
+        //
+        this.setVisible(true);
+        //
+        this.snmpHandler = snmpHandler;
+        //
 
     }
 
@@ -120,6 +122,12 @@ public class ManagerIHM extends java.awt.Frame {
         jLabel9.setText("Communauté");
 
         jLabel10.setText("Version SNMP");
+
+        AddressIPField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddressIPFieldActionPerformed(evt);
+            }
+        });
 
         choixversionSNMP.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "version 1", "version 2" }));
 
@@ -489,7 +497,7 @@ public class ManagerIHM extends java.awt.Frame {
         }
         Communautebytes = Communaute.getBytes(); // conversion du string communaute en byte[]
         SNMPMessage msg;
-        msg = new SNMPMessage(ipv4, ipv4, 161, version, Communautebytes, payload); // constructeur (probablement faux ici)
+        msg = new SNMPMessage(ipv4, ipv4, 161, version, Communautebytes, (byte)0xA0, payload); // constructeur (probablement faux ici)
         jTabbedPane2.setSelectedIndex(1);   // il aura des conditions avant de passer au tab SNMP
     }//GEN-LAST:event_ValiderConfigurationActionPerformed
 
@@ -529,89 +537,34 @@ public class ManagerIHM extends java.awt.Frame {
         // on nettoie le champs
         SetOIDField.setText("");
     }//GEN-LAST:event_SetOIDFieldMouseClicked
-
+    // GET
     private void GetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetBoutonActionPerformed
-        // TODO add your handling code here:
+        ArrayList<VarBind> varBindingsList = new ArrayList<>();
+        //
+        varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), null));
+        
+        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
+        try{
+            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
+            //
+            SNMPMessage SNMPTestMessage = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA0, payload); 
+            // envoi de la requête
+            SNMPMessage res_msg = snmpHandler.sendGetNextRequest(SNMPTestMessage);
+            // affichage du résultat
+            this.LogTextArea.setText(res_msg.getPayload().toString());
+            
+        }catch(Exception e){
+            System.err.println("[IHM_ERROR]: " +e.getMessage());
+        }        
     }//GEN-LAST:event_GetBoutonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        // Déclaration des variables
-        //Sockets
-        DatagramSocket socket = null;
-        DatagramSocket trap_listenner = null;
-        //Queues
-        Queue<DatagramPacket> DG_packet_queue_IS;       // File d'attente pour les PDU SNMP pour le flux entrant;
-        Queue<DatagramPacket> DG_packet_queue_OS;       // File d'attente pour les PDU SNMP pour le flux sortant;
-
-        Queue<SNMPMessage> S_MSG_queue_IS;           // File d'attente pour les SNMPMessages entrants (transmit au noyau)
-        Queue<SNMPMessage> S_MSG_queue_OS;           // File d'attente pour les SNMPMessages entrants (transmit au noyau)
-
-        //Thread
-        SNMPMessageHandlerInputStream S_MSG_HDLR_IS;     // Thread gérant les SNMPMessages entrants
-        SNMPMessageHandlerOutputStream S_MSG_HDLR_OS;     // Thread gérant les SNMPMessages sortants
-
-        SocketHandlerInputStream SOCK_HDLR_IS;      // Thread gérant les DatagramPacket entrants
-        SocketHandlerOutputStream SOCK_HDLR_OS;      // Thread gérant les DatagramPacket sortants
-
-        //Autres
-        // Initialisation du Socket
-        System.out.println("[MAIN_PROC]: Initializing Sockets...");
-        try {
-            socket = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
-            trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
-        } catch (Exception e) {
-            System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> " + e.getMessage());
-            System.err.println("Exiting...");
-
-            System.exit(-1);                                  // FIN RPOG si Erreur de chargement du socket
-        }
-        System.out.println("[MAIN_PROC]: Sockets initialized...");
-
-        // Initialisation des files d'attentes
-        System.out.println("[MAIN_PROC]: Initializing queues...");
-        DG_packet_queue_IS = new LinkedList<>();
-        //  DG_packet_queue_OS = new LinkedList<>();
-
-        S_MSG_queue_IS = new LinkedList<>();
-        //  S_MSG_queue_OS     = new LinkedList<>();
-
-        System.out.println("[MAIN_PROC]: Queues initialized...");
-        // Initialisation des Threads
-        System.out.println("[MAIN_PROC]: Initializing Threads...");
-
-        // Couche SocketHandler
-        SOCK_HDLR_IS = new SocketHandlerInputStream(socket, DG_packet_queue_IS);
-    //  SOCK_HDLR_OS = new SocketHandlerOutputStream(socket, DG_packet_queue_OS);
-
-        // Couche SNMPMessageHandler
-        S_MSG_HDLR_IS = new SNMPMessageHandlerInputStream(DG_packet_queue_IS, S_MSG_queue_IS);
-    //  S_MSG_HDLR_OS = new SNMPMessageHandlerOutputStream(DG_packet_queue_OS, SOCK_HDLR_OS);
-
-        // Couche SNMPKernel
-        System.out.println("[MAIN_PROC]: Threads initializded...");
-        System.out.println("[MAIN_PROC]: Successfull initialized !");
-        // Démarrage des Threads
-        // Couche SocketHandler
-        SOCK_HDLR_IS.start();
-        //  SOCK_HDLR_OS.start();
-
-        S_MSG_HDLR_IS.start();
-    //  S_MSG_HDLR_OS.start();
-
-        // Initialisation de l'IHM
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ManagerIHM().setVisible(true);
-            }
-        });
-    }
+    private void AddressIPFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddressIPFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AddressIPFieldActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -650,4 +603,6 @@ public class ManagerIHM extends java.awt.Frame {
     private javax.swing.JTree network_tree;
     private javax.swing.JLabel resultatValidationIP;
     // End of variables declaration//GEN-END:variables
+
+    private SNMPHandler snmpHandler;
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="STRI SNMP Manager" version="4">
+  <OBJECT>
+    <ID name="STRI SNMP Manager" mc="Standard.Project" uid="5b13dca7-97c4-4973-8b4c-1a4df28a2678"/>
+    <ATTRIBUTES>
+      <ATT name="ProjectContext"></ATT>
+      <ATT name="ProjectDescr"></ATT>
+      <ATT name="Name"><![CDATA[STRI SNMP Manager]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="DiagramRoot">
+        <COMPID name="STRI SNMP Manager" mc="Standard.DiagramSet" uid="0ac8f1ed-e46e-4767-b440-61430220a59a"/>
+      </COMP>
+      <COMP relation="Model">
+        <COMPID name="stri snmp manager" mc="Standard.Package" uid="b63b38cb-a073-481b-b67a-7d537f6e6846"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

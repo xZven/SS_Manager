@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="SNMPKernel" version="4">
+  <OBJECT>
+    <ID name="SNMPKernel" mc="Standard.Package" uid="ec866944-2498-4263-b450-1d238a3e93ec"/>
+    <PID name="stri snmp manager" mc="Standard.Package" uid="b63b38cb-a073-481b-b67a-7d537f6e6846"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[SNMPKernel]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="SNMPHandler" mc="Standard.Class" uid="c4417f8b-ae38-4f15-a291-90ca3797848a"/>
+        <COMPID name="SNMPActualizer" mc="Standard.Class" uid="a74e6d2f-860a-4b4a-8bf3-ddb688d8f89f"/>
+        <COMPID name="AgentHandler" mc="Standard.Class" uid="ce79866e-d42d-412e-bd2f-2018c91fbc0a"/>
+        <COMPID name="Manager" mc="Standard.Actor" uid="9f856bfc-a33b-44b4-a7b3-a553f5aef8e6"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

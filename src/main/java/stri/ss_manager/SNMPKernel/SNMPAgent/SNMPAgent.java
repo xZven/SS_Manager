@@ -30,6 +30,9 @@ import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
+ * 
+ * Cette classe défini le Thread de l'agent SNMp qui permet de gérer
+ * les requêtes SNMP à destination de cette machine.
  */
 public class SNMPAgent extends Thread {
     
@@ -46,6 +49,12 @@ public class SNMPAgent extends Thread {
     
     // constructeurs
     
+    /**
+     * Créer un Agent SNMP
+     * 
+     * @param S_MSG_queue_IS File d'attente pour le flux entrant des messages SNMP
+     * @param S_MSG_queue_OS File d'attente pour le flux sortant des messages SNMP
+     */
     public SNMPAgent(Queue<SNMPMessage> S_MSG_queue_IS,Queue<SNMPMessage> S_MSG_queue_OS){
         // lecture du fichier de configuration
         try{ 
@@ -243,8 +252,6 @@ public class SNMPAgent extends Thread {
         // Redémarrage auto du thread.
         this.start();
     }
-    
-
-    
+  
 }
 

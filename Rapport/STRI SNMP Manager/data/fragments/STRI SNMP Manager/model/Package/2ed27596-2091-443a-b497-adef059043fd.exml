@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="smi" version="4">
+  <OBJECT>
+    <ID name="smi" mc="Standard.Package" uid="2ed27596-2091-443a-b497-adef059043fd"/>
+    <PID name="stri snmp manager" mc="Standard.Package" uid="b63b38cb-a073-481b-b67a-7d537f6e6846"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[smi]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="SNMPObjectID" mc="Standard.Class" uid="42f672a4-3dbd-4a0c-afb7-f273c0d31391"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>
