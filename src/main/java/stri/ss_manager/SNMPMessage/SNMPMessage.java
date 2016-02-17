@@ -456,18 +456,18 @@ public class SNMPMessage {
             String varBind = "";
             //
             for(VarBind vb : this.payload.getVarBindingsList()) {
-                varBind += vb.toString();
+                varBind += vb.toString() +" ";
             }
             //
-            payload = "\t\tRequestID: "      +this.payload.getRequestId()     + "\n"+
-                      "\t\tErrorStatus: "    +this.payload.getErrorStatus()   + "\n"+
-                      "\t\tErrorIndex: "     +this.payload.getErrorIndex()    + "\n"+
-                      "\n\n VarBin:"         +varBind                         + "\n";
+            payload = "\tRequestID: "      +this.payload.getRequestId()     + "\n"+
+                      "\tErrorStatus: "    +this.payload.getErrorStatus()   + "\n"+
+                      "\tErrorIndex: "     +this.payload.getErrorIndex()    + "\n"+
+                      "\n:"         +varBind                         + "\n";
             return  
-                "FROM "                 +   this.Receiver               +
-                " \t\tCOMMUNAUTY:  "    +   this.version                +
-                " \t\tVERSION:  "       +   new String(this.communauty) +
-                " \t\tPDU_TYPE "        +   this.getPduTypeString()     +             
+                "FROM "               +   this.Sender                 + "\n"+
+                " \tCOMMUNAUTY:  "    +   new String(this.communauty) + "\n"+
+                " \tVERSION:  "       +   this.version                + "\n"+
+                " \tPDU_TYPE "        +   this.getPduTypeString()     + "\n"+            
                 "PAYLOAD\n"+payload;
         }
     }

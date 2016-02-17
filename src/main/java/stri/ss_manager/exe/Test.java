@@ -124,7 +124,7 @@ public class Test {
         S_MSG_HDLR_IS.start();
         S_MSG_HDLR_OS.start();
 
-        new ManagerIHM(new SNMPHandler(S_MSG_queue_IS, S_MSG_queue_OS));
+        ManagerIHM ihm = new ManagerIHM(new SNMPHandler(S_MSG_queue_IS, S_MSG_queue_OS));
     
         // Initialisation de l'IHM
      /*  java.awt.EventQueue.invokeLater(new Runnable() {
@@ -167,7 +167,7 @@ public class Test {
                 System.err.println("[MAIN_PROC]: "+e.getMessage());
             }
         } */
-
+/*
         // Test d'envoi de message SNMP get
         ArrayList<VarBind> varBindingsList = new ArrayList<>();
         // création d'un oid
@@ -204,7 +204,7 @@ public class Test {
         }catch(Exception e){
             System.err.println("ERROR " +e.getMessage());
         }
-  
+  */
     }
 
 }

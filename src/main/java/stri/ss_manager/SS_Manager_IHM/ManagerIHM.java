@@ -32,7 +32,12 @@ import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 
 /**
  *
- * @author Manavai
+ * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
+ * 
+ *  * Cette classe permet de tester le Manager SNMP en initialisant
+ * les Threads nécessaire et en créant des messages de tests.
+ * 
+ * @version 1
  */
 public class ManagerIHM extends java.awt.Frame {
 
@@ -519,8 +524,9 @@ public class ManagerIHM extends java.awt.Frame {
     }//GEN-LAST:event_ValueFieldMouseClicked
 
     private void ClearFieldBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearFieldBoutonActionPerformed
-        SetOIDField.setText("");
-        ValueField.setText("");
+        SetOIDField.setText("");    //
+        ValueField.setText("");     //
+        LogTextArea.setText("");    //
     }//GEN-LAST:event_ClearFieldBoutonActionPerformed
 
     private void SetOIDFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetOIDFieldActionPerformed
@@ -539,22 +545,23 @@ public class ManagerIHM extends java.awt.Frame {
 
     private void SetOIDFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SetOIDFieldMouseClicked
         // TODO add your handling code here:
-        // on nettoie le champs
-        SetOIDField.setText("");
+        // on sélectionne le text pour que l'utilisateur l'efface ou puisse le modifier
+        SetOIDField.selectAll();
     }//GEN-LAST:event_SetOIDFieldMouseClicked
-    // GET
+    // GET OK
     private void GetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetBoutonActionPerformed
         ArrayList<VarBind> varBindingsList = new ArrayList<>();
         //
         varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), null));
-        
+        //
         SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
         try{
+            //
             InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
             //
-            SNMPMessage SNMPTestMessage = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA0, payload); 
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA0, payload); 
             // envoi de la requête
-            SNMPMessage res_msg = snmpHandler.sendGetNextRequest(SNMPTestMessage);
+            SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
             // affichage du résultat
             this.LogTextArea.setText(res_msg.toStringforIHM());
             
@@ -570,7 +577,7 @@ public class ManagerIHM extends java.awt.Frame {
     private void AddressIPFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddressIPFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_AddressIPFieldActionPerformed
-    // SET
+    // SET 
     private void SetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetBoutonActionPerformed
         // TODO add your handling code here:
         // désactivation du bouton
@@ -585,7 +592,7 @@ public class ManagerIHM extends java.awt.Frame {
             //
             InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
             //
-            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA0, payload); 
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA4, payload); 
             // envoi de la requête
             SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
             // affichage du résultat

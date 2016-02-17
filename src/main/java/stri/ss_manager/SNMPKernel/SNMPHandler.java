@@ -84,11 +84,11 @@ public class SNMPHandler extends Thread{
             // on attends et au bout d'un délai on renvoi un message
             // 4 essais MAX
             
-            this.S_MSG_queue_OS.add(S_MSG_TO_SEND); counter += 1;
-            // attente de la réponse
+            this.S_MSG_queue_OS.add(S_MSG_TO_SEND); counter++;
+            
                         
             try{
-                sleep(100);
+                sleep(2000);    // 2 s avant retransmission
             }catch(Exception e){
                 System.err.println("[SNMPHandler.sendGetRequest()]: Error de sleep --> " + e.getMessage());
             }
