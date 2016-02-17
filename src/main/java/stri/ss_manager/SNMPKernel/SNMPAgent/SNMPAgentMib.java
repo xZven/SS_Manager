@@ -18,11 +18,8 @@
 package stri.ss_manager.SNMPKernel.SNMPAgent;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.Scanner;
 import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;

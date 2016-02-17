@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.Queue;
 import java.util.Scanner;
-import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 

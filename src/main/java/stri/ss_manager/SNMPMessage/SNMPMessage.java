@@ -21,6 +21,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.payload.SNMPTrapV1;
 import stri.ss_manager.SNMPMessage.payload.SNMPTrapV2;
@@ -216,7 +217,7 @@ public class SNMPMessage {
     @Override
     public String toString(){
         
-        if(this.payload == null){ // payload == trapv1
+        if(this.payload == null){ //   trapv1
             return  
                 "[SENDER]  "       +   this.Sender                 +
                 " [RECEIVER]  "    +   this.Receiver               +
@@ -409,4 +410,65 @@ public class SNMPMessage {
      * Aucun setters n'est défini car un message SNMP n'est utilisable qu'une seule fois.
      * Pour répondre, un nouveau message SNMP doit être créé.
      */
+    
+    public String getPduTypeString(){
+
+            switch(this.pduType){
+               case 0xA0:               // GetReq;
+                return "GetReq";
+            case 0xA1:                  // GetNextReq;
+                return "GetNextReq"; 
+            case 0xA2:                  // GetRes
+                return "GetRes";
+            case 0xA3:                  // SetReq
+                return "SetReq";
+            case 0xA4:                  // SNMPv1 Trap
+                return "SNMPv1 Trap";
+            case 0xA5:                  // GetBulkReq
+                // not handled
+                return "GetBulkReq";
+            case 0xA6:                  // InformReq
+                // not handled
+                return "InformReq";
+            case 0xA7:                  // SNMPv2 Trap
+                return "SNMPv2 Trap";
+            case 0xA8:                  // Report
+                // not handled
+                return "Report";
+            default:
+                return "UNKNOWN PDU";  
+            }
+    }
+    public String toStringforIHM() {
+        
+        // AFFICHAGE
+        //
+        // FROM 127.0.0.1 
+        //      COMMUNAUTY: "public"
+        //      VERSION: 1
+        //      PDU TYPE: GetReq\n
+        // PAYLOAD:
+      
+        if(this.payload == null){ // payload == trapv1
+           return "";            
+        }else{                    // payload != trapv1
+            String payload;
+            String varBind = "";
+            //
+            for(VarBind vb : this.payload.getVarBindingsList()) {
+                varBind += vb.toString();
+            }
+            //
+            payload = "\t\tRequestID: "      +this.payload.getRequestId()     + "\n"+
+                      "\t\tErrorStatus: "    +this.payload.getErrorStatus()   + "\n"+
+                      "\t\tErrorIndex: "     +this.payload.getErrorIndex()    + "\n"+
+                      "\n\n VarBin:"         +varBind                         + "\n";
+            return  
+                "FROM "                 +   this.Receiver               +
+                " \t\tCOMMUNAUTY:  "    +   this.version                +
+                " \t\tVERSION:  "       +   new String(this.communauty) +
+                " \t\tPDU_TYPE "        +   this.getPduTypeString()     +             
+                "PAYLOAD\n"+payload;
+        }
+    }
 }

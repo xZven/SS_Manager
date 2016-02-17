@@ -354,6 +354,10 @@ public class SNMPMessagePayload {
     public void setErrorIndex(int errorIndex) {
         this.errorIndex = errorIndex;
     }
+
+    public String toStringforIHM() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }
