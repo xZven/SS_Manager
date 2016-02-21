@@ -59,6 +59,14 @@ public class ManagerIHM extends java.awt.Frame {
         String PATTERN = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
         return ip.matches(PATTERN);
     }
+    
+    public void setOidandValueOnIhmByVarBin(VarBind vb){
+        // OID
+        this.SetOIDField.setText(vb.getObjectId().getObjectIdStringFormat());
+        // Value
+        this.ValueField.setText(new String(vb.getObjectValue()));
+        
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -572,6 +580,8 @@ public class ManagerIHM extends java.awt.Frame {
             SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
             // affichage du résultat
             this.LogTextArea.setText(res_msg.toStringforIHM());
+            //
+            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
             
         }catch(Exception e){
             //réactiovation du bouton
@@ -579,6 +589,7 @@ public class ManagerIHM extends java.awt.Frame {
             //
             System.err.println("[IHM_ERROR.GetBouton]: " +e.getMessage());
         } 
+        
         this.GetBouton.setEnabled(true);
     }//GEN-LAST:event_GetBoutonActionPerformed
 
@@ -611,6 +622,7 @@ public class ManagerIHM extends java.awt.Frame {
             // affichage du résultat
             this.LogTextArea.setText(res_msg.toStringforIHM());
             //
+            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
         }catch(Exception e){
             this.SetBouton.setEnabled(true);
             System.err.println("[IHM_ERROR.SetBouton]: " +e.getMessage());
@@ -639,6 +651,8 @@ public class ManagerIHM extends java.awt.Frame {
             SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
             // affichage du résultat
             this.LogTextArea.setText(res_msg.toStringforIHM());
+            //
+            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
             //
         }catch(Exception e){
             this.GetNextBouton.setEnabled(true);
