@@ -47,6 +47,7 @@ public class SNMPHandler extends Thread{
         Queue<SNMPMessage> S_MSG_queue_IS;
         Queue<SNMPMessage> S_MSG_queue_OS;
     //
+        int requestIdIncrementator = 0;
         
     // constructeurs
     
@@ -77,7 +78,11 @@ public class SNMPHandler extends Thread{
      */
     public SNMPMessage sendGetRequest(SNMPMessage S_MSG_TO_SEND){
         SNMPMessage S_MSG_RESPONSE = null;
+        //
         int counter = 0;
+        // request id
+        S_MSG_TO_SEND.getPayload().setRequestId(S_MSG_TO_SEND.getPayload().getRequestId() + this.requestIdIncrementator++);
+        
     // ********************************************************************* //
         
         while((S_MSG_RESPONSE = this.S_MSG_queue_IS.poll()) == null && counter <4){ // TANT qu'aucun message n'est reçu
@@ -115,6 +120,8 @@ public class SNMPHandler extends Thread{
     public SNMPMessage sendGetNextRequest(SNMPMessage S_MSG_TO_SEND){
            SNMPMessage S_MSG_RESPONSE = null;
         int counter = 0;
+        // request id
+        S_MSG_TO_SEND.getPayload().setRequestId(S_MSG_TO_SEND.getPayload().getRequestId() + this.requestIdIncrementator++);
     // ********************************************************************* //
         
         while((S_MSG_RESPONSE = this.S_MSG_queue_IS.poll()) == null && counter <4){ // TANT qu'aucun message n'est reçu
@@ -151,6 +158,8 @@ public class SNMPHandler extends Thread{
     public SNMPMessage sendSetRequest(SNMPMessage S_MSG_TO_SEND){
                SNMPMessage S_MSG_RESPONSE = null;
         int counter = 0;
+        // request id
+        S_MSG_TO_SEND.getPayload().setRequestId(S_MSG_TO_SEND.getPayload().getRequestId() + this.requestIdIncrementator++);
     // ********************************************************************* //
         
         while((S_MSG_RESPONSE = this.S_MSG_queue_IS.poll()) == null && counter <4){ // TANT qu'aucun message n'est reçu

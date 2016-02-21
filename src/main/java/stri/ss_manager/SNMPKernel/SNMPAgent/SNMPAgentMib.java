@@ -32,7 +32,7 @@ import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 public class SNMPAgentMib {
     // attributs
     
-    String mibFile = "./mib/SNMPAgent.mib";
+    String mibFile = "./mib/SNMPv2.mib";
     
     // méthodes
     
