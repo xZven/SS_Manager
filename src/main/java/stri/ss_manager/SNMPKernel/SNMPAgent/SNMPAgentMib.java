@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Scanner;
+import stri.ss_manager.SNMP.smi.OID;
 import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 
@@ -34,6 +35,13 @@ public class SNMPAgentMib {
     String mibFile = "./mib/SNMPAgent.mib";
     
     // méthodes
+    
+    /**
+     * Cette fonction permet d'obtenir la valeur des oid
+     * présente dans la payload des messages SNMP.
+     * @param payload
+     * @return payload avec les valeurs attribuer
+     */
     public SNMPMessagePayload getOidValue(SNMPMessagePayload payload) {
         //
         try{ 
@@ -94,6 +102,13 @@ public class SNMPAgentMib {
         return payload;
     }
 
+    /**
+     * Cette fonction  permet de définir la valeur des oid
+     * présents dans les messages SNMP, dans la MIB de l'agent.
+     * 
+     * @param payload payload contenant les oid à set ainsi que leur valeur
+     * @return la payload qui pourra être utilisé dans un message GET.RES
+     */
     public SNMPMessagePayload setOidValue(SNMPMessagePayload payload) {
         /*
         try{ 
@@ -151,8 +166,31 @@ public class SNMPAgentMib {
         return payload;
     }
 
+    /**
+     * Cette fonction permet d'obtenir la valeur suivante l'oid
+     * présent dans la payload d'un message SNMP.
+     * 
+     * @param payload payload contenant la requête getNext
+     * @return payload contenant les oid et leur valeurs
+     */
     public SNMPMessagePayload getNextOidValue(SNMPMessagePayload payload) {
-       throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates. 
+       // on fait un get de la valeur suivant
+       
+       // Pour chaque Varbind dans la payload, on incrémente la valeur de l'oid
+       // exemple: 1.3.6.1.2.1.1.6.0 devient  1.3.6.1.2.1.1.7.0
+       byte[] oid;
+
+       for(VarBind vb:payload.getVarBindingsList()){
+           //
+           oid = vb.getObjectId().getObjectId();
+           // On incrémente l'avant dernière valeur
+           oid[oid.length - 2] += 1;
+           // on reattribut l'oid à la payload
+           vb.setObjectId(new OID(oid));
+       }
+       // get des valeurs
+       return this.getOidValue(payload);
+       
     }
     
 }

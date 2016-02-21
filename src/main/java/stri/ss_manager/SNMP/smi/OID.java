@@ -35,7 +35,7 @@ public class OID {
     // Constructeurs
     /**
      * Permet de créer un ObjectIdentifier en passant un byte Array.
-     * Aucun vérification n'est faite.
+     * Aucune vérification n'est faite.
      * @param objectId 
      */
     public OID(byte[] objectId){        
