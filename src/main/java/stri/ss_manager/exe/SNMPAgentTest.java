@@ -65,7 +65,7 @@ public class SNMPAgentTest {
         System.out.println("[MAIN_PROC]: Initializing Sockets...");
         try{
             socket         = new DatagramSocket(161);         // socket d'envoie/réception des requêtes SNMP
-            //trap_listenner = new DatagramSocket(162);         // socket de réception des TRAPS
+            
         }catch(Exception e){
             System.err.println("[MAIN_PROC]: ERROR OPENNING SOCKETS --> "+e.getMessage());
             System.err.println("Exiting...");

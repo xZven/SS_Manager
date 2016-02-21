@@ -209,7 +209,7 @@ public class ManagerIHM extends java.awt.Frame {
         jTabbedPane2.addTab("Configuration", ConfigurationPanel);
 
         label_soft_name.setFont(new java.awt.Font("Ti92Pluspc", 1, 36)); // NOI18N
-        label_soft_name.setText("STRI SNMP Manager v1");
+        label_soft_name.setText("STRI SNMP Manager v2");
 
         jButton1.setText("Charger MIB");
         jButton1.setActionCommand("ChargerMIB");
@@ -232,6 +232,11 @@ public class ManagerIHM extends java.awt.Frame {
         });
 
         GetNextBouton.setText("GetNext");
+        GetNextBouton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GetNextBoutonActionPerformed(evt);
+            }
+        });
 
         SetBouton.setText("Set");
         SetBouton.addActionListener(new java.awt.event.ActionListener() {
@@ -550,6 +555,9 @@ public class ManagerIHM extends java.awt.Frame {
     }//GEN-LAST:event_SetOIDFieldMouseClicked
     // GET OK
     private void GetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetBoutonActionPerformed
+        // désactivation du bouton
+        this.GetBouton.setEnabled(false);
+        //
         ArrayList<VarBind> varBindingsList = new ArrayList<>();
         //
         varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), null));
@@ -566,8 +574,12 @@ public class ManagerIHM extends java.awt.Frame {
             this.LogTextArea.setText(res_msg.toStringforIHM());
             
         }catch(Exception e){
+            //réactiovation du bouton
+            this.GetBouton.setEnabled(true);
+            //
             System.err.println("[IHM_ERROR.GetBouton]: " +e.getMessage());
-        }        
+        } 
+        this.GetBouton.setEnabled(true);
     }//GEN-LAST:event_GetBoutonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -577,10 +589,11 @@ public class ManagerIHM extends java.awt.Frame {
     private void AddressIPFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddressIPFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_AddressIPFieldActionPerformed
-    // SET 
+    // SET OK
     private void SetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetBoutonActionPerformed
         // TODO add your handling code here:
         // désactivation du bouton
+        this.SetBouton.setEnabled(false);
         
         ArrayList<VarBind> varBindingsList = new ArrayList<>();
         //
@@ -599,9 +612,41 @@ public class ManagerIHM extends java.awt.Frame {
             this.LogTextArea.setText(res_msg.toStringforIHM());
             //
         }catch(Exception e){
+            this.SetBouton.setEnabled(true);
             System.err.println("[IHM_ERROR.SetBouton]: " +e.getMessage());
         }
+        //
+        this.SetBouton.setEnabled(true);
     }//GEN-LAST:event_SetBoutonActionPerformed
+    // GET NEXT OK
+    private void GetNextBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetNextBoutonActionPerformed
+        // TODO add your handling code here:
+        // désactivation du bouton
+        this.GetNextBouton.setEnabled(false);
+        //        
+        ArrayList<VarBind> varBindingsList = new ArrayList<>();
+        //
+        varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), this.ValueField.getText().getBytes()));
+                                                              // reqID, pas d'erreur, pas d'erreurn, list varbind
+        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000000, 0, 0, varBindingsList);
+        // création du message SNMP
+        try{
+            //
+            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
+            //
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA1, payload); 
+            // envoi de la requête
+            SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
+            // affichage du résultat
+            this.LogTextArea.setText(res_msg.toStringforIHM());
+            //
+        }catch(Exception e){
+            this.GetNextBouton.setEnabled(true);
+            System.err.println("[IHM_ERROR.SetBouton]: " +e.getMessage());
+        }
+        //
+        this.GetNextBouton.setEnabled(true);
+    }//GEN-LAST:event_GetNextBoutonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

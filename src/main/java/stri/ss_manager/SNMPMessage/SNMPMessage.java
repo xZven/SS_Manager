@@ -466,7 +466,7 @@ public class SNMPMessage {
             return  
                 "FROM "               +   this.Sender                 + "\n"+
                 " \tCOMMUNAUTY:  "    +   new String(this.communauty) + "\n"+
-                " \tVERSION:  "       +   this.version                + "\n"+
+                " \tVERSION:  "       +   this.version  + 1           + "\n"+
                 " \tPDU_TYPE "        +   this.getPduTypeString()     + "\n"+            
                 "PAYLOAD\n"+payload;
         }

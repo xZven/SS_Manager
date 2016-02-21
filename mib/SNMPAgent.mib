@@ -1,5 +1,12 @@
 # Version 2 
-#OID ObjectName	Access	Value
+#OID Syntax ObjectName	Access	Value
 #
-1.3.6.1.2.1.1.5.0 Machine Projet Jav
-1.3.6.1.2.1.1.6.0 Description de la machine inconnu
+#
+# System (1)
+1.3.6.1.2.1.1.1.0 sysDescr RW Description de la machine inconnu
+1.3.6.1.2.1.1.2.0 sysObjectID RO 0
+1.3.6.1.2.1.1.3.0 sysUptime RO 0
+1.3.6.1.2.1.1.4.0 Contact RW manavai@tp_vava.fr
+1.3.6.1.2.1.1.5.0 SysName RO Machine Projet Java
+1.3.6.1.2.1.1.6.0 SysLocation RW Chez moi
+# Interfaces (2)

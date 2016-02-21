@@ -46,7 +46,7 @@ import stri.ss_manager.SS_Manager_IHM.ManagerIHM;
  * @version 1
  * 
  */
-public class Test {
+public class SNMPManagerTest {
 
     /**
      * Programme principale qui sert à tester le Manager SNMP
@@ -168,7 +168,7 @@ public class Test {
             }
         } */
 /*
-        // Test d'envoi de message SNMP get
+        // SNMPManagerTest d'envoi de message SNMP get
         ArrayList<VarBind> varBindingsList = new ArrayList<>();
         // création d'un oid
         varBindingsList.add(new VarBind(new OID("1.3.6.1.2.1.1.5.0"), null));
@@ -184,7 +184,7 @@ public class Test {
             System.err.println("ERROR " +e.getMessage());
         }
         
-        // Test d'envoi de message SNMP set
+        // SNMPManagerTest d'envoi de message SNMP set
         ArrayList<VarBind> varBindingsList1 = new ArrayList<>();
         try{
             Thread.sleep(1000);

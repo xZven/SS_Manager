@@ -61,8 +61,14 @@ public class SNMPAgentMib {
                 }else{                           // paramètre de configuration
                     //
                     Scanner scanner = new Scanner(ligne);
+                    // Format d'un ligne:
+                    // OID ObjectName	Access	Value
+                    String oid        = scanner.next();
                     //
-                    String oid      = scanner.next();
+                    String objectName = scanner.next();
+                    //
+                    String maxAccess  = scanner.next();
+                    //                    
                     String oidValue = "";
                     
                     
@@ -78,6 +84,9 @@ public class SNMPAgentMib {
                             vb.setObjectValue(oidValue.getBytes());
                             // matching réussi
                             index++;
+                            // affichage
+                            System.out.println("[AGENT_MIB_MATCHER]: "+oid+" ("+objectName+") ["+maxAccess+"]: "+oidValue);
+                            
                         }
                     }
                     // si le nombre de match est inférieure au nombre de VarBind
