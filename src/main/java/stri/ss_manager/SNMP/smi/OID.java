@@ -42,6 +42,10 @@ public class OID {
         this.objectId    = objectId;
     }
     
+    /**
+     * Permet de créer un ObjectIdentifier en passant un chaine de caractère au format 1.3.X.X.X     * 
+     * @param objectId oid à créer
+     */
     public OID(String objectId){ 
        
         this.objectId = new byte[objectId.getBytes().length - ((objectId.getBytes().length/2))]; // 3 Piquets = 2 Barrière et on ne veut que les barrière.

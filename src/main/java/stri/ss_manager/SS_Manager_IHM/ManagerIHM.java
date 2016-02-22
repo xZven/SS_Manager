@@ -55,8 +55,10 @@ public class ManagerIHM extends java.awt.Frame {
         this.setVisible(true);
         //
         this.snmpHandler = snmpHandler;
-        //
-
+        // désactivation des boutons
+        this.GetBouton.setEnabled(false);
+        this.GetNextBouton.setEnabled(false);
+        this.SetBouton.setEnabled(false);
     }
     
     // méthodes non générées
@@ -83,44 +85,31 @@ public class ManagerIHM extends java.awt.Frame {
      * @return le nom de l'v_oid
      */
     private String oidLookUp(OID oid){
-        
-         //
-        
          // ouverture du fichier mib
         try{
             BufferedReader br=new BufferedReader(
                                 new InputStreamReader(
                                     new FileInputStream(this.mibFile)));
             String ligne;
-            //
-            // FORMAT D'UNE LIGNE DANS UN FICHIER MIB
-            // X.X.X.X.X.X.X.X VALUE VALUE VALUE
-            int index       = 0;                 // variable utilisé pour les erreurs de mathcing
+            //                // variable utilisé pour les erreurs de mathcing
             while ((ligne=br.readLine())!=null){ // lecture lgine par ligne
-                System.out.println(ligne);
+                //System.out.println(ligne);
                 if(ligne.charAt(0) == '#'){      // ligne de commentaire
                     // Ignoré
                 }else{                           // ligne normale
                     //
                     Scanner scanner = new Scanner(ligne);
-                    // Format d'un ligne:
-                    // OID ObjectName	Access	Value
+                    //
                     String v_oid       = scanner.next();
                     //
                     String objectName  = scanner.next();
-                    //
-                    String maxAccess   = scanner.next();
-                    //                    
-                    String oidValue    = "";
-                    // on concatène tous ce qui suit l'v_oid dans le fichier
-                    while(scanner.hasNext()) oidValue += " " + scanner.next();
-                    
-                    // si l'oid de la ligne correspond avec celui fourni en paramètre
-                    if(v_oid.getBytes() == oid.getObjectIdStringFormat().getBytes()){
-                        // fermeture des flux
+                    // matching...
+                    String temp = SetOIDField.getText();
+                    if(temp.matches(v_oid)){
+                        System.out.println("[IHM.oidLookUp()]: "+v_oid+" ("+objectName+")");
+                        //fermeture des flux
                         scanner.close();
                         br.close(); 
-                        //
                         return objectName;
                     }
                     // fermeture scanner
@@ -129,12 +118,11 @@ public class ManagerIHM extends java.awt.Frame {
                 }
             }       
             br.close(); 
-        }		
-        catch (Exception e){
+        } catch (Exception e){
             //
             System.err.println("[IHM.oidLookUp()]: ERROR --> "+e.toString());
         }
-        return null;
+        return "Void";
     }
     
     /**
@@ -177,6 +165,7 @@ public class ManagerIHM extends java.awt.Frame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         ValueField = new javax.swing.JTextField();
+        oid_name_label = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
 
@@ -407,6 +396,8 @@ public class ManagerIHM extends java.awt.Frame {
             }
         });
 
+        oid_name_label.setText("void");
+
         javax.swing.GroupLayout SNMPPanelLayout = new javax.swing.GroupLayout(SNMPPanel);
         SNMPPanel.setLayout(SNMPPanelLayout);
         SNMPPanelLayout.setHorizontalGroup(
@@ -448,9 +439,12 @@ public class ManagerIHM extends java.awt.Frame {
                                         .addGroup(SNMPPanelLayout.createSequentialGroup()
                                             .addComponent(jLabel5)
                                             .addGap(10, 10, 10)))
-                                    .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(ValueField, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
-                                        .addComponent(SetOIDField))
+                                    .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(ValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(SNMPPanelLayout.createSequentialGroup()
+                                            .addComponent(SetOIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(oid_name_label, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addGap(0, 0, Short.MAX_VALUE))))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -459,40 +453,45 @@ public class ManagerIHM extends java.awt.Frame {
             .addGroup(SNMPPanelLayout.createSequentialGroup()
                 .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(SNMPPanelLayout.createSequentialGroup()
+                        .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(SNMPPanelLayout.createSequentialGroup()
+                                .addGap(19, 19, 19)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(SNMPPanelLayout.createSequentialGroup()
+                                .addGap(27, 27, 27)
+                                .addComponent(label_soft_name, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(GetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(GetNextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(SetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(SNMPPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(SNMPPanelLayout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(SNMPPanelLayout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(label_soft_name, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(GetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(GetNextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(SetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(14, 14, 14)
-                .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(SNMPPanelLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
                         .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(SNMPPanelLayout.createSequentialGroup()
                                 .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(SetOIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1))
+                                    .addComponent(jLabel1)
+                                    .addComponent(oid_name_label, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(ValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel5)))
                             .addComponent(ClearFieldBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
+                .addGap(3, 3, 3))
         );
 
         SetOIDField.getAccessibleContext().setAccessibleName("GetValueField");
@@ -574,12 +573,23 @@ public class ManagerIHM extends java.awt.Frame {
         SNMPMessagePayload payload = null; // ?
         String AddressIPAverifier = AddressIPField.getText(); // recuperation de l'addresse IP
         if (validate(AddressIPAverifier) == true) {           // validation
-
+            //réactivation des boutons
+            this.GetBouton.setEnabled(true);
+            this.GetNextBouton.setEnabled(true);
+            this.SetBouton.setEnabled(true);
+            // changement de tab
+            jTabbedPane2.setSelectedIndex(1);   // il aura des conditions avant de passer au tab SNMP
+            //
+            resultatValidationIP.setText("");
         } else {
-            JOptionPane.showMessageDialog (null, "Addresse IP invalide", "Attention", JOptionPane.WARNING_MESSAGE);
+            // on les désactive
+            this.GetBouton.setEnabled(false);
+            this.GetNextBouton.setEnabled(false);
+            this.SetBouton.setEnabled(false);
+            //JOptionPane.showMessageDialog (null, "Addresse IP invalide", "Attention", JOptionPane.WARNING_MESSAGE);
             resultatValidationIP.setText("Addresse IP invalide"); // warning si invalide
         }
-        String Communaute = CommunauteField.getText();        // recuperation de la communauté
+ /*       String Communaute = CommunauteField.getText();        // recuperation de la communauté
 
         version = choixversionSNMP.getSelectedIndex() + 1;    // recuperation du numero de la version choisi selon l'index+1 car ca commence par 0. (ici on peux pas utiliser getSelectedValue())
         try {
@@ -589,8 +599,8 @@ public class ManagerIHM extends java.awt.Frame {
         }
         Communautebytes = Communaute.getBytes(); // conversion du string communaute en byte[]
         SNMPMessage msg;
-        msg = new SNMPMessage(ipv4, ipv4, 161, version, Communautebytes, (byte)0xA0, payload); // constructeur (probablement faux ici)
-        jTabbedPane2.setSelectedIndex(1);   // il aura des conditions avant de passer au tab SNMP
+        msg = new SNMPMessage(ipv4, ipv4, 161, version, Communautebytes, (byte)0xA0, payload); // constructeur (probablement faux ici)*/
+        
     }//GEN-LAST:event_ValiderConfigurationActionPerformed
 
     private void ValueFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValueFieldActionPerformed
@@ -621,7 +631,9 @@ public class ManagerIHM extends java.awt.Frame {
         if (SetOIDField.getText().isEmpty() == true) {
             SetOIDField.setText("Value to set");
         } else {
-            // il y a une valeur dans le champs donc on ne fait rien
+            // il y a une valeur dans le champs on va résoudre l'oid
+            //
+            oid_name_label.setText(oidLookUp(new OID(this.SetOIDField.getText())));  
         }
     }//GEN-LAST:event_SetOIDFieldMouseExited
 
@@ -766,6 +778,7 @@ public class ManagerIHM extends java.awt.Frame {
     private javax.swing.JLabel label_soft_name;
     private javax.swing.JPanel main_panel;
     private javax.swing.JTree network_tree;
+    private javax.swing.JLabel oid_name_label;
     private javax.swing.JLabel resultatValidationIP;
     // End of variables declaration//GEN-END:variables
 
