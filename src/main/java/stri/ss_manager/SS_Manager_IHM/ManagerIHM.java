@@ -17,9 +17,13 @@
  */
 package stri.ss_manager.SS_Manager_IHM;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -37,7 +41,7 @@ import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
  *  * Cette classe permet de tester le Manager SNMP en initialisant
  * les Threads nécessaire et en créant des messages de tests.
  * 
- * @version 1
+ * @version 2
  */
 public class ManagerIHM extends java.awt.Frame {
 
@@ -54,20 +58,85 @@ public class ManagerIHM extends java.awt.Frame {
         //
 
     }
-
+    
+    // méthodes non générées
     public static boolean validate(final String ip) { // fonction pour validation addresse IPV4
         String PATTERN = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
         return ip.matches(PATTERN);
     }
     
-    public void setOidandValueOnIhmByVarBin(VarBind vb){
+    private void setOidandValueOnIhmByVarBin(VarBind vb){
         // OID
         this.SetOIDField.setText(vb.getObjectId().getObjectIdStringFormat());
         // Value
         this.ValueField.setText(new String(vb.getObjectValue()));
         
     }
-
+        
+    /**
+     * Cette fonction peremt de résoudre le nom de l'v_oid en allant
+ interroger les mibs chargées.
+     * 
+     * Ex: 1.3.6.1.2.1.1.5.0 ==> sysName
+     * 
+     * @param oid v_oid à résoudre
+     * @return le nom de l'v_oid
+     */
+    private String oidLookUp(OID oid){
+        
+         //
+        
+         // ouverture du fichier mib
+        try{
+            BufferedReader br=new BufferedReader(
+                                new InputStreamReader(
+                                    new FileInputStream(this.mibFile)));
+            String ligne;
+            //
+            // FORMAT D'UNE LIGNE DANS UN FICHIER MIB
+            // X.X.X.X.X.X.X.X VALUE VALUE VALUE
+            int index       = 0;                 // variable utilisé pour les erreurs de mathcing
+            while ((ligne=br.readLine())!=null){ // lecture lgine par ligne
+                System.out.println(ligne);
+                if(ligne.charAt(0) == '#'){      // ligne de commentaire
+                    // Ignoré
+                }else{                           // ligne normale
+                    //
+                    Scanner scanner = new Scanner(ligne);
+                    // Format d'un ligne:
+                    // OID ObjectName	Access	Value
+                    String v_oid       = scanner.next();
+                    //
+                    String objectName  = scanner.next();
+                    //
+                    String maxAccess   = scanner.next();
+                    //                    
+                    String oidValue    = "";
+                    // on concatène tous ce qui suit l'v_oid dans le fichier
+                    while(scanner.hasNext()) oidValue += " " + scanner.next();
+                    
+                    // si l'oid de la ligne correspond avec celui fourni en paramètre
+                    if(v_oid.getBytes() == oid.getObjectIdStringFormat().getBytes()){
+                        // fermeture des flux
+                        scanner.close();
+                        br.close(); 
+                        //
+                        return objectName;
+                    }
+                    // fermeture scanner
+                    scanner.close();
+                    // s'il n'y a aucun match, on générera une erreur.
+                }
+            }       
+            br.close(); 
+        }		
+        catch (Exception e){
+            //
+            System.err.println("[IHM.oidLookUp()]: ERROR --> "+e.toString());
+        }
+        return null;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -701,4 +770,8 @@ public class ManagerIHM extends java.awt.Frame {
     // End of variables declaration//GEN-END:variables
 
     private SNMPHandler snmpHandler;
+    
+    // fichier mib
+    
+    String mibFile = "./mib/SNMPv2.mib";
 }
