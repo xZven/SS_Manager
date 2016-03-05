@@ -84,8 +84,35 @@ public class SNMPMessage {
         this.pduType    = pduType;
         
         this.payload    = payload;
-        this.trapV1      = null;   
+        this.trapV1     = null;   
+    }
+    
+    /**
+     * Cette fonction permet de construire un message SNMP en lui passant
+     * les paramètres suivants.
+     * 
+     * @param Sender Adresse IP de celui qui envoi le message SNMP
+     * @param Receiver Adresse IP de celui qui reçoit le message SNMP
+     * @param port Numéro de port distant sur lequel le message SNMP est reçu ou envoyé.
+     * @param version Numéro de version.
+     * @param communauty Nom de la communauté.
+     * @param pduType Type de la PDU (e.g: Get(0xA0), GetNext (0xA1) , Set (0xA3), GetResponse (0xA2) , Trapv1 (0xA4), Trapv2 (0xA7))
+     * @param trapv1 Payload du message SNMP (TRAPv1)
+     */
+    public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, byte pduType, SNMPTrapV1 trapv1, int i){
+        
+        this.Sender     = Sender;
+        this.Receiver   = Receiver;
+        this.port       = port;
+        
+        this.version    = version - 1;
+        this.communauty = communauty;
+        this.pduType    = pduType;
+        
+        this.payload    = null;
+        this.trapV1     = trapv1;   
     }    
+   
    
     /**
      * Construit un SNMPMessage en lui passant un DatagramPacket

@@ -25,6 +25,7 @@ import java.util.Queue;
 import java.util.Scanner;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
+import stri.ss_manager.SNMPMessage.payload.SNMPTrapV2;
 
 /**
  *
@@ -116,90 +117,96 @@ public class SNMPAgent extends Thread {
                 // on extrait le message de la file d'attente
                 
                 temp_SNMPMessage = this.S_MSG_queue_IS.poll();
-                
-                // vérification du nom de communauté
+                    //
                 switch(temp_SNMPMessage.getPduType()){
-                    case 0xA0: // ******************************************* //Get.req
-                        System.out.println("[SNMP_AGENT] GET.req Received...");
-                        // vérification de la communauté
-                        if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){
-                            // Traitement du message reçu
-                            System.out.println("[SNMP_AGENT] communauté égale");
-                            res_payload = this.agent_mib.getOidValue(temp_SNMPMessage.getPayload());
+                case 0xA0: // ******************************************* //Get.req
+                    System.out.println("[SNMP_AGENT] GET.req Received...");
+                    // vérification de la communauté
+                    if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){
+                        // Traitement du message reçu
+                        System.out.println("[SNMP_AGENT] communauté égale");
+                        res_payload = this.agent_mib.getOidValue(temp_SNMPMessage.getPayload());
 
-                            // Construction du message de réponse.
-                            res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
-                                                         ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
-                                                         ,temp_SNMPMessage.getPort()            // port distant
-                                                         ,temp_SNMPMessage.getVersion()     // numéro de version identique
-                                                         ,temp_SNMPMessage.getCommunauty()      // communauté identique
-                                                         ,(byte) 0xA2                           // Get.res
-                                                         ,res_payload);                         // payload du message réponse.
-                            // renvoi de la réponse
-                            this.S_MSG_queue_OS.add(res_SNMPMessage);                          // placement en file d'attente de sorti
-                        }else{  // ne fais pas partie de la bonne communauté
-                           //
-                           System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
-                           // un trap sera envoyé à son Manager
-                        }
-                        break;
-                    case 0xA1:  // ******************************************* // GetNext.req
-                        System.out.println("[SNMP_AGENT] GETNext.req Received...");
-                       // vérification de la communauté
-                       if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){ //Si communauté est bonne
-                            // Traitement du message reçu
-                            res_payload = this.agent_mib.getNextOidValue(temp_SNMPMessage.getPayload());
-                            // Construction du message de réponse.
-                            res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
-                                                         ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
-                                                         ,temp_SNMPMessage.getPort()            // port distant
-                                                         ,temp_SNMPMessage.getVersion()         // numéro de version identique
-                                                         ,temp_SNMPMessage.getCommunauty()      // communauté identique
-                                                         ,(byte) 0xA2                           // Get.res
-                                                         ,res_payload);                         // payload du message réponse.
-                            
-                            this.S_MSG_queue_OS.add(res_SNMPMessage);                           // renvoi de la réponse
-                        }else{  // ne fais pas partie de la bonne communauté
-                           System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
-                           // un trap sera envoyé à son Manager
-                        }
-                        
-                        break;
-                    case 0xA3:   // ******************************************* // SetReq
-                        System.out.println("[SNMP_AGENT] SET.req Received...");
-                        // vérification de la communauté
-                        if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){
-                            // Traitement du message reçu
-                            
-                            res_payload = this.agent_mib.setOidValue(temp_SNMPMessage.getPayload());
-                            // Construction du message de réponse.
-                            res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
-                                                         ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
-                                                         ,temp_SNMPMessage.getPort()            // port distant
-                                                         ,temp_SNMPMessage.getVersion()         // numéro de version identique
-                                                         ,temp_SNMPMessage.getCommunauty()      // communauté identique
-                                                         ,(byte) 0xA2                           // Get.res
-                                                         ,res_payload);                         // payload du message réponse.
-                            // renvoi de la réponse
-                            this.S_MSG_queue_OS.add(res_SNMPMessage);                           // placement en file d'attente
-                        }else{  // ne fais pas partie de la bonne communauté
-                            System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
-                           // un trap sera envoyé à son Manager
-                        }
-                        break;
-                        
-                    default:                            // Autres type de paquets = non-géré.
-                        // un trap peut être envoyé à son manager
-                        break;    
+                        // Construction du message de réponse.
+                        res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
+                                                     ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
+                                                     ,temp_SNMPMessage.getPort()            // port distant
+                                                     ,temp_SNMPMessage.getVersion()     // numéro de version identique
+                                                     ,temp_SNMPMessage.getCommunauty()      // communauté identique
+                                                     ,(byte) 0xA2                           // Get.res
+                                                     ,res_payload);                         // payload du message réponse.
+                        // renvoi de la réponse
+                        this.S_MSG_queue_OS.add(res_SNMPMessage);                          // placement en file d'attente de sorti
+                    }else{  // ne fais pas partie de la bonne communauté
+                       //
+                       System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
+                       // un trap sera envoyé à son Manager
+                       SNMPTrapV2 trapPdu = null;
+                       // envoi du Trap
+                       sendTrapToManager(trapPdu);
+                       
+                    }
+                    break;
+                case 0xA1:  // ******************************************* // GetNext.req
+                    System.out.println("[SNMP_AGENT] GETNext.req Received...");
+                   // vérification de la communauté
+                   if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){ //Si communauté est bonne
+                        // Traitement du message reçu
+                        res_payload = this.agent_mib.getNextOidValue(temp_SNMPMessage.getPayload());
+                        // Construction du message de réponse.
+                        res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
+                                                     ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
+                                                     ,temp_SNMPMessage.getPort()            // port distant
+                                                     ,temp_SNMPMessage.getVersion()         // numéro de version identique
+                                                     ,temp_SNMPMessage.getCommunauty()      // communauté identique
+                                                     ,(byte) 0xA2                           // Get.res
+                                                     ,res_payload);                         // payload du message réponse.
+
+                        this.S_MSG_queue_OS.add(res_SNMPMessage);                           // renvoi de la réponse
+                    }else{  // ne fais pas partie de la bonne communauté
+                       System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
+                       // un trap sera envoyé à son Manager
+                    }
+
+                    break;
+                case 0xA3:   // ******************************************* // SetReq
+                    System.out.println("[SNMP_AGENT] SET.req Received...");
+                    // vérification de la communauté
+                    if(new String(temp_SNMPMessage.getCommunauty()).matches(new String(this.communauty))){
+                        // Traitement du message reçu
+
+                        res_payload = this.agent_mib.setOidValue(temp_SNMPMessage.getPayload());
+                        // Construction du message de réponse.
+                        res_SNMPMessage = new SNMPMessage(temp_SNMPMessage.getReceiver()    // celui qui a reçu (l'agent) devient l'emmeteur
+                                                     ,temp_SNMPMessage.getSender()          // celui qui à envoyé devient le récepteur
+                                                     ,temp_SNMPMessage.getPort()            // port distant
+                                                     ,temp_SNMPMessage.getVersion()         // numéro de version identique
+                                                     ,temp_SNMPMessage.getCommunauty()      // communauté identique
+                                                     ,(byte) 0xA2                           // Get.res
+                                                     ,res_payload);                         // payload du message réponse.
+                        // renvoi de la réponse
+                        this.S_MSG_queue_OS.add(res_SNMPMessage);                           // placement en file d'attente
+                    }else{  // ne fais pas partie de la bonne communauté
+                        System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
+                       // un trap sera envoyé à son Manager 
+
+                    }
+                    break;
+
+                default:                            // Autres type de paquets = non-géré.
+                    // un trap peut être envoyé à son manager
+                    break;    
                 }
+            }else{ // file d'attente vide
+                
                 //
-            } else { // SI la file d'attent est vide, on endors le thread pour 100ms
                 try {
                     sleep(100); // 100 ms
                 } catch (Exception e) {
                     System.err.println("[SNMP_AGENT]: ERROR --> " + e.getMessage());
                 }
             }
+            
         }
         
         System.out.println("[SNMP_AGENT]: Stopped");
@@ -251,6 +258,25 @@ public class SNMPAgent extends Thread {
         // Redémarrage auto du thread.
         this.start();
     }
-  
+   
+    /**
+     * Cette fonction permet d'envoyer un TRAP SNMP version 2 au Manager
+     * de cette agent, sur le port 162.
+     * 
+     * @param trapPdu Contenu du message trap 
+     */
+    public void sendTrapToManager(SNMPTrapV2 trapPdu){
+
+        // conception du message SNMP
+        SNMPMessage trap_message_v2 = new SNMPMessage(null
+                , this.addrManager, 
+                162, 
+                1,
+                this.communauty, 
+                (byte) 0xA7, 
+                trapPdu);
+
+        this.S_MSG_queue_OS.add(trap_message_v2);
+    }
 }
 

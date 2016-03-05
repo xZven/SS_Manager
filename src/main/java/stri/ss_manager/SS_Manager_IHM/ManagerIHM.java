@@ -17,16 +17,14 @@
  */
 package stri.ss_manager.SS_Manager_IHM;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import static java.lang.Thread.sleep;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import stri.ss_manager.SNMP.smi.OID;
 import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPKernel.SNMPHandler;
@@ -44,6 +42,8 @@ import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
  * @version 2
  */
 public class ManagerIHM extends java.awt.Frame {
+    
+    private boolean BLINKTRAPBOUTON;
 
     /**
      * Creates new form ManagerIHM
@@ -74,7 +74,35 @@ public class ManagerIHM extends java.awt.Frame {
         this.ValueField.setText(new String(vb.getObjectValue()));
         
     }
+    
+    /**
+     * A la réception d'un TRAP SNMP, se bouton servira à faire
+     * clignoter le bouton TRAP SNMP
+     * @param trap
+     */
+    public void blinkTrapBouton(SNMPMessage trap){
         
+        // activation du bouton
+        this.trap_bouton.setEnabled(true);        
+        //
+        this.BLINKTRAPBOUTON = true;
+        while(this.BLINKTRAPBOUTON){ // tant qu'on a pas cliqué sur le bouton
+           //
+            try{
+                this.trap_bouton.setBackground(Color.red);
+                sleep(500); // 0.5s
+                this.trap_bouton.setBackground(Color.gray);
+                sleep(500);
+            }catch(Exception e){
+                // affichage d'un message d'erreur dans la console
+                System.err.println("[IHM.BlinkTrapBouton]: ERROR --> "+e.getMessage());
+            }
+        }
+        
+        // affichage du message trap
+        new TrapDisplayer(trap);
+        
+    }
     /**
      * Cette fonction peremt de résoudre le nom de l'v_oid en allant
  interroger les mibs chargées.
@@ -166,6 +194,7 @@ public class ManagerIHM extends java.awt.Frame {
         jLabel5 = new javax.swing.JLabel();
         ValueField = new javax.swing.JTextField();
         oid_name_label = new javax.swing.JLabel();
+        trap_bouton = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
 
@@ -398,6 +427,15 @@ public class ManagerIHM extends java.awt.Frame {
 
         oid_name_label.setText("void");
 
+        trap_bouton.setBackground(new java.awt.Color(204, 204, 204));
+        trap_bouton.setText("NEW TRAP");
+        trap_bouton.setEnabled(false);
+        trap_bouton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trap_boutonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout SNMPPanelLayout = new javax.swing.GroupLayout(SNMPPanel);
         SNMPPanel.setLayout(SNMPPanelLayout);
         SNMPPanelLayout.setHorizontalGroup(
@@ -421,9 +459,7 @@ public class ManagerIHM extends java.awt.Frame {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(GetNextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(ClearFieldBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(SetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(SetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(SNMPPanelLayout.createSequentialGroup()
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -440,12 +476,17 @@ public class ManagerIHM extends java.awt.Frame {
                                             .addComponent(jLabel5)
                                             .addGap(10, 10, 10)))
                                     .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(ValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(SNMPPanelLayout.createSequentialGroup()
+                                            .addComponent(ValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(ClearFieldBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(0, 0, Short.MAX_VALUE))
                                         .addGroup(SNMPPanelLayout.createSequentialGroup()
                                             .addComponent(SetOIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(18, 18, 18)
-                                            .addComponent(oid_name_label, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGap(0, 0, Short.MAX_VALUE))))))
+                                            .addComponent(oid_name_label, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(trap_bouton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         SNMPPanelLayout.setVerticalGroup(
@@ -475,21 +516,23 @@ public class ManagerIHM extends java.awt.Frame {
                 .addGap(18, 18, 18)
                 .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(SNMPPanelLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(SNMPPanelLayout.createSequentialGroup()
+                                .addGap(26, 26, 26)
                                 .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(SetOIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel1)
-                                    .addComponent(oid_name_label, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(ValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5)))
-                            .addComponent(ClearFieldBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(oid_name_label, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(SNMPPanelLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(trap_bouton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(ClearFieldBouton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
                 .addGap(3, 3, 3))
         );
@@ -742,6 +785,14 @@ public class ManagerIHM extends java.awt.Frame {
         //
         this.GetNextBouton.setEnabled(true);
     }//GEN-LAST:event_GetNextBoutonActionPerformed
+    // TRAP BOUTON
+    private void trap_boutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trap_boutonActionPerformed
+        // TODO add your handling code here:
+        
+        // désactivation du clignotement du bouton
+        this.BLINKTRAPBOUTON = false;
+        this.trap_bouton.setEnabled(false);
+    }//GEN-LAST:event_trap_boutonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -780,6 +831,7 @@ public class ManagerIHM extends java.awt.Frame {
     private javax.swing.JTree network_tree;
     private javax.swing.JLabel oid_name_label;
     private javax.swing.JLabel resultatValidationIP;
+    private javax.swing.JButton trap_bouton;
     // End of variables declaration//GEN-END:variables
 
     private SNMPHandler snmpHandler;
@@ -787,4 +839,10 @@ public class ManagerIHM extends java.awt.Frame {
     // fichier mib
     
     String mibFile = "./mib/SNMPv2.mib";
+    
+    //
+    public static void main(String[] args) {
+    
+         ManagerIHM ihm = new ManagerIHM(new SNMPHandler(null, null));
+    }
 }

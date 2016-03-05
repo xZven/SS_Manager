@@ -3,16 +3,11 @@ package stri.ss_manager.exe;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import stri.ss_manager.SNMP.smi.OID;
-import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPKernel.SNMPHandler;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.handler.*;
-import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerInputStream;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerOutputStream;
 import stri.ss_manager.SNMPMessage.transport.SocketHandlerTrapListener;
@@ -104,9 +99,10 @@ public class SNMPManagerTest {
         SOCK_HDLR_IS         = new SocketHandlerInputStream(socket, DG_packet_queue_IS);
         SOCK_HDLR_TRAP_LSTNR = new SocketHandlerTrapListener(trap_listenner, DG_packet_queue_IS);
         SOCK_HDLR_OS         = new SocketHandlerOutputStream(socket, DG_packet_queue_OS);
-
+        // Lancement de l'ihm
+        ManagerIHM ihm       = new ManagerIHM(new SNMPHandler(S_MSG_queue_IS, S_MSG_queue_OS));
         // Couche SNMPMessageHandler
-        S_MSG_HDLR_IS = new SNMPMessageHandlerInputStream(DG_packet_queue_IS, S_MSG_queue_IS);
+        S_MSG_HDLR_IS = new SNMPMessageHandlerInputStream(DG_packet_queue_IS, S_MSG_queue_IS, ihm);
         S_MSG_HDLR_OS = new SNMPMessageHandlerOutputStream(DG_packet_queue_OS, S_MSG_queue_OS);
 
         // Couche SNMPKernel
@@ -124,7 +120,7 @@ public class SNMPManagerTest {
         S_MSG_HDLR_IS.start();
         S_MSG_HDLR_OS.start();
 
-        ManagerIHM ihm = new ManagerIHM(new SNMPHandler(S_MSG_queue_IS, S_MSG_queue_OS));
+        
     
         // Initialisation de l'IHM
      /*  java.awt.EventQueue.invokeLater(new Runnable() {

@@ -20,11 +20,12 @@ package stri.ss_manager.SNMPMessage.handler;
 import java.net.DatagramPacket;
 import java.util.Queue;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
+import stri.ss_manager.SS_Manager_IHM.ManagerIHM;
 
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
- * @version 1.0
+ * @version 3.0
  * @see SocketHandlerInputStream
  * @see SNMPMessage
  *
@@ -53,6 +54,8 @@ public class SNMPMessageHandlerInputStream extends Thread {
     private Queue<DatagramPacket> DG_packet_queue_IS;     // File d'attente pour les DGPacket entrants
     private Queue<SNMPMessage>    S_MSG_queue_IS;         // File d'attente pour les SNMPMessages entrants (transmit au noyau)
     private boolean               RUNNING = true;         // Variable utilisé pour arrêter le Thread
+    
+    private ManagerIHM            ihm = null;             // IHM où les TRAP seront affiché
 
     // méthodes
     /**
@@ -72,6 +75,26 @@ public class SNMPMessageHandlerInputStream extends Thread {
         System.out.println("[MSG_HDLR_IS]: Ready...");
     }
 
+    /**
+     * Ce constructeur permet d'initialiser le thread sans le lancer. Elle est utilisé
+     * par le Manager car ce dernier passe son ihm en paramètre.
+     * 
+     * @param DG_packet_queue_IS    File d'attente pour les DatagramPacket entrants
+     * @param S_MSG_queue_IS        FIle d'attente pour les SNMPMessages entrants
+     * @param ihm                   IHM où les TRAP seront affiché
+     */
+    public SNMPMessageHandlerInputStream(Queue<DatagramPacket> DG_packet_queue_IS, Queue<SNMPMessage> S_MSG_queue_IS, ManagerIHM ihm) {
+        // Attribution d'un nom au thread
+        this.setName("S_MSG_HDLR_IS");
+        // On construit la file d'attente entre SOCK_HDLR_IS et MSG_HDLR_IS
+        this.DG_packet_queue_IS = DG_packet_queue_IS;
+        // On lie la file d'attente  DU S_Proto_HDLR et MSG_HDLR_IS
+        this.S_MSG_queue_IS     = S_MSG_queue_IS;
+        //
+        this.ihm = ihm;
+        //
+        System.out.println("[MSG_HDLR_IS]: Ready...");
+    }
     /**
      * Cette méthode permet d'arrêter le Thread en cours.
      */
@@ -98,7 +121,14 @@ public class SNMPMessageHandlerInputStream extends Thread {
                 // affichage
                 System.out.println("[MSG_HDLR_IS]: RECEIVED MSG --> " + temp_SNMPMessage.toString());
                 // on le transmet à la file d'attente
-                S_MSG_queue_IS.add(temp_SNMPMessage);
+                if(temp_SNMPMessage.getPduType() == 0xA7){
+                    // on transmet la trap directement à l'IHM
+                    ihm.blinkTrapBouton(temp_SNMPMessage);
+                }else{
+                    // On le place dans une file d'attente pour être traité ultérieurement
+                    S_MSG_queue_IS.add(temp_SNMPMessage);
+                }
+                
                 // on endors le thread pour 10ms
                 //
                 try {
