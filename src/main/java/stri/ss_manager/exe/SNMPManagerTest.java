@@ -3,6 +3,9 @@ package stri.ss_manager.exe;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
 import java.util.Queue;
 import stri.ss_manager.SNMPKernel.SNMPHandler;
@@ -120,16 +123,23 @@ public class SNMPManagerTest {
         S_MSG_HDLR_IS.start();
         S_MSG_HDLR_OS.start();
 
+        // Initalisation du service RMI
         
-    
-        // Initialisation de l'IHM
-     /*  java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new ManagerIHM().setVisible(true);
-            }
-        }); */
-
+         // Initialisation du RMI (Remote Manager Interface)
+        System.out.println("[MAIN_PROC]: Initializing Remote Manager Interface (RMI) services...");
+        try {
+            //***********************************************************
+            LocateRegistry.createRegistry(1099);
+            //***********************************************************
+            
+            Naming.rebind("RemoteManagerInterface", UnicastRemoteObject.exportObject(ihm.getSnmpHandler(), 1099));
+            //
+            System.out.println("[MAIN_PROC]: RMI SERVICE OK !");
+            
+        } catch (Exception e) {
+            System.err.println("[MAIN_PROC_RMI_ERROR]: " + e.getMessage());
+        }
+        
     
         // Ici le role du programme principale est de vérifier
         // que les threads fonctionnent corecctement.

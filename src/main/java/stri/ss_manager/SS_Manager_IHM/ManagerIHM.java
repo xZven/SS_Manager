@@ -23,11 +23,12 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import static java.lang.Thread.sleep;
 import java.net.InetAddress;
+import java.rmi.Naming;
 import java.util.ArrayList;
 import java.util.Scanner;
 import stri.ss_manager.SNMP.smi.OID;
 import stri.ss_manager.SNMP.smi.VarBind;
-import stri.ss_manager.SNMPKernel.SNMPHandler;
+import stri.ss_manager.SNMPKernel.*;
 
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
@@ -39,7 +40,7 @@ import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
  *  * Cette classe permet de tester le Manager SNMP en initialisant
  * les Threads nécessaire et en créant des messages de tests.
  * 
- * @version 2
+ * @version 4
  */
 public class ManagerIHM extends java.awt.Frame {
     
@@ -164,8 +165,8 @@ public class ManagerIHM extends java.awt.Frame {
         main_panel = new javax.swing.JPanel();
         label_logo_stri = new javax.swing.JLabel();
         label_logo_UPSSITECH = new javax.swing.JLabel();
-        jTabbedPane2 = new javax.swing.JTabbedPane();
-        ConfigurationPanel = new javax.swing.JPanel();
+        ManagerPanel = new javax.swing.JTabbedPane();
+        AgentPanel = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         ValiderConfiguration = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
@@ -195,8 +196,21 @@ public class ManagerIHM extends java.awt.Frame {
         ValueField = new javax.swing.JTextField();
         oid_name_label = new javax.swing.JLabel();
         trap_bouton = new javax.swing.JButton();
-        jPanel6 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        rmi_panel = new javax.swing.JPanel();
+        rmi_get = new javax.swing.JButton();
+        rmi_getnext = new javax.swing.JButton();
+        rmi_set = new javax.swing.JButton();
+        rmi_oid_TextField = new javax.swing.JTextField();
+        rmi_value_TextField = new javax.swing.JTextField();
+        rmi_oid_label = new javax.swing.JLabel();
+        rmi_oidValue_label = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        rmi_console = new javax.swing.JTextArea();
+        jPanel1 = new javax.swing.JPanel();
+        rmi_remote_manager_ip = new javax.swing.JTextField();
+        rmi_connect_bouton = new javax.swing.JButton();
+        rmi_state_label = new javax.swing.JLabel();
+        rmi_label = new javax.swing.JLabel();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -208,7 +222,7 @@ public class ManagerIHM extends java.awt.Frame {
 
         label_logo_stri.setAutoscrolls(true);
 
-        jTabbedPane2.setToolTipText("");
+        ManagerPanel.setToolTipText("");
 
         ValiderConfiguration.setText("Valider");
         ValiderConfiguration.addActionListener(new java.awt.event.ActionListener() {
@@ -284,24 +298,24 @@ public class ManagerIHM extends java.awt.Frame {
                 .addGap(35, 35, 35))
         );
 
-        javax.swing.GroupLayout ConfigurationPanelLayout = new javax.swing.GroupLayout(ConfigurationPanel);
-        ConfigurationPanel.setLayout(ConfigurationPanelLayout);
-        ConfigurationPanelLayout.setHorizontalGroup(
-            ConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ConfigurationPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout AgentPanelLayout = new javax.swing.GroupLayout(AgentPanel);
+        AgentPanel.setLayout(AgentPanelLayout);
+        AgentPanelLayout.setHorizontalGroup(
+            AgentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(AgentPanelLayout.createSequentialGroup()
                 .addGap(253, 253, 253)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(308, Short.MAX_VALUE))
+                .addContainerGap(425, Short.MAX_VALUE))
         );
-        ConfigurationPanelLayout.setVerticalGroup(
-            ConfigurationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ConfigurationPanelLayout.createSequentialGroup()
+        AgentPanelLayout.setVerticalGroup(
+            AgentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(AgentPanelLayout.createSequentialGroup()
                 .addGap(106, 106, 106)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(176, Short.MAX_VALUE))
+                .addContainerGap(179, Short.MAX_VALUE))
         );
 
-        jTabbedPane2.addTab("Configuration", ConfigurationPanel);
+        ManagerPanel.addTab("Configuration", AgentPanel);
 
         label_soft_name.setFont(new java.awt.Font("Ti92Pluspc", 1, 36)); // NOI18N
         label_soft_name.setText("STRI SNMP Manager v2");
@@ -541,29 +555,179 @@ public class ManagerIHM extends java.awt.Frame {
         jLabel2.getAccessibleContext().setAccessibleName("wIcon");
         jLabel5.getAccessibleContext().setAccessibleName("ValeurOID");
 
-        jTabbedPane2.addTab("SNMP", SNMPPanel);
+        ManagerPanel.addTab("SNMP", SNMPPanel);
         SNMPPanel.getAccessibleContext().setAccessibleName("SNMP");
 
-        jLabel3.setText("Developpé par: Teikituhaaha Manavai, Balbiani Lorrain, El Jammal Farid");
+        rmi_panel.setEnabled(false);
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(257, 257, 257)
-                .addComponent(jLabel3)
-                .addContainerGap(309, Short.MAX_VALUE))
+        rmi_get.setText("GET");
+        rmi_get.setEnabled(false);
+        rmi_get.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rmi_getActionPerformed(evt);
+            }
+        });
+
+        rmi_getnext.setText("GetNext");
+        rmi_getnext.setEnabled(false);
+
+        rmi_set.setText("SET");
+        rmi_set.setEnabled(false);
+
+        rmi_oid_TextField.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        rmi_oid_TextField.setForeground(new java.awt.Color(204, 204, 204));
+        rmi_oid_TextField.setText("1.3.X.X.X.X.X.X.0");
+        rmi_oid_TextField.setEnabled(false);
+
+        rmi_value_TextField.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        rmi_value_TextField.setForeground(new java.awt.Color(153, 153, 153));
+        rmi_value_TextField.setText("Valeur de l'OID pour le SET");
+        rmi_value_TextField.setEnabled(false);
+        rmi_value_TextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rmi_value_TextFieldActionPerformed(evt);
+            }
+        });
+
+        rmi_oid_label.setText("OID");
+
+        rmi_oidValue_label.setText("Value");
+
+        rmi_console.setBackground(new java.awt.Color(0, 0, 0));
+        rmi_console.setColumns(20);
+        rmi_console.setForeground(new java.awt.Color(0, 255, 0));
+        rmi_console.setRows(5);
+        rmi_console.setText("RMI_CONSOLE > ...");
+        jScrollPane3.setViewportView(rmi_console);
+
+        jPanel1.setBackground(new java.awt.Color(153, 153, 153));
+
+        rmi_remote_manager_ip.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        rmi_remote_manager_ip.setText("Remote Manager IP addr");
+        rmi_remote_manager_ip.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rmi_remote_manager_ipMouseClicked(evt);
+            }
+        });
+        rmi_remote_manager_ip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rmi_remote_manager_ipActionPerformed(evt);
+            }
+        });
+        rmi_remote_manager_ip.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                rmi_remote_manager_ipKeyReleased(evt);
+            }
+        });
+
+        rmi_connect_bouton.setText("CONNECT");
+        rmi_connect_bouton.setEnabled(false);
+        rmi_connect_bouton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rmi_connect_boutonActionPerformed(evt);
+            }
+        });
+
+        rmi_state_label.setBackground(new java.awt.Color(204, 0, 0));
+        rmi_state_label.setText("DISCONNECTED");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rmi_connect_bouton, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rmi_remote_manager_ip, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(rmi_state_label, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(235, 235, 235)
-                .addComponent(jLabel3)
-                .addContainerGap(269, Short.MAX_VALUE))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(rmi_state_label, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(rmi_remote_manager_ip, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rmi_connect_bouton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(21, 21, 21))
         );
 
-        jTabbedPane2.addTab("A propos", jPanel6);
+        rmi_label.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        rmi_label.setText("Remote Manager Interface");
+
+        javax.swing.GroupLayout rmi_panelLayout = new javax.swing.GroupLayout(rmi_panel);
+        rmi_panel.setLayout(rmi_panelLayout);
+        rmi_panelLayout.setHorizontalGroup(
+            rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rmi_panelLayout.createSequentialGroup()
+                .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rmi_panelLayout.createSequentialGroup()
+                        .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(rmi_panelLayout.createSequentialGroup()
+                                .addGap(89, 89, 89)
+                                .addComponent(rmi_label, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(rmi_panelLayout.createSequentialGroup()
+                                .addGap(44, 44, 44)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
+                        .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rmi_get, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rmi_set, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rmi_getnext, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(48, 48, 48)
+                        .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(rmi_oid_TextField)
+                                .addComponent(rmi_value_TextField, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rmi_panelLayout.createSequentialGroup()
+                                .addComponent(rmi_oid_label, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(98, 98, 98))
+                            .addGroup(rmi_panelLayout.createSequentialGroup()
+                                .addGap(135, 135, 135)
+                                .addComponent(rmi_oidValue_label))))
+                    .addGroup(rmi_panelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane3)))
+                .addGap(18, 18, 18))
+        );
+        rmi_panelLayout.setVerticalGroup(
+            rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rmi_panelLayout.createSequentialGroup()
+                .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(rmi_panelLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(rmi_oid_label, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rmi_get, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rmi_oid_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(31, 31, 31)
+                        .addComponent(rmi_getnext, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
+                        .addComponent(rmi_oidValue_label)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(rmi_value_TextField)
+                            .addComponent(rmi_set, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)))
+                    .addGroup(rmi_panelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(rmi_label, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(34, 34, 34)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        ManagerPanel.addTab("A propos", rmi_panel);
+
+        ManagerPanel.setSelectedIndex(1);
 
         javax.swing.GroupLayout main_panelLayout = new javax.swing.GroupLayout(main_panel);
         main_panel.setLayout(main_panelLayout);
@@ -577,14 +741,14 @@ public class ManagerIHM extends java.awt.Frame {
                         .addGap(0, 0, 0)
                         .addComponent(label_logo_UPSSITECH)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jTabbedPane2))
+                    .addComponent(ManagerPanel))
                 .addContainerGap())
         );
         main_panelLayout.setVerticalGroup(
             main_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(main_panelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ManagerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(main_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label_logo_stri)
@@ -592,8 +756,8 @@ public class ManagerIHM extends java.awt.Frame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane2.getAccessibleContext().setAccessibleName("SNMP");
-        jTabbedPane2.getAccessibleContext().setAccessibleDescription("SNMP");
+        ManagerPanel.getAccessibleContext().setAccessibleName("SNMP");
+        ManagerPanel.getAccessibleContext().setAccessibleDescription("SNMP");
 
         add(main_panel, java.awt.BorderLayout.CENTER);
 
@@ -607,44 +771,14 @@ public class ManagerIHM extends java.awt.Frame {
         System.exit(0);
     }//GEN-LAST:event_exitForm
 
-    private void ValiderConfigurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValiderConfigurationActionPerformed
-    
-        InetAddress ipv4 = null;
-        String versionSNMP;
-        int version;
-        byte[] Communautebytes;
-        SNMPMessagePayload payload = null; // ?
-        String AddressIPAverifier = AddressIPField.getText(); // recuperation de l'addresse IP
-        if (validate(AddressIPAverifier) == true) {           // validation
-            //réactivation des boutons
-            this.GetBouton.setEnabled(true);
-            this.GetNextBouton.setEnabled(true);
-            this.SetBouton.setEnabled(true);
-            // changement de tab
-            jTabbedPane2.setSelectedIndex(1);   // il aura des conditions avant de passer au tab SNMP
-            //
-            resultatValidationIP.setText("");
-        } else {
-            // on les désactive
-            this.GetBouton.setEnabled(false);
-            this.GetNextBouton.setEnabled(false);
-            this.SetBouton.setEnabled(false);
-            //JOptionPane.showMessageDialog (null, "Addresse IP invalide", "Attention", JOptionPane.WARNING_MESSAGE);
-            resultatValidationIP.setText("Addresse IP invalide"); // warning si invalide
-        }
- /*       String Communaute = CommunauteField.getText();        // recuperation de la communauté
+   // TRAP BOUTON
+    private void trap_boutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trap_boutonActionPerformed
+        // TODO add your handling code here:
 
-        version = choixversionSNMP.getSelectedIndex() + 1;    // recuperation du numero de la version choisi selon l'index+1 car ca commence par 0. (ici on peux pas utiliser getSelectedValue())
-        try {
-            ipv4 = InetAddress.getByName(AddressIPAverifier); // conversion de l'adresse ip valide en InetAddress
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(ManagerIHM.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Communautebytes = Communaute.getBytes(); // conversion du string communaute en byte[]
-        SNMPMessage msg;
-        msg = new SNMPMessage(ipv4, ipv4, 161, version, Communautebytes, (byte)0xA0, payload); // constructeur (probablement faux ici)*/
-        
-    }//GEN-LAST:event_ValiderConfigurationActionPerformed
+        // désactivation du clignotement du bouton
+        this.BLINKTRAPBOUTON = false;
+        this.trap_bouton.setEnabled(false);
+    }//GEN-LAST:event_trap_boutonActionPerformed
 
     private void ValueFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValueFieldActionPerformed
         // TODO add your handling code here:
@@ -676,7 +810,7 @@ public class ManagerIHM extends java.awt.Frame {
         } else {
             // il y a une valeur dans le champs on va résoudre l'oid
             //
-            oid_name_label.setText(oidLookUp(new OID(this.SetOIDField.getText())));  
+            oid_name_label.setText(oidLookUp(new OID(this.SetOIDField.getText())));
         }
     }//GEN-LAST:event_SetOIDFieldMouseExited
 
@@ -685,62 +819,24 @@ public class ManagerIHM extends java.awt.Frame {
         // on sélectionne le text pour que l'utilisateur l'efface ou puisse le modifier
         SetOIDField.selectAll();
     }//GEN-LAST:event_SetOIDFieldMouseClicked
-    // GET OK
-    private void GetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetBoutonActionPerformed
-        // désactivation du bouton
-        this.GetBouton.setEnabled(false);
-        //
-        ArrayList<VarBind> varBindingsList = new ArrayList<>();
-        //
-        varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), null));
-        //
-        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
-        try{
-            //
-            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
-            //
-            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA0, payload); 
-            // envoi de la requête
-            SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
-            // affichage du résultat
-            this.LogTextArea.setText(res_msg.toStringforIHM());
-            //
-            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
-            
-        }catch(Exception e){
-            //réactiovation du bouton
-            this.GetBouton.setEnabled(true);
-            //
-            System.err.println("[IHM_ERROR.GetBouton]: " +e.getMessage());
-        } 
-        
-        this.GetBouton.setEnabled(true);
-    }//GEN-LAST:event_GetBoutonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void AddressIPFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddressIPFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_AddressIPFieldActionPerformed
-    // SET OK
+   // SET OK
     private void SetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetBoutonActionPerformed
         // TODO add your handling code here:
         // désactivation du bouton
         this.SetBouton.setEnabled(false);
-        
+
         ArrayList<VarBind> varBindingsList = new ArrayList<>();
         //
         varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), this.ValueField.getText().getBytes()));
-                                                              // reqID, pas d'erreur, pas d'erreurn, list varbind
+        // reqID, pas d'erreur, pas d'erreurn, list varbind
         SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
         // création du message SNMP
         try{
             //
             InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
             //
-            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA4, payload); 
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA4, payload);
             // envoi de la requête
             SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
             // affichage du résultat
@@ -754,55 +850,172 @@ public class ManagerIHM extends java.awt.Frame {
         //
         this.SetBouton.setEnabled(true);
     }//GEN-LAST:event_SetBoutonActionPerformed
-    // GET NEXT OK
-    private void GetNextBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetNextBoutonActionPerformed
+
+//GEN-FIRST:event_GetNextBoutonActionPerformed
+ 
+//GEN-LAST:event_GetNextBoutonActionPerformed
+
+//GEN-FIRST:event_GetBoutonActionPerformed
+ 
+//GEN-LAST:event_GetBoutonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        // désactivation du bouton
-        this.GetNextBouton.setEnabled(false);
-        //        
-        ArrayList<VarBind> varBindingsList = new ArrayList<>();
-        //
-        varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), this.ValueField.getText().getBytes()));
-                                                              // reqID, pas d'erreur, pas d'erreurn, list varbind
-        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000000, 0, 0, varBindingsList);
-        // création du message SNMP
-        try{
-            //
-            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
-            //
-            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA1, payload); 
-            // envoi de la requête
-            SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
-            // affichage du résultat
-            this.LogTextArea.setText(res_msg.toStringforIHM());
-            //
-            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
-            //
-        }catch(Exception e){
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void AddressIPFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddressIPFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AddressIPFieldActionPerformed
+
+    private void ValiderConfigurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ValiderConfigurationActionPerformed
+
+        InetAddress ipv4 = null;
+        String versionSNMP;
+        int version;
+        byte[] Communautebytes;
+        SNMPMessagePayload payload = null; // ?
+        String AddressIPAverifier = AddressIPField.getText(); // recuperation de l'addresse IP
+        if (validate(AddressIPAverifier) == true) {           // validation
+            //réactivation des boutons
+            this.GetBouton.setEnabled(true);
             this.GetNextBouton.setEnabled(true);
-            System.err.println("[IHM_ERROR.SetBouton]: " +e.getMessage());
+            this.SetBouton.setEnabled(true);
+            // changement de tab
+            ManagerPanel.setSelectedIndex(1);   // il aura des conditions avant de passer au tab SNMP
+            //
+            resultatValidationIP.setText("");
+        } else {
+            // on les désactive
+            this.GetBouton.setEnabled(false);
+            this.GetNextBouton.setEnabled(false);
+            this.SetBouton.setEnabled(false);
+            //JOptionPane.showMessageDialog (null, "Addresse IP invalide", "Attention", JOptionPane.WARNING_MESSAGE);
+            resultatValidationIP.setText("Addresse IP invalide"); // warning si invalide
         }
-        //
-        this.GetNextBouton.setEnabled(true);
-    }//GEN-LAST:event_GetNextBoutonActionPerformed
-    // TRAP BOUTON
-    private void trap_boutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trap_boutonActionPerformed
+        /*       String Communaute = CommunauteField.getText();        // recuperation de la communauté
+
+        version = choixversionSNMP.getSelectedIndex() + 1;    // recuperation du numero de la version choisi selon l'index+1 car ca commence par 0. (ici on peux pas utiliser getSelectedValue())
+        try {
+            ipv4 = InetAddress.getByName(AddressIPAverifier); // conversion de l'adresse ip valide en InetAddress
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ManagerIHM.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Communautebytes = Communaute.getBytes(); // conversion du string communaute en byte[]
+        SNMPMessage msg;
+        msg = new SNMPMessage(ipv4, ipv4, 161, version, Communautebytes, (byte)0xA0, payload); // constructeur (probablement faux ici)*/
+
+    }//GEN-LAST:event_ValiderConfigurationActionPerformed
+
+    private void rmi_value_TextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_value_TextFieldActionPerformed
         // TODO add your handling code here:
+    }//GEN-LAST:event_rmi_value_TextFieldActionPerformed
+
+    private void rmi_remote_manager_ipMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rmi_remote_manager_ipMouseClicked
+        // TODO add your handling code here:
+        // on sélectione le text contenu dans le champs
+        this.rmi_remote_manager_ip.selectAll();
+    }//GEN-LAST:event_rmi_remote_manager_ipMouseClicked
+
+    private void rmi_getActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_getActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rmi_getActionPerformed
+
+    private void rmi_remote_manager_ipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_remote_manager_ipActionPerformed
+        // TODO add your handling code here:
+        if(this.validate(this.rmi_remote_manager_ip.getText())){
+            // activation du bouton
+            this.rmi_connect_bouton.setEnabled(true);
+            //
+            this.rmi_state_label.setText("DISCONNECTED");
+        }else{
+            this.rmi_connect_bouton.setEnabled(false);
+            // affichage erreur
+            this.rmi_state_label.setText("BAD IP FORMAT !");
+        }
         
-        // désactivation du clignotement du bouton
-        this.BLINKTRAPBOUTON = false;
-        this.trap_bouton.setEnabled(false);
-    }//GEN-LAST:event_trap_boutonActionPerformed
+    }//GEN-LAST:event_rmi_remote_manager_ipActionPerformed
+
+    private void rmi_remote_manager_ipKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_rmi_remote_manager_ipKeyReleased
+        // TODO add your handling code here:
+        if(this.validate(this.rmi_remote_manager_ip.getText())){
+            // activation du bouton
+            this.rmi_connect_bouton.setEnabled(true);
+            //
+            this.rmi_state_label.setText("DISCONNECTED");
+        }else{
+            this.rmi_connect_bouton.setEnabled(false);
+            // affichage erreur
+            this.rmi_state_label.setText("BAD IP FORMAT !");
+        }
+    }//GEN-LAST:event_rmi_remote_manager_ipKeyReleased
+
+    private void rmi_connect_boutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_connect_boutonActionPerformed
+        // TODO add your handling code here:
+        // on tente de se connecter au remote agent via RMI:
+        if(this.rmi_connect_bouton.getText().matches("CONNECT")){
+            try{
+                this.snmpRemoteManagerInterface = (SNMPRemoteManagerInterface) Naming.lookup("rmi://"+this.rmi_remote_manager_ip.getText()+"/RemoteManagerInterface");
+                // affichage des messages
+                System.out.println("[IHM_RMI]: CONNECTED TO REMOTE Manager !");
+                //
+                this.rmi_state_label.setText("CONNECTED");
+                //
+                this.rmi_connect_bouton.setText("DISCONNECT");
+                // activation des boutons et des champs
+                this.rmi_get.setEnabled(true);
+                this.rmi_getnext.setEnabled(true);
+                this.rmi_set.setEnabled(true);
+                this.rmi_oid_TextField.setEnabled(true);
+                this.rmi_value_TextField.setEnabled(true);
+                //
+                this.rmi_console.setText("RMI_CONSOLE >");
+
+            }catch(Exception e){
+                System.out.println("[IHM_RMI_ERROR]: "+e.getMessage());
+                //
+                this.rmi_state_label.setText("FAILED to CONNECT");
+                //
+                this.rmi_connect_bouton.setText("CONNECT");
+                // activation des boutons et des champs
+                this.rmi_get.setEnabled(false);
+                this.rmi_getnext.setEnabled(false);
+                this.rmi_set.setEnabled(false);
+                this.rmi_oid_TextField.setEnabled(false);
+                this.rmi_value_TextField.setEnabled(false);
+                //
+                this.rmi_console.setText("RMI_CONSOLE >...");
+            }
+            // on ajoute cet agent dans le jTree
+        }else{
+                System.out.println("[IHM_RMI]: DISCONNECTED FROM REMOTE Manager !");
+                //
+                this.rmi_state_label.setText("DISCONNECTED");
+                //
+                this.rmi_connect_bouton.setText("CONNECT");
+                // activation des boutons et des champs
+                this.rmi_get.setEnabled(false);
+                this.rmi_getnext.setEnabled(false);
+                this.rmi_set.setEnabled(false);
+                this.rmi_oid_TextField.setEnabled(false);
+                this.rmi_value_TextField.setEnabled(false);
+                //
+                this.rmi_console.setText("RMI_CONSOLE >...");
+                //
+        }
+        
+        
+    }//GEN-LAST:event_rmi_connect_boutonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField AddressIPField;
+    private javax.swing.JPanel AgentPanel;
     private javax.swing.JButton ClearFieldBouton;
     private javax.swing.JTextField CommunauteField;
-    private javax.swing.JPanel ConfigurationPanel;
     private javax.swing.JButton GetBouton;
     private javax.swing.JButton GetNextBouton;
     private javax.swing.JTextArea LogTextArea;
+    private javax.swing.JTabbedPane ManagerPanel;
     private javax.swing.JPanel SNMPPanel;
     private javax.swing.JButton SetBouton;
     private javax.swing.JTextField SetOIDField;
@@ -814,16 +1027,15 @@ public class ManagerIHM extends java.awt.Frame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel label_logo_UPSSITECH;
     private javax.swing.JLabel label_logo_stri;
     private javax.swing.JLabel label_soft_name;
@@ -831,18 +1043,39 @@ public class ManagerIHM extends java.awt.Frame {
     private javax.swing.JTree network_tree;
     private javax.swing.JLabel oid_name_label;
     private javax.swing.JLabel resultatValidationIP;
+    private javax.swing.JButton rmi_connect_bouton;
+    private javax.swing.JTextArea rmi_console;
+    private javax.swing.JButton rmi_get;
+    private javax.swing.JButton rmi_getnext;
+    private javax.swing.JLabel rmi_label;
+    private javax.swing.JLabel rmi_oidValue_label;
+    private javax.swing.JTextField rmi_oid_TextField;
+    private javax.swing.JLabel rmi_oid_label;
+    private javax.swing.JPanel rmi_panel;
+    private javax.swing.JTextField rmi_remote_manager_ip;
+    private javax.swing.JButton rmi_set;
+    private javax.swing.JLabel rmi_state_label;
+    private javax.swing.JTextField rmi_value_TextField;
     private javax.swing.JButton trap_bouton;
     // End of variables declaration//GEN-END:variables
 
     private SNMPHandler snmpHandler;
+    private SNMPRemoteManagerInterface snmpRemoteManagerInterface;
     
     // fichier mib
     
-    String mibFile = "./mib/SNMPv2.mib";
+    private String mibFile = "./mib/SNMPv2.mib";
     
-    //
-    public static void main(String[] args) {
-    
-         ManagerIHM ihm = new ManagerIHM(new SNMPHandler(null, null));
+    // GETTER
+    /**
+     * Cette fonction permet d'obtenir les SNMPHandler du Manager
+     * pour initier le service RMI.
+     * 
+     * @return SNMPHndler
+     */
+    public SNMPHandler getSnmpHandler() {
+        return snmpHandler;
     }
+    
+    
 }

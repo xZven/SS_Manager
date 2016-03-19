@@ -17,13 +17,14 @@
  */
 package stri.ss_manager.SNMPKernel;
 
+import java.rmi.RemoteException;
 import java.util.Queue;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
- * @version 1
+ * @version 4
  * Cette classe défini le coeur du programme. C'est ce Thread qui se 
  * charge de répartir les différents messages aux bonnes entités(Agent ou Manager).
  * 
@@ -39,7 +40,7 @@ import stri.ss_manager.SNMPMessage.SNMPMessage;
  *  Pour cette première version du programme, le coeur ne gèrera que les requête ponctuelles.
  * </p>
  */
-public class SNMPHandler extends Thread{
+public class SNMPHandler extends Thread implements SNMPRemoteManagerInterface{
     
     // attributs
     
@@ -61,6 +62,7 @@ public class SNMPHandler extends Thread{
     public SNMPHandler(Queue<SNMPMessage> S_MSG_queue_IS, Queue<SNMPMessage> S_MSG_queue_OS) {
         this.S_MSG_queue_IS = S_MSG_queue_IS;
         this.S_MSG_queue_OS = S_MSG_queue_OS;
+        
     }
         
        
@@ -76,6 +78,7 @@ public class SNMPHandler extends Thread{
      * @param S_MSG_TO_SEND Message à envoyer
      * @return SNMPMessage reçu de l'agent ou NULL.
      */
+    @Override
     public SNMPMessage sendGetRequest(SNMPMessage S_MSG_TO_SEND){
         SNMPMessage S_MSG_RESPONSE = null;
         //
@@ -117,6 +120,7 @@ public class SNMPHandler extends Thread{
      * @param S_MSG_TO_SEND Message à envoyer
      * @return SNMPMessage reçu de l'agent ou NULL.
      */
+    @Override
     public SNMPMessage sendGetNextRequest(SNMPMessage S_MSG_TO_SEND){
            SNMPMessage S_MSG_RESPONSE = null;
         int counter = 0;
@@ -155,6 +159,7 @@ public class SNMPHandler extends Thread{
      * @param S_MSG_TO_SEND Message à envoyer
      * @return SNMPMessage reçu de l'agent ou NULL.
      */
+    @Override
     public SNMPMessage sendSetRequest(SNMPMessage S_MSG_TO_SEND){
                SNMPMessage S_MSG_RESPONSE = null;
         int counter = 0;
@@ -183,5 +188,15 @@ public class SNMPHandler extends Thread{
         }else{
             return S_MSG_RESPONSE;
         }
+    }
+
+    @Override
+    public void shutDown() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void reloadAgentConfiguration() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

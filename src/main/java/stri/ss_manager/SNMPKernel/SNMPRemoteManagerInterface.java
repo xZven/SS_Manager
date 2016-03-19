@@ -26,7 +26,7 @@ import stri.ss_manager.SNMPMessage.SNMPMessage;
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
  * @version 4.0
  */
-public interface SNMPRemoteControler extends java.rmi.Remote{
+public interface SNMPRemoteManagerInterface extends java.rmi.Remote{
     
     public SNMPMessage sendGetRequest(SNMPMessage M_TO_SEND)throws java.rmi.RemoteException;
     
