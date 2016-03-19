@@ -261,15 +261,15 @@
                                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                                   <Component id="jLabel4" min="-2" pref="218" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Component id="jButton1" min="-2" pref="170" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="jButton2" min="-2" pref="170" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="GetBouton" min="-2" pref="170" max="-2" attributes="0"/>
+                                      <Component id="GetBouton" min="-2" pref="169" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="GetNextBouton" min="-2" pref="170" max="-2" attributes="0"/>
+                                      <Component id="GetNextBouton" min="-2" pref="171" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="SetBouton" min="-2" pref="170" max="-2" attributes="0"/>
                                   </Group>
@@ -278,7 +278,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                              <Component id="jScrollPane2" max="32767" attributes="0"/>
+                                              <Component id="jScrollPane2" min="-2" pref="602" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" attributes="0">
                                               <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
@@ -292,19 +292,19 @@
                                                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
-                                              <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="ValueField" min="-2" pref="387" max="-2" attributes="0"/>
                                                       <EmptySpace max="-2" attributes="0"/>
                                                       <Component id="ClearFieldBouton" min="-2" pref="170" max="-2" attributes="0"/>
-                                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                                                   </Group>
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="SetOIDField" min="-2" pref="205" max="-2" attributes="0"/>
                                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                                       <Component id="oid_name_label" min="-2" pref="164" max="-2" attributes="0"/>
                                                       <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="trap_bouton" max="32767" attributes="0"/>
+                                                      <Component id="trap_bouton" min="-2" pref="174" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
                                           </Group>
@@ -312,7 +312,7 @@
                                   </Group>
                               </Group>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="89" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -336,12 +336,10 @@
                                       <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                                           <Component id="jButton2" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                                           <Component id="jButton1" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                                          <Component id="GetBouton" alignment="3" min="-2" pref="42" max="-2" attributes="0"/>
+                                          <Component id="GetBouton" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                                           <Component id="GetNextBouton" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                                          <Component id="SetBouton" alignment="3" min="-2" pref="42" max="-2" attributes="0"/>
                                       </Group>
+                                      <Component id="SetBouton" alignment="1" min="-2" pref="42" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
@@ -407,22 +405,6 @@
                     <Property name="actionCommand" type="java.lang.String" value="DechargerMIB"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="GetBouton">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Get"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GetBoutonActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="GetNextBouton">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="GetNext"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GetNextBoutonActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="SetBouton">
                   <Properties>
@@ -558,6 +540,16 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trap_boutonActionPerformed"/>
                   </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="GetBouton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Get"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="GetNextBouton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="GetNext"/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>

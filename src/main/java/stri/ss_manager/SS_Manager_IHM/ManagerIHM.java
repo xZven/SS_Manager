@@ -180,8 +180,6 @@ public class ManagerIHM extends java.awt.Frame {
         label_soft_name = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        GetBouton = new javax.swing.JButton();
-        GetNextBouton = new javax.swing.JButton();
         SetBouton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         network_tree = new javax.swing.JTree();
@@ -196,6 +194,8 @@ public class ManagerIHM extends java.awt.Frame {
         ValueField = new javax.swing.JTextField();
         oid_name_label = new javax.swing.JLabel();
         trap_bouton = new javax.swing.JButton();
+        GetBouton = new javax.swing.JButton();
+        GetNextBouton = new javax.swing.JButton();
         rmi_panel = new javax.swing.JPanel();
         rmi_get = new javax.swing.JButton();
         rmi_getnext = new javax.swing.JButton();
@@ -333,20 +333,6 @@ public class ManagerIHM extends java.awt.Frame {
         jButton2.setActionCommand("DechargerMIB");
         jButton2.setEnabled(false);
 
-        GetBouton.setText("Get");
-        GetBouton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                GetBoutonActionPerformed(evt);
-            }
-        });
-
-        GetNextBouton.setText("GetNext");
-        GetNextBouton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                GetNextBoutonActionPerformed(evt);
-            }
-        });
-
         SetBouton.setText("Set");
         SetBouton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -450,6 +436,10 @@ public class ManagerIHM extends java.awt.Frame {
             }
         });
 
+        GetBouton.setText("Get");
+
+        GetNextBouton.setText("GetNext");
+
         javax.swing.GroupLayout SNMPPanelLayout = new javax.swing.GroupLayout(SNMPPanel);
         SNMPPanel.setLayout(SNMPPanelLayout);
         SNMPPanelLayout.setHorizontalGroup(
@@ -463,15 +453,15 @@ public class ManagerIHM extends java.awt.Frame {
                         .addComponent(label_soft_name)
                         .addGap(27, 27, 27)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(SNMPPanelLayout.createSequentialGroup()
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(GetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(GetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(GetNextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(GetNextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(SetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(SNMPPanelLayout.createSequentialGroup()
@@ -479,7 +469,7 @@ public class ManagerIHM extends java.awt.Frame {
                             .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(SNMPPanelLayout.createSequentialGroup()
                                     .addGap(27, 27, 27)
-                                    .addComponent(jScrollPane2))
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 602, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(SNMPPanelLayout.createSequentialGroup()
                                     .addGap(24, 24, 24)
                                     .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -489,19 +479,19 @@ public class ManagerIHM extends java.awt.Frame {
                                         .addGroup(SNMPPanelLayout.createSequentialGroup()
                                             .addComponent(jLabel5)
                                             .addGap(10, 10, 10)))
-                                    .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(SNMPPanelLayout.createSequentialGroup()
                                             .addComponent(ValueField, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(ClearFieldBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(0, 0, Short.MAX_VALUE))
+                                            .addGap(2, 2, 2))
                                         .addGroup(SNMPPanelLayout.createSequentialGroup()
                                             .addComponent(SetOIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGap(18, 18, 18)
                                             .addComponent(oid_name_label, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(trap_bouton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                            .addComponent(trap_bouton, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
+                .addContainerGap(89, Short.MAX_VALUE))
         );
         SNMPPanelLayout.setVerticalGroup(
             SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -519,11 +509,10 @@ public class ManagerIHM extends java.awt.Frame {
                         .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SNMPPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(GetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(GetNextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(SetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(GetBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(GetNextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(SetBouton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(SNMPPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -850,14 +839,6 @@ public class ManagerIHM extends java.awt.Frame {
         //
         this.SetBouton.setEnabled(true);
     }//GEN-LAST:event_SetBoutonActionPerformed
-
-//GEN-FIRST:event_GetNextBoutonActionPerformed
- 
-//GEN-LAST:event_GetNextBoutonActionPerformed
-
-//GEN-FIRST:event_GetBoutonActionPerformed
- 
-//GEN-LAST:event_GetBoutonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
