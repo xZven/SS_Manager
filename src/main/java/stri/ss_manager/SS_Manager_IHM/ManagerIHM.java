@@ -197,9 +197,9 @@ public class ManagerIHM extends java.awt.Frame {
         GetBouton = new javax.swing.JButton();
         GetNextBouton = new javax.swing.JButton();
         rmi_panel = new javax.swing.JPanel();
-        rmi_get = new javax.swing.JButton();
-        rmi_getnext = new javax.swing.JButton();
-        rmi_set = new javax.swing.JButton();
+        rmi_getBouton = new javax.swing.JButton();
+        rmi_getnextBouton = new javax.swing.JButton();
+        rmi_setBouton = new javax.swing.JButton();
         rmi_oid_TextField = new javax.swing.JTextField();
         rmi_value_TextField = new javax.swing.JTextField();
         rmi_oid_label = new javax.swing.JLabel();
@@ -437,8 +437,18 @@ public class ManagerIHM extends java.awt.Frame {
         });
 
         GetBouton.setText("Get");
+        GetBouton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GetBoutonActionPerformed(evt);
+            }
+        });
 
         GetNextBouton.setText("GetNext");
+        GetNextBouton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GetNextBoutonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout SNMPPanelLayout = new javax.swing.GroupLayout(SNMPPanel);
         SNMPPanel.setLayout(SNMPPanelLayout);
@@ -549,19 +559,29 @@ public class ManagerIHM extends java.awt.Frame {
 
         rmi_panel.setEnabled(false);
 
-        rmi_get.setText("GET");
-        rmi_get.setEnabled(false);
-        rmi_get.addActionListener(new java.awt.event.ActionListener() {
+        rmi_getBouton.setText("GET");
+        rmi_getBouton.setEnabled(false);
+        rmi_getBouton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rmi_getActionPerformed(evt);
+                rmi_getBoutonActionPerformed(evt);
             }
         });
 
-        rmi_getnext.setText("GetNext");
-        rmi_getnext.setEnabled(false);
+        rmi_getnextBouton.setText("GetNext");
+        rmi_getnextBouton.setEnabled(false);
+        rmi_getnextBouton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rmi_getnextBoutonActionPerformed(evt);
+            }
+        });
 
-        rmi_set.setText("SET");
-        rmi_set.setEnabled(false);
+        rmi_setBouton.setText("SET");
+        rmi_setBouton.setEnabled(false);
+        rmi_setBouton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rmi_setBoutonActionPerformed(evt);
+            }
+        });
 
         rmi_oid_TextField.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         rmi_oid_TextField.setForeground(new java.awt.Color(204, 204, 204));
@@ -666,9 +686,9 @@ public class ManagerIHM extends java.awt.Frame {
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
                         .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rmi_get, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rmi_set, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rmi_getnext, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(rmi_getBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rmi_setBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rmi_getnextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(48, 48, 48)
                         .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -694,16 +714,16 @@ public class ManagerIHM extends java.awt.Frame {
                         .addComponent(rmi_oid_label, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(rmi_get, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rmi_getBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(rmi_oid_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(31, 31, 31)
-                        .addComponent(rmi_getnext, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(rmi_getnextBouton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(4, 4, 4)
                         .addComponent(rmi_oidValue_label)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(rmi_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(rmi_value_TextField)
-                            .addComponent(rmi_set, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)))
+                            .addComponent(rmi_setBouton, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)))
                     .addGroup(rmi_panelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(rmi_label, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -808,7 +828,6 @@ public class ManagerIHM extends java.awt.Frame {
         // on sélectionne le text pour que l'utilisateur l'efface ou puisse le modifier
         SetOIDField.selectAll();
     }//GEN-LAST:event_SetOIDFieldMouseClicked
-
    // SET OK
     private void SetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SetBoutonActionPerformed
         // TODO add your handling code here:
@@ -897,9 +916,34 @@ public class ManagerIHM extends java.awt.Frame {
         this.rmi_remote_manager_ip.selectAll();
     }//GEN-LAST:event_rmi_remote_manager_ipMouseClicked
 
-    private void rmi_getActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_getActionPerformed
+    private void rmi_getBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_getBoutonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_rmi_getActionPerformed
+        this.rmi_getBouton.setEnabled(false);
+
+        ArrayList<VarBind> varBindingsList = new ArrayList<>();
+        //
+        varBindingsList.add(new VarBind(new OID(this.rmi_oid_TextField.getText()), null));
+        // reqID, pas d'erreur, pas d'erreurn, list varbind
+        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
+        // création du message SNMP
+        try{
+            //
+            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
+            //
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA0, payload);
+            // envoi de la requête
+            SNMPMessage res_msg         = snmpRemoteManagerInterface.sendSetRequest(req_msg);
+            // affichage du résultat
+            this.rmi_console.setText(res_msg.toStringforIHM());
+            //
+            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
+        }catch(Exception e){
+            this.rmi_getBouton.setEnabled(true);
+            System.err.println("[IHM_ERROR.RMI_GetBouton]: " +e.getMessage());
+        }
+        //
+        this.rmi_getBouton.setEnabled(true);
+    }//GEN-LAST:event_rmi_getBoutonActionPerformed
 
     private void rmi_remote_manager_ipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_remote_manager_ipActionPerformed
         // TODO add your handling code here:
@@ -943,9 +987,9 @@ public class ManagerIHM extends java.awt.Frame {
                 //
                 this.rmi_connect_bouton.setText("DISCONNECT");
                 // activation des boutons et des champs
-                this.rmi_get.setEnabled(true);
-                this.rmi_getnext.setEnabled(true);
-                this.rmi_set.setEnabled(true);
+                this.rmi_getBouton.setEnabled(true);
+                this.rmi_getnextBouton.setEnabled(true);
+                this.rmi_setBouton.setEnabled(true);
                 this.rmi_oid_TextField.setEnabled(true);
                 this.rmi_value_TextField.setEnabled(true);
                 //
@@ -958,9 +1002,9 @@ public class ManagerIHM extends java.awt.Frame {
                 //
                 this.rmi_connect_bouton.setText("CONNECT");
                 // activation des boutons et des champs
-                this.rmi_get.setEnabled(false);
-                this.rmi_getnext.setEnabled(false);
-                this.rmi_set.setEnabled(false);
+                this.rmi_getBouton.setEnabled(false);
+                this.rmi_getnextBouton.setEnabled(false);
+                this.rmi_setBouton.setEnabled(false);
                 this.rmi_oid_TextField.setEnabled(false);
                 this.rmi_value_TextField.setEnabled(false);
                 //
@@ -974,9 +1018,9 @@ public class ManagerIHM extends java.awt.Frame {
                 //
                 this.rmi_connect_bouton.setText("CONNECT");
                 // activation des boutons et des champs
-                this.rmi_get.setEnabled(false);
-                this.rmi_getnext.setEnabled(false);
-                this.rmi_set.setEnabled(false);
+                this.rmi_getBouton.setEnabled(false);
+                this.rmi_getnextBouton.setEnabled(false);
+                this.rmi_setBouton.setEnabled(false);
                 this.rmi_oid_TextField.setEnabled(false);
                 this.rmi_value_TextField.setEnabled(false);
                 //
@@ -986,6 +1030,125 @@ public class ManagerIHM extends java.awt.Frame {
         
         
     }//GEN-LAST:event_rmi_connect_boutonActionPerformed
+
+    private void rmi_setBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_setBoutonActionPerformed
+        // TODO add your handling code here:
+        // désactivation du bouton
+        this.rmi_setBouton.setEnabled(false);
+
+        ArrayList<VarBind> varBindingsList = new ArrayList<>();
+        //
+        varBindingsList.add(new VarBind(new OID(this.rmi_oid_TextField.getText()), this.rmi_value_TextField.getText().getBytes()));
+        // reqID, pas d'erreur, pas d'erreurn, list varbind
+        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
+        // création du message SNMP
+        try{
+            //
+            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
+            //
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA3, payload);
+            // envoi de la requête
+            SNMPMessage res_msg         = snmpRemoteManagerInterface.sendSetRequest(req_msg);
+            // affichage du résultat
+            this.rmi_console.setText(res_msg.toStringforIHM());
+            //
+            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
+        }catch(Exception e){
+            this.rmi_setBouton.setEnabled(true);
+            System.err.println("[IHM_ERROR.rmi_SetBouton]: " +e.getMessage());
+        }
+        //
+        this.rmi_setBouton.setEnabled(true);
+    }//GEN-LAST:event_rmi_setBoutonActionPerformed
+
+    private void rmi_getnextBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmi_getnextBoutonActionPerformed
+        // TODO add your handling code here:
+        this.rmi_getnextBouton.setEnabled(false);
+
+        ArrayList<VarBind> varBindingsList = new ArrayList<>();
+        //
+        varBindingsList.add(new VarBind(new OID(this.rmi_oid_TextField.getText()), null));
+        // reqID, pas d'erreur, pas d'erreurn, list varbind
+        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
+        // création du message SNMP
+        try{
+            //
+            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
+            //
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA3, payload);
+            // envoi de la requête
+            SNMPMessage res_msg         = snmpRemoteManagerInterface.sendSetRequest(req_msg);
+            // affichage du résultat
+            this.rmi_console.setText(res_msg.toStringforIHM());
+            //
+            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
+        }catch(Exception e){
+            this.rmi_getnextBouton.setEnabled(true);
+            System.err.println("[IHM_ERROR.rmi_GetNextBouton]: " +e.getMessage());
+        }
+        //
+        this.rmi_getnextBouton.setEnabled(true);
+    }//GEN-LAST:event_rmi_getnextBoutonActionPerformed
+
+    private void GetBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetBoutonActionPerformed
+        // TODO add your handling code here:
+        // désactivation du bouton
+        this.GetBouton.setEnabled(false);
+
+        ArrayList<VarBind> varBindingsList = new ArrayList<>();
+        //
+        varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), null));
+        // reqID, pas d'erreur, pas d'erreurn, list varbind
+        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
+        // création du message SNMP
+        try{
+            //
+            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
+            //
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA0, payload);
+            // envoi de la requête
+            SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
+            // affichage du résultat
+            this.LogTextArea.setText(res_msg.toStringforIHM());
+            //
+            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
+        }catch(Exception e){
+            this.GetBouton.setEnabled(true);
+            System.err.println("[IHM_ERROR.GetBouton]: " +e.getMessage());
+        }
+        //
+        this.GetBouton.setEnabled(true);
+    }//GEN-LAST:event_GetBoutonActionPerformed
+
+    private void GetNextBoutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GetNextBoutonActionPerformed
+        // TODO add your handling code here:
+        // désactivation du bouton
+        this.GetNextBouton.setEnabled(false);
+
+        ArrayList<VarBind> varBindingsList = new ArrayList<>();
+        //
+        varBindingsList.add(new VarBind(new OID(this.SetOIDField.getText()), null));
+        // reqID, pas d'erreur, pas d'erreurn, list varbind
+        SNMPMessagePayload payload      = new SNMPMessagePayload(0X0F000001, 0, 0, varBindingsList);
+        // création du message SNMP
+        try{
+            //
+            InetAddress Receiver        = InetAddress.getByName(this.AddressIPField.getText());            //
+            //
+            SNMPMessage req_msg         = new SNMPMessage(null, Receiver, 161, 2, this.CommunauteField.getText().getBytes(), (byte) 0xA1, payload);
+            // envoi de la requête
+            SNMPMessage res_msg         = snmpHandler.sendGetNextRequest(req_msg);
+            // affichage du résultat
+            this.LogTextArea.setText(res_msg.toStringforIHM());
+            //
+            setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
+        }catch(Exception e){
+            this.GetNextBouton.setEnabled(true);
+            System.err.println("[IHM_ERROR.GetBouton]: " +e.getMessage());
+        }
+        //
+        this.GetNextBouton.setEnabled(true);
+    }//GEN-LAST:event_GetNextBoutonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1026,15 +1189,15 @@ public class ManagerIHM extends java.awt.Frame {
     private javax.swing.JLabel resultatValidationIP;
     private javax.swing.JButton rmi_connect_bouton;
     private javax.swing.JTextArea rmi_console;
-    private javax.swing.JButton rmi_get;
-    private javax.swing.JButton rmi_getnext;
+    private javax.swing.JButton rmi_getBouton;
+    private javax.swing.JButton rmi_getnextBouton;
     private javax.swing.JLabel rmi_label;
     private javax.swing.JLabel rmi_oidValue_label;
     private javax.swing.JTextField rmi_oid_TextField;
     private javax.swing.JLabel rmi_oid_label;
     private javax.swing.JPanel rmi_panel;
     private javax.swing.JTextField rmi_remote_manager_ip;
-    private javax.swing.JButton rmi_set;
+    private javax.swing.JButton rmi_setBouton;
     private javax.swing.JLabel rmi_state_label;
     private javax.swing.JTextField rmi_value_TextField;
     private javax.swing.JButton trap_bouton;

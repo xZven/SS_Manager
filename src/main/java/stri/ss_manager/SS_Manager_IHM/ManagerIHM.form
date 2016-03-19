@@ -545,11 +545,17 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Get"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GetBoutonActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="GetNextBouton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="GetNext"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GetNextBoutonActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -583,9 +589,9 @@
                                   </Group>
                                   <EmptySpace pref="77" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="rmi_get" min="-2" pref="155" max="-2" attributes="0"/>
-                                      <Component id="rmi_set" alignment="0" min="-2" pref="155" max="-2" attributes="0"/>
-                                      <Component id="rmi_getnext" alignment="0" min="-2" pref="155" max="-2" attributes="0"/>
+                                      <Component id="rmi_getBouton" min="-2" pref="155" max="-2" attributes="0"/>
+                                      <Component id="rmi_setBouton" alignment="0" min="-2" pref="155" max="-2" attributes="0"/>
+                                      <Component id="rmi_getnextBouton" alignment="0" min="-2" pref="155" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -621,17 +627,17 @@
                                   <Component id="rmi_oid_label" min="-2" pref="23" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="rmi_get" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                                      <Component id="rmi_getBouton" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                                       <Component id="rmi_oid_TextField" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                                  <Component id="rmi_getnext" min="-2" pref="35" max="-2" attributes="0"/>
+                                  <Component id="rmi_getnextBouton" min="-2" pref="35" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                                   <Component id="rmi_oidValue_label" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Component id="rmi_value_TextField" max="32767" attributes="0"/>
-                                      <Component id="rmi_set" pref="35" max="32767" attributes="0"/>
+                                      <Component id="rmi_setBouton" pref="35" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
@@ -649,26 +655,32 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JButton" name="rmi_get">
+                <Component class="javax.swing.JButton" name="rmi_getBouton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="GET"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rmi_getActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rmi_getBoutonActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="rmi_getnext">
+                <Component class="javax.swing.JButton" name="rmi_getnextBouton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="GetNext"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rmi_getnextBoutonActionPerformed"/>
+                  </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="rmi_set">
+                <Component class="javax.swing.JButton" name="rmi_setBouton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="SET"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rmi_setBoutonActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="rmi_oid_TextField">
                   <Properties>
