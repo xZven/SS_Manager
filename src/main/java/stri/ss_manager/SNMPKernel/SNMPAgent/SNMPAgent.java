@@ -21,8 +21,12 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Scanner;
+import stri.ss_manager.SNMP.smi.OID;
+import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.payload.SNMPTrapV2;
@@ -96,6 +100,12 @@ public class SNMPAgent extends Thread {
         //
         this.S_MSG_queue_IS = S_MSG_queue_IS;
         //
+        try{
+            this.addrManager = InetAddress.getByName("127.0.0.1");
+        }catch(Exception e){
+            //
+        }
+        //
         this.setName("SNMP_AGENT");
         //
         System.out.println("[SNMP_AGENT]: Ready...");       
@@ -141,9 +151,8 @@ public class SNMPAgent extends Thread {
                        //
                        System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
                        // un trap sera envoyé à son Manager
-                       SNMPTrapV2 trapPdu = null;
                        // envoi du Trap
-                       sendTrapToManager(trapPdu);
+                       sendTrapToManagerForAuthentificationFailure(temp_SNMPMessage.getSender());
                        
                     }
                     break;
@@ -166,6 +175,7 @@ public class SNMPAgent extends Thread {
                     }else{  // ne fais pas partie de la bonne communauté
                        System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
                        // un trap sera envoyé à son Manager
+                        sendTrapToManagerForAuthentificationFailure(temp_SNMPMessage.getSender());
                     }
 
                     break;
@@ -189,7 +199,7 @@ public class SNMPAgent extends Thread {
                     }else{  // ne fais pas partie de la bonne communauté
                         System.out.println("[SNMP_AGENT]: Bad communauty ! (Sending Trap to manager...)");
                        // un trap sera envoyé à son Manager 
-
+                         sendTrapToManagerForAuthentificationFailure(temp_SNMPMessage.getSender());
                     }
                     break;
 
@@ -265,18 +275,36 @@ public class SNMPAgent extends Thread {
      * 
      * @param trapPdu Contenu du message trap 
      */
-    public void sendTrapToManager(SNMPTrapV2 trapPdu){
+    private void sendTrapToManager(SNMPMessagePayload trapPdu){
 
-        // conception du message SNMP
-        SNMPMessage trap_message_v2 = new SNMPMessage(null
-                , this.addrManager, 
-                162, 
-                1,
-                this.communauty, 
-                (byte) 0xA7, 
-                trapPdu);
-
+        // conception du message SNMP Trapv2
+        SNMPMessage trap_message_v2 = new SNMPMessage(null, 
+                                                    this.addrManager, 
+                                                    162, 
+                                                    1,
+                                                    this.communauty, 
+                                                    (byte) 0xA7, 
+                                                    trapPdu);
+        // envoi du message
         this.S_MSG_queue_OS.add(trap_message_v2);
+    }
+    /**
+     * Cette fonction permet d'envoyer un TRAP SNMP à son Manager.
+     * 
+     * @param remoteManager Adresse IP du Manager ayant commi l'erreur d'authentification
+     */
+    private void sendTrapToManagerForAuthentificationFailure(InetAddress remoteManager){
+        ArrayList<VarBind> varBind = new ArrayList<>();
+        // récupération du temps système
+        byte[] SysUpTime = ByteBuffer.allocate(Long.SIZE / Byte.SIZE).putLong(System.currentTimeMillis()).array();
+        //
+        varBind.add(new VarBind(new OID("1.3.1.2.1.1.3"), SysUpTime));
+        varBind.add(new VarBind(new OID("1.3.6.1.6.3.1.1.5.5.0"), remoteManager.toString().getBytes()));
+
+        SNMPMessagePayload trap = new SNMPMessagePayload(0xA7, 0, 0, varBind);
+        
+        // envoi du message
+        sendTrapToManager(trap);
     }
 }
 
