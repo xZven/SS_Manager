@@ -17,6 +17,7 @@
  */
 package stri.ss_manager.SNMPMessage.payload;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.security.Timestamp;
@@ -31,7 +32,7 @@ import stri.ss_manager.SNMP.smi.VarBind;
  * Cette classe défini l'information utile dans les PDU SNMP qui sont
  * de type TRAP.
  */
-public class SNMPTrapV1 {
+public class SNMPTrapV1 implements Serializable{
     
     
     // attributs

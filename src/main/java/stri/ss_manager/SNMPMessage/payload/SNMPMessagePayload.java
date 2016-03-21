@@ -17,6 +17,7 @@
  */
 package stri.ss_manager.SNMPMessage.payload;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import stri.ss_manager.SNMP.smi.VarBind;
@@ -34,7 +35,7 @@ import stri.ss_manager.SNMP.smi.VarBind;
  * (Pas de setter défini).
  * </p>
  */
-public class SNMPMessagePayload {
+public class SNMPMessagePayload implements Serializable{
     
     // attributs
     private int requestId;
@@ -248,7 +249,7 @@ public class SNMPMessagePayload {
     private byte[] getVarBindListTLVFormat(){
         
         // VAR
-        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(100);
+        ByteBuffer temp_ByteBuffer = ByteBuffer.allocate(200);
         byte[] temp_data;
         int varBindListLght = 0;
         //

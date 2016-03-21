@@ -17,6 +17,7 @@
  */
 package stri.ss_manager.SNMP.smi;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 /**
@@ -26,7 +27,7 @@ import java.nio.ByteBuffer;
  * Cette classe défini l'ensemble OID plus sa valeur. Le type de sa valeur
  * sera extrait des MIBs.
  */
-public class VarBind {
+public class VarBind implements Serializable{
     
     // attributs
     

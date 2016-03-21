@@ -17,6 +17,7 @@
  */
 package stri.ss_manager.SNMPKernel;
 
+import java.net.InetAddress;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 
 /**
@@ -38,6 +39,8 @@ public interface SNMPRemoteManagerInterface extends java.rmi.Remote{
     
     public void shutDown() throws java.rmi.RemoteException;;
     
-    public void reloadAgentConfiguration() throws java.rmi.RemoteException;;
+    public void reloadAgentConfiguration() throws java.rmi.RemoteException;
+    
+    public void setIpTopLevelManager(InetAddress ip) throws java.rmi.RemoteException;
     
 }

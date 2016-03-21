@@ -4,8 +4,8 @@ package stri.ss_manager.exe;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
 import java.util.Queue;
 import stri.ss_manager.SNMPKernel.SNMPHandler;
@@ -103,7 +103,13 @@ public class SNMPManagerTest {
         SOCK_HDLR_TRAP_LSTNR = new SocketHandlerTrapListener(trap_listenner, DG_packet_queue_IS);
         SOCK_HDLR_OS         = new SocketHandlerOutputStream(socket, DG_packet_queue_OS);
         // Lancement de l'ihm
-        ManagerIHM ihm       = new ManagerIHM(new SNMPHandler(S_MSG_queue_IS, S_MSG_queue_OS));
+        ManagerIHM ihm;
+        try {
+            ihm = new ManagerIHM(new SNMPHandler(S_MSG_queue_IS, S_MSG_queue_OS));
+        } catch (RemoteException ex) {
+            System.err.println("[MAIN_PROC]: "+ ex.getMessage());
+            ihm = null;
+        }
         // Couche SNMPMessageHandler
         S_MSG_HDLR_IS = new SNMPMessageHandlerInputStream(DG_packet_queue_IS, S_MSG_queue_IS, ihm);
         S_MSG_HDLR_OS = new SNMPMessageHandlerOutputStream(DG_packet_queue_OS, S_MSG_queue_OS);
@@ -132,7 +138,7 @@ public class SNMPManagerTest {
             LocateRegistry.createRegistry(1099);
             //***********************************************************
             
-            Naming.rebind("RemoteManagerInterface", UnicastRemoteObject.exportObject(ihm.getSnmpHandler(), 1099));
+            Naming.rebind("RemoteManagerInterface", ihm.getSnmpHandler());
             //
             System.out.println("[MAIN_PROC]: RMI SERVICE OK !");
             

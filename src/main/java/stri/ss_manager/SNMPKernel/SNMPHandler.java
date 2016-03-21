@@ -17,8 +17,14 @@
  */
 package stri.ss_manager.SNMPKernel;
 
+import static java.lang.Thread.sleep;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import stri.ss_manager.SNMPMessage.SNMPMessage;
 
 /**
@@ -40,7 +46,7 @@ import stri.ss_manager.SNMPMessage.SNMPMessage;
  *  Pour cette première version du programme, le coeur ne gèrera que les requête ponctuelles.
  * </p>
  */
-public class SNMPHandler extends Thread implements SNMPRemoteManagerInterface{
+public class SNMPHandler extends UnicastRemoteObject implements SNMPRemoteManagerInterface{
     
     // attributs
     
@@ -49,6 +55,8 @@ public class SNMPHandler extends Thread implements SNMPRemoteManagerInterface{
         Queue<SNMPMessage> S_MSG_queue_OS;
     //
         int requestIdIncrementator = 0;
+    //
+        InetAddress topLevelManager;
         
     // constructeurs
     
@@ -58,14 +66,23 @@ public class SNMPHandler extends Thread implements SNMPRemoteManagerInterface{
      * 
      * @param S_MSG_queue_IS File d'attente pour le flux entrant des messages SNMP
      * @param S_MSG_queue_OS File d'attente pour le flux sortant des messages SNMP
+     * @throws java.rmi.RemoteException
      */
-    public SNMPHandler(Queue<SNMPMessage> S_MSG_queue_IS, Queue<SNMPMessage> S_MSG_queue_OS) {
+    public SNMPHandler(Queue<SNMPMessage> S_MSG_queue_IS, Queue<SNMPMessage> S_MSG_queue_OS) throws RemoteException{
+
+        super();
+        
         this.S_MSG_queue_IS = S_MSG_queue_IS;
         this.S_MSG_queue_OS = S_MSG_queue_OS;
         
-    }
+            try {
+                this.topLevelManager = InetAddress.getByName("localhost");
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(SNMPHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         
-       
+    }
+
     // méthodes
     
     // ATTENTION CES METHODES DE MARCHERONT QUE POUR LA VERSION 1 DU PROGRAMME SS_MANAGER
@@ -190,13 +207,35 @@ public class SNMPHandler extends Thread implements SNMPRemoteManagerInterface{
         }
     }
 
+    public void sendtraopToTopLevelManager(SNMPMessage trap){
+       this.S_MSG_queue_OS.add(trap); 
+    }
+    /** Cette méthode permet d'arrêter le manager distant
+     * 
+     * @throws RemoteException 
+     */
     @Override
     public void shutDown() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("[SNMPHandler]: Shutdown from RMI !");
+        System.exit(0);
     }
 
     @Override
     public void reloadAgentConfiguration() throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Cette méthode permet d'envoyer un message TRAP.
+     * 
+     * @param trap_message_v2 Trap à envoyer
+     */
+    public void sendTrap(SNMPMessage trap_message_v2) {
+        this.S_MSG_queue_OS.add(trap_message_v2);
+    }
+    
+    @Override
+    public void setIpTopLevelManager(InetAddress ip) throws RemoteException {
+        this.topLevelManager = ip;
     }
 }

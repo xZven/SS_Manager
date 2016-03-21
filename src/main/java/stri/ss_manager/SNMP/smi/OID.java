@@ -17,6 +17,7 @@
  */
 package stri.ss_manager.SNMP.smi;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 /**
@@ -27,7 +28,7 @@ import java.nio.ByteBuffer;
  * Cette classe défini les ObjectIdentifier défini dans le protocole SNMP.
  * 
  */
-public class OID {
+public class OID implements Serializable{
     
     // attributs
     private byte[] objectId;

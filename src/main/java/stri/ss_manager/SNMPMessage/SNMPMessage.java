@@ -17,10 +17,12 @@
  */
 package stri.ss_manager.SNMPMessage;
 
+import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.rmi.Remote;
 import stri.ss_manager.SNMP.smi.VarBind;
 import stri.ss_manager.SNMPMessage.payload.SNMPMessagePayload;
 import stri.ss_manager.SNMPMessage.payload.SNMPTrapV1;
@@ -29,7 +31,7 @@ import stri.ss_manager.SNMPMessage.payload.SNMPTrapV2;
 /**
  *
  * @author Lorrain BALBIANI - Farid EL JAMAL - Manavai TEIKITUHAAHAA
- * @version 1.0
+ * @version 4
  * 
  * Cette classe défini les messages SNMP échangés pour toute version. 
  * Elle servent entre les échanges
@@ -42,7 +44,7 @@ import stri.ss_manager.SNMPMessage.payload.SNMPTrapV2;
  * </p>
  * 
  */
-public class SNMPMessage {
+public class SNMPMessage implements Serializable{
     
     // attributs                    // ces adresses sont extraite ou mis dans les PDU SNMP
     private InetAddress Sender;     // Adresse IPv4 de l'emmeteur du message SNMP
@@ -98,6 +100,7 @@ public class SNMPMessage {
      * @param communauty Nom de la communauté.
      * @param pduType Type de la PDU (e.g: Get(0xA0), GetNext (0xA1) , Set (0xA3), GetResponse (0xA2) , Trapv1 (0xA4), Trapv2 (0xA7))
      * @param trapv1 Payload du message SNMP (TRAPv1)
+     * @param i
      */
     public SNMPMessage(InetAddress Sender, InetAddress Receiver, int port, int version, byte[] communauty, byte pduType, SNMPTrapV1 trapv1, int i){
         
