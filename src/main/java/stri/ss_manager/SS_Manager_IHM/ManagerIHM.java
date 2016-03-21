@@ -1021,7 +1021,8 @@ public class ManagerIHM extends java.awt.Frame {
             // envoi de la requête
             SNMPMessage res_msg         = snmpRemoteManagerInterface.sendGetRequest(req_msg);
             // affichage du résultat
-            this.rmi_console.setText(res_msg.toStringforIHM());
+           // this.rmi_console.setText(res_msg.toStringforIHM());
+            System.out.println(res_msg.toStringforIHM());
             this.rmi_value_TextField.setText(new String(res_msg.getPayload().getVarBindingsList().get(0).getObjectValue()));
             //
             setOidandValueOnIhmByVarBin(res_msg.getPayload().getVarBindingsList().get(0));
